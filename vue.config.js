@@ -10,7 +10,8 @@ module.exports = {
     resolve: {
       extensions: ['.ts', '.js', '.vue', '.json'],
       alias: {
-        src: resolve('src')
+        src: resolve('src'),
+        components: resolve('src/components')
       }
     }
   }
