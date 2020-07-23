@@ -11,7 +11,8 @@ module.exports = {
       extensions: ['.ts', '.js', '.vue', '.json'],
       alias: {
         src: resolve('src'),
-        components: resolve('src/components')
+        components: resolve('src/components'),
+        assets: resolve('src/assets')
       }
     }
   }
