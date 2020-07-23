@@ -1,6 +1,8 @@
 <template>
     <div class="app">
       <my-header></my-header>
+      <my-tab></my-tab>
+      <router-view></router-view>
     </div>
 </template>
 
@@ -8,14 +10,17 @@
     import Vue from 'vue'
     import Component from 'vue-class-component'
     import MyHeader from 'components/m-header/MyHeader.vue'
+    import MyTab from 'components/m-tab/MyTab.vue'
 
     @Component({
         components: {
-          'my-header': MyHeader
+          MyHeader,
+          MyTab
         }
     })
 
     export default class extends Vue {
+
     }
 </script>
 

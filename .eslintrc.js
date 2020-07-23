@@ -19,6 +19,6 @@ module.exports = {
     'indent': 0,
     'eol-last': 0,
     'space-before-function-paren': 0,
-    'no-trailing-spaces': 0
+    'no-trailing-spaces': 0,
   }
 }
