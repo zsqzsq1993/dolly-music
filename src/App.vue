@@ -1,6 +1,6 @@
 <template>
     <div class="app">
-      <MyHeader></MyHeader>
+      <my-header></my-header>
     </div>
 </template>
 
@@ -12,7 +12,7 @@
 
     @Component({
         components: {
-          MyHeader
+          'my-header': MyHeader
         }
     })
 
