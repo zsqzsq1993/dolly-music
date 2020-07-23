@@ -7,7 +7,6 @@
 <script lang="ts">
     import Vue from 'vue'
     import Component from 'vue-class-component'
-
     import MyHeader from 'components/m-header/MyHeader.vue'
 
     @Component({

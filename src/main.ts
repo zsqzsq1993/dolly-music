@@ -6,6 +6,9 @@ import './registerServiceWorker'
 import store from './store'
 
 // customer import
+import 'src/assets/stylus/reset.styl'
+import 'src/assets/stylus/base.styl'
+import 'src/assets/stylus/icon.styl'
 import fastclick from 'fastclick'
 
 Vue.config.productionTip = false
