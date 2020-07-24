@@ -13,6 +13,8 @@ import FastClick from 'fastclick'
 
 Vue.config.productionTip = false
 
+// eslint-disable-next-line
+// @ts-ignore
 FastClick.attach(document.body)
 
 new Vue({

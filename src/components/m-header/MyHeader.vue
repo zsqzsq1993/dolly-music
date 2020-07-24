@@ -9,8 +9,6 @@
     import Vue from 'vue'
     import Component from 'vue-class-component'
 
-    import Test from 'components/test.vue'
-
     @Component({})
 
     export default class extends Vue {

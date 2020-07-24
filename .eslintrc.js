@@ -20,5 +20,8 @@ module.exports = {
     'eol-last': 0,
     'space-before-function-paren': 0,
     'no-trailing-spaces': 0,
+    'space-in-parens': 0,
+    'no-multi-spaces': 0,
+    'object-curly-spacing': 0
   }
 }
