@@ -22,6 +22,7 @@ module.exports = {
     'no-trailing-spaces': 0,
     'space-in-parens': 0,
     'no-multi-spaces': 0,
-    'object-curly-spacing': 0
+    'object-curly-spacing': 0,
+    'quote-props': 0
   }
 }

@@ -14,7 +14,8 @@ module.exports = {
       alias: {
         src: resolve('src'),
         components: resolve('src/components'),
-        assets: resolve('src/assets')
+        assets: resolve('src/assets'),
+        base: resolve('src/base')
       }
     }
   },

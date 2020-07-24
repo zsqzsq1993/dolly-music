@@ -10,9 +10,8 @@ export default function (): Promise<any> {
 
   const data = Object.assign({}, commonData, recommandCarouselData)
 
-  return dollyAxios.get(url,  {
-    params: data
-  }).then(result => {
-    return result.data
-  })
+  return dollyAxios.get(url, {params: data})
+    .then(result => {
+      return result.data
+    })
 }
