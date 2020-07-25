@@ -23,6 +23,7 @@ module.exports = {
     'space-in-parens': 0,
     'no-multi-spaces': 0,
     'object-curly-spacing': 0,
-    'quote-props': 0
+    'quote-props': 0,
+    '@typescript-eslint/camelcase': 0
   }
 }

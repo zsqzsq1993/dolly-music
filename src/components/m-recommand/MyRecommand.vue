@@ -2,14 +2,13 @@
     <div class="m-recommand">
       <div class="slider-outer-wrapper">
         <div class="slider-inner-wrapper">
-          <slider
-            v-if="slider.length"
-            :momentum="true">
-            <a v-for="(item, idx) in slider"
-               :key="idx"
-               :href="item.jumpUrl">
-              <img :src="item.picUrl">
-            </a>
+          <slider v-if="slider.length">
+            <div v-for="item in slider"
+                 :key="item.jumpUrl">
+              <a :href="item.jumpUrl">
+                <img :src="item.picUrl">
+              </a>
+            </div>
           </slider>
         </div>
       </div>
