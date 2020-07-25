@@ -2,7 +2,9 @@
     <div class="m-recommand">
       <div class="slider-outer-wrapper">
         <div class="slider-inner-wrapper">
-          <slider v-if="slider.length">
+          <slider
+            v-if="slider.length"
+            :momentum="true">
             <a v-for="(item, idx) in slider"
                :key="idx"
                :href="item.jumpUrl">
@@ -18,7 +20,7 @@
     import Vue from 'vue'
     import Component from 'vue-class-component'
     import getRecommandCarousel from 'src/api/getRecommandCarousel'
-    import Slider from 'base/slider.vue'
+    import Slider from '@/base/Slider.vue'
 
     @Component({
         components: {
@@ -52,11 +54,11 @@
       width 100%
       padding-top 40%
       background red
+        overflow hidden
       .slider-inner-wrapper
         position absolute
         top 0
         left 0
         width 100%
         height 100%
-        overflow hidden
 </style>

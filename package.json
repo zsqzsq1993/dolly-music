@@ -17,6 +17,7 @@
     "vuex": "^3.4.0"
   },
   "devDependencies": {
+    "@better-scroll/core": "^2.0.0-beta.10",
     "@types/fastclick": "^1.0.29",
     "@typescript-eslint/eslint-plugin": "^2.33.0",
     "@typescript-eslint/parser": "^2.33.0",
