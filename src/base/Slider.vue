@@ -18,22 +18,34 @@
     import BScroll from '@better-scroll/core'
     import Slide from '@better-scroll/slide'
     import {addClass} from '@/assets/ts/classHelper.ts'
+    import {Page} from '@better-scroll/slide/dist/types/SlidePage'
+
+    BScroll.use(Slide)
 
     @Component
     export default class Slider extends Vue {
       @Prop({default: true}) readonly momentum!: boolean
       @Prop({default: true}) readonly loop!: boolean
+      @Prop({default: true}) readonly autoplay!: boolean
+      @Prop({default: 4000}) readonly interval!: number
 
       slider: null | BScroll = null
       currentIndex = 0
       dots: Array<undefined> = []
+      playTimer = 0
 
       mounted() {
         this.$nextTick(() => {
           this._setInitialDots()
           this._setInitialWidth()
           this._setInitialScroll()
+          this._setScrollListener()
         })
+      }
+
+      beforeDestroy() {
+        clearTimeout(this.playTimer)
+        this.playTimer = 0
       }
 
       _setInitialWidth() {
@@ -49,16 +61,10 @@
           child.style.width = unitWidth + 'px'
         }
 
-        // if (this.loop) {
-        //   totalWidth += 2 * unitWidth
-        // }
-
         sliderGroup.style.width = totalWidth + 'px'
       }
 
       _setInitialScroll() {
-        BScroll.use(Slide)
-
         this.slider = new BScroll('.m-slider', {
           scrollX: true,
           scrollY: false,
@@ -68,19 +74,33 @@
             speed: 400
           }
         })
-
-        const slide = new Slide(this.slider!)
-
-        this.slider.on('scrollEnd', () => {
-          const currentPage = slide.getCurrentPage().pageX
-          this.currentIndex = currentPage
-        })
       }
 
       _setInitialDots() {
         this.dots = new Array<undefined>(
           (this.$refs.sliderGroup as HTMLElement).children.length
         )
+      }
+
+      _setScrollListener() {
+        this.slider && this.slider.on('slideWillChange', (page: Page) => {
+          this.currentIndex = page.pageX
+        })
+
+        if (this.autoplay) {
+          this._nextPage()
+
+          this.slider && this.slider.on('scrollEnd', () => {
+            clearTimeout(this.playTimer)
+            this._nextPage()
+          })
+        }
+      }
+
+      _nextPage() {
+        this.playTimer = setTimeout(() => {
+          this.slider && this.slider.next()
+        }, this.interval)
       }
     }
 </script>
@@ -92,10 +112,10 @@
     position: relative;
     width 100%
     height 100%
+    overflow hidden
     .slider-group
       height 100%
       white-space nowrap
-      overflow hidden
       .slider-item
         float left
         overflow hidden
