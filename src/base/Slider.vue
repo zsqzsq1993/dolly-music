@@ -39,7 +39,7 @@
           this._setInitialDots()
           this._setInitialWidth()
           this._setInitialScroll()
-          this._setScrollListener()
+          this._setListeners()
         })
       }
 
@@ -82,19 +82,26 @@
         )
       }
 
-      _setScrollListener() {
+      _setListeners() {
+        // dot follows the index
         this.slider && this.slider.on('slideWillChange', (page: Page) => {
           this.currentIndex = page.pageX
         })
 
+        // autoplay
         if (this.autoplay) {
           this._nextPage()
-
           this.slider && this.slider.on('scrollEnd', () => {
             clearTimeout(this.playTimer)
             this._nextPage()
           })
         }
+
+        // resizable
+        window.addEventListener('resize', () => {
+          this._setInitialWidth()
+          this.slider && this.slider.refresh()
+        })
       }
 
       _nextPage() {
