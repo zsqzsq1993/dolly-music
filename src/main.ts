@@ -9,7 +9,14 @@ import store from './store'
 import 'src/assets/stylus/reset.styl'
 import 'src/assets/stylus/base.styl'
 import 'src/assets/stylus/icon.styl'
+import lazyload from 'vue-lazyload'
+
 import FastClick from 'fastclick'
+Vue.use(lazyload, {
+  attempt: 2,
+  error: require('@/assets/images/pizza.png'),
+  loading: require('@/assets/images/pizza.png')
+})
 
 Vue.config.productionTip = false
 

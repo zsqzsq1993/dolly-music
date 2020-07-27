@@ -22,7 +22,7 @@
             <div class="img-wrapper">
               <img width="60"
                    height="60"
-                   :src="item.imgurl"
+                   v-lazy="item.imgurl"
                    :alt="item.creator.name">
             </div>
             <div class="text-wrapper">
