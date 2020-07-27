@@ -1,7 +1,7 @@
 <template>
   <div class="m-recommand">
-    <Scroll :data="list">
-      <div>
+    <scroll :data="list">
+      <div >
         <div class="slider-outer-wrapper">
           <div class="slider-inner-wrapper">
             <slider v-if="slider.length">
@@ -32,7 +32,11 @@
           </div>
         </div>
       </div>
-    </Scroll>
+    </scroll>
+    <div class="loading-wrapper">
+      <loading :show="!list.length">
+      </loading>
+    </div>
   </div>
 </template>
 
@@ -40,13 +44,15 @@
     import Vue from 'vue'
     import Component from 'vue-class-component'
     import {getRecommandCarousel, getRecommandList, SliderData, ListData } from 'src/api/getRecommand'
-    import Slider from 'base/Slider.vue'
-    import Scroll from 'base/Scroll.vue'
+    import Slider from 'base/m-slider/Slider.vue'
+    import Scroll from 'base/m-scroll/Scroll.vue'
+    import Loading from 'base/m-loading/Loading.vue'
 
     @Component({
         components: {
           Slider,
-          Scroll
+          Scroll,
+          Loading
         }
     })
 
@@ -127,4 +133,9 @@
             color $color-text
           .disc
             color $color-text-d
+    .loading-wrapper
+      position: absolute
+      width: 100%
+      top: 50%
+      // transform: translateY(-50%)
 </style>
