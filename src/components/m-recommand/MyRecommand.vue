@@ -1,35 +1,39 @@
 <template>
-    <div class="m-recommand">
-      <div class="slider-outer-wrapper">
-        <div class="slider-inner-wrapper">
-          <slider v-if="slider.length">
-            <div v-for="item in slider"
-                 :key="item.jumpUrl">
-              <a :href="item.jumpUrl">
-                <img :src="item.picUrl">
-              </a>
+  <div class="m-recommand">
+    <Scroll :data="list">
+      <div>
+        <div class="slider-outer-wrapper">
+          <div class="slider-inner-wrapper">
+            <slider v-if="slider.length">
+              <div v-for="item in slider"
+                   :key="item.jumpUrl">
+                <a :href="item.jumpUrl">
+                  <img :src="item.picUrl">
+                </a>
+              </div>
+            </slider>
+          </div>
+        </div>
+        <div class="list-wrapper">
+          <h1 class="title">热门歌单推荐</h1>
+          <div class="list-item"
+               v-for="item in list"
+               :key="item.creator.name">
+            <div class="img-wrapper">
+              <img width="60"
+                   height="60"
+                   :src="item.imgurl"
+                   :alt="item.creator.name">
             </div>
-          </slider>
-        </div>
-      </div>
-      <div class="list-wrapper">
-        <h1 class="title">热门歌单推荐</h1>
-        <div class="list-item"
-             v-for="item in list"
-             :key="item.creator.name">
-          <div class="img-wrapper">
-            <img width="60"
-                 height="60"
-                 :src="item.imgurl"
-                 :alt="item.creator.name">
-          </div>
-          <div class="text-wrapper">
-            <h2 class="sub-title">{{item.creator.name}}</h2>
-            <p class="disc">{{item.dissname}}</p>
+            <div class="text-wrapper">
+              <h2 class="sub-title">{{item.creator.name}}</h2>
+              <p class="disc">{{item.dissname}}</p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </Scroll>
+  </div>
 </template>
 
 <script lang="ts">
@@ -37,10 +41,12 @@
     import Component from 'vue-class-component'
     import {getRecommandCarousel, getRecommandList, SliderData, ListData } from 'src/api/getRecommand'
     import Slider from 'base/Slider.vue'
+    import Scroll from 'base/Scroll.vue'
 
     @Component({
         components: {
-          Slider
+          Slider,
+          Scroll
         }
     })
 
@@ -79,6 +85,13 @@
   @import '~assets/stylus/variable.styl'
 
   .m-recommand
+    position fixed
+    width 100%
+    top: 88px
+    bottom 0
+    .recommand-content
+      height 100%
+      overflow hidden
     .slider-outer-wrapper
       position relative
       width 100%
