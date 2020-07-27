@@ -62,12 +62,36 @@ module.exports = {
 
             res.json({
               code: 0,
-              data: {
-                slider
-              }
+              data: slider
             })
           } else {
-            res.json(res)
+            res.json(response)
+          }
+        }).catch(e => {
+          console.log(e)
+        })
+      })
+
+      app.get('/api/getRecommandList', (req, res) => {
+        const url = 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg'
+
+        const data = req.query
+
+        axios.get(url, {
+          params: data,
+          headers: {
+            referer: 'https://u.y.qq.com/',
+            host: 'u.y.qq.com'
+          }
+        }).then(response => {
+          response = response.data
+          if (response.code === 0) {
+            res.json({
+              code: 0,
+              data: response.data.list
+            })
+          } else {
+            res.json(response)
           }
         }).catch(e => {
           console.log(e)

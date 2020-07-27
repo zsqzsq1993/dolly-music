@@ -12,14 +12,31 @@
           </slider>
         </div>
       </div>
+      <div class="list-wrapper">
+        <h1 class="title">热门歌单推荐</h1>
+        <div class="list-item"
+             v-for="item in list"
+             :key="item.creator.name">
+          <div class="img-wrapper">
+            <img width="60"
+                 height="60"
+                 :src="item.imgurl"
+                 :alt="item.creator.name">
+          </div>
+          <div class="text-wrapper">
+            <h2 class="sub-title">{{item.creator.name}}</h2>
+            <p class="disc">{{item.dissname}}</p>
+          </div>
+        </div>
+      </div>
     </div>
 </template>
 
 <script lang="ts">
     import Vue from 'vue'
     import Component from 'vue-class-component'
-    import getRecommandCarousel from 'src/api/getRecommandCarousel'
-    import Slider from '@/base/Slider.vue'
+    import {getRecommandCarousel, getRecommandList, SliderData, ListData } from 'src/api/getRecommand'
+    import Slider from 'base/Slider.vue'
 
     @Component({
         components: {
@@ -28,16 +45,28 @@
     })
 
     export default class extends Vue {
-      slider = []
+      slider: Array<undefined | SliderData> = []
+      list: Array<undefined | ListData> = []
 
       created() {
         this._getRecommandCarousel()
+        this._getRecommandList()
       }
 
       _getRecommandCarousel() {
         getRecommandCarousel().then(response => {
           if (response.code === 0) {
-            this.slider = response.data.slider
+            this.slider = response.data
+          } else {
+            throw new Error('can not catch carousel data.')
+          }
+        })
+      }
+
+      _getRecommandList() {
+        getRecommandList().then(response => {
+          if (response.code === 0) {
+            this.list = response.data
           } else {
             throw new Error('can not catch carousel data.')
           }
@@ -47,6 +76,8 @@
 </script>
 
 <style lang="stylus">
+  @import '~assets/stylus/variable.styl'
+
   .m-recommand
     .slider-outer-wrapper
       position relative
@@ -60,4 +91,27 @@
         left 0
         width 100%
         height 100%
+    .list-wrapper
+      .title
+        height 65px
+        line-height 65px
+        text-align center
+        font-size $font-size-median
+        color: $color-theme
+      .list-item
+        display flex
+        padding 0 20px 20px
+        .img-wrapper
+          flex 0 0 60px
+          padding-right 20px
+        .text-wrapper
+          display flex
+          flex-direction column
+          justify-content space-around
+          flex 1 1 0
+          font-size $font-size-median
+          .sub-title
+            color $color-text
+          .disc
+            color $color-text-d
 </style>

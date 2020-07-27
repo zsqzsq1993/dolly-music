@@ -3,11 +3,11 @@ export const commonData = {
   inCharset: 'utf-8',
   outCharset: 'utf-8',
   notice: 0,
-  format: 'jsonp'
+  format: 'jsonp',
+  platform: 'yqq.json'
 }
 
 export const recommandCarouselData = {
-  platform: 'yqq.json',
   hostUin: 0,
   needNewCode: 0,
   inCharset: 'utf8',
@@ -36,4 +36,19 @@ export const recommandCarouselData = {
     'toplist': {'module': 'musicToplist.ToplistInfoServer', 'method': 'GetAll', 'param': {}},
     'focus': {'module': 'QQMusic.MusichallServer', 'method': 'GetFocus', 'param': {}}
   }
+}
+
+export const recommandListData = {
+  picmid: 1,
+  rnd: Math.random(),
+  g_tk_new_20200303: 5381,
+  loginUin: 0,
+  hostUin: 0,
+  format: 'json',
+  inCharset: 'utf8',
+  needNewCode: 0,
+  categoryId: 10000000,
+  sortId: 5,
+  sin: 0,
+  ein: 19
 }
