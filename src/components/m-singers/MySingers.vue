@@ -1,8 +1,6 @@
 <template>
     <div class="m-singers">
-      <scroll :data="singers">
-        <list-view :data="singers"></list-view>
-      </scroll>
+      <list-view :data="singers"></list-view>
     </div>
 </template>
 
@@ -10,7 +8,6 @@
   import { getSingerList } from 'src/api/getSingers'
   import { Vue, Component } from 'vue-property-decorator'
   import { Singer } from 'src/assets/ts/Singer'
-  import Scroll from 'base/m-scroll/Scroll.vue'
   import ListView from 'base/m-list-view/ListView.vue'
 
   const HOT_LEN = 10
@@ -24,7 +21,6 @@
 
   @Component({
     components: {
-      Scroll,
       ListView
     }
   })

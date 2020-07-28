@@ -8,3 +8,11 @@ export function addClass(element: HTMLElement, className: string): void {
     element.className = originClassName + ' ' + className.trim()
   }
 }
+
+export function getData(el: HTMLElement, name: string, val?: any): any {
+  const prefix = 'data-'
+  name = prefix + name
+  return typeof val !== 'undefined'
+    ? el.setAttribute(name, val)
+    : el.getAttribute(name)
+}

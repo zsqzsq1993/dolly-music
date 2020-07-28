@@ -17,7 +17,7 @@
     import { Prop, Component, Vue } from 'vue-property-decorator'
     import BScroll from '@better-scroll/core'
     import Slide from '@better-scroll/slide'
-    import {addClass} from '@/assets/ts/classHelper.ts'
+    import {addClass} from 'src/assets/ts/dom'
     import {Page} from '@better-scroll/slide/dist/types/SlidePage'
 
     BScroll.use(Slide)
