@@ -56,18 +56,18 @@
             map.hot.items.push(
               new Singer(item.Fsinger_mid, item.Fsinger_name)
             )
-          } else {
-            if (!map[item.Findex]) {
-              map[item.Findex] = {
-                title: item.Findex,
-                items: []
-              }
-            } else {
-              map[item.Findex].items.push(
-                new Singer(item.Fsinger_mid, item.Fsinger_name)
-              )
+          }
+
+          if (!map[item.Findex]) {
+            map[item.Findex] = {
+              title: item.Findex,
+              items: []
             }
           }
+
+          map[item.Findex].items.push(
+            new Singer(item.Fsinger_mid, item.Fsinger_name)
+          )
         })
         return map
       } else {
