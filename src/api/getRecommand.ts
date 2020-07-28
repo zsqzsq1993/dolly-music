@@ -1,12 +1,11 @@
-import {commonData, recommandCarouselData, recommandListData} from 'src/api/config'
+import {
+  commonData,
+  recommandCarouselData,
+  recommandListData,
+  RetData,
+  devMode
+} from 'src/api/config'
 import dollyAxios from 'dolly-axios'
-
-const devMode: boolean = process.env.NODE_ENV !== 'production'
-
-interface RetData<T> {
-  code: number;
-  data: Array<T>;
-}
 
 export interface SliderData {
   picUrl: string;

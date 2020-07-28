@@ -14,16 +14,16 @@ const routes: Array<RouteConfig> = [
     component: MyRecommand
   },
   {
-    path: '/singers',
-    component: () => import('components/m-singers/MySingers.vue')
-  },
-  {
     path: '/rank',
     component: () => import('components/m-rank/MyRank.vue')
   },
   {
     path: '/search',
     component: () => import('components/m-search/MySearch.vue')
+  },
+  {
+    path: '/singers',
+    component: () => import('components/m-singers/MySingers.vue')
   }
 ]
 

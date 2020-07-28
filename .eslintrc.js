@@ -25,6 +25,6 @@ module.exports = {
     'object-curly-spacing': 0,
     'quote-props': 0,
     '@typescript-eslint/camelcase': 0,
-    ' @typescript-eslint/no-explicit-any': 0
+    '@typescript-eslint/no-explicit-any': 0
   }
 }

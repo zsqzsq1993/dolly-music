@@ -1,25 +1,11 @@
 <template>
     <div class="m-tab">
       <router-link class="tab-item" tag="div" to="/recommand"><span class="tab-link">推荐</span></router-link>
-      <router-link class="tab-item" tag="div" to="/singer"><span class="tab-link">歌手</span></router-link>
+      <router-link class="tab-item" tag="div" to="/singers"><span class="tab-link">歌手</span></router-link>
       <router-link class="tab-item" tag="div" to="/rank"><span class="tab-link">排行</span></router-link>
       <router-link class="tab-item" tag="div" to="/search"><span class="tab-link">搜索</span></router-link>
     </div>
 </template>
-
-<script lang="ts">
-    import Vue from 'vue'
-    import Component from 'vue-class-component'
-
-    @Component({
-        props: {},
-
-        components: {}
-    })
-
-    export default class extends Vue {
-    }
-</script>
 
 <style lang="stylus">
   @import "~assets/stylus/variable.styl"

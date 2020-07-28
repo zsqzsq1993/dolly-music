@@ -1,3 +1,10 @@
+export const devMode: boolean = process.env.NODE_ENV !== 'production'
+
+export interface RetData<T> {
+  code: number;
+  data: Array<T>;
+}
+
 export const commonData = {
   g_tk: 1928093487,
   inCharset: 'utf-8',
@@ -5,6 +12,11 @@ export const commonData = {
   notice: 0,
   format: 'jsonp',
   platform: 'yqq.json'
+}
+
+export const jsonpOptions = {
+  param: 'jsonpCallback',
+  prefix: 'jp'
 }
 
 export const recommandCarouselData = {
@@ -51,4 +63,16 @@ export const recommandListData = {
   sortId: 5,
   sin: 0,
   ein: 19
+}
+
+export const singerListData = {
+  // '-': 'getUCGI'+(Math.random()+'').replace('0.','')
+  channel: 'singer',
+  page: 'list',
+  key: 'all_all_all',
+  pagesize: 100,
+  pagenum: 1,
+  hostUin: 0,
+  needNewCode: 0,
+  platform: 'yqq'
 }

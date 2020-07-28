@@ -17,8 +17,8 @@
         <div class="list-wrapper">
           <h1 class="title">热门歌单推荐</h1>
           <div class="list-item"
-               v-for="item in list"
-               :key="item.creator.name">
+               v-for="(item,idx) in list"
+               :key="item.creator.name + idx">
             <div class="img-wrapper">
               <img width="60"
                    height="60"
