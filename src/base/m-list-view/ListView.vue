@@ -19,17 +19,17 @@
           </ul>
         </li>
       </ul>
-      <div class="list-shortcut">
-        <ul @touchstart="handleTouchStart">
-          <li v-for="(item, idx) in data"
-              :key="item.title + idx"
-              class="shortcut-item"
-              :class="{ current: idx === currentIndex }"
-              :data-index="idx">
-            {{ item.title.slice(0, 1) }}
-          </li>
-        </ul>
-      </div>
+    </div>
+    <div class="list-shortcut">
+      <ul @touchstart="handleTouchStart">
+        <li v-for="(item, idx) in data"
+            :key="item.title + idx"
+            class="shortcut-item"
+            :class="{ 'current' : idx === currentIndex }"
+            :data-index="idx">
+          {{ item.title.slice(0, 1) }}
+        </li>
+      </ul>
     </div>
   </scroll>
 </template>
@@ -59,6 +59,7 @@
         const target: HTMLElement = event.target as HTMLElement
         const index: number = getData(target, 'index')
         const element: HTMLElement = (this.$refs.groups as any)[index]
+        this.currentIndex = Number(index)
         this._scrollToElement(element)
       }
 
@@ -71,31 +72,31 @@
 <style lang="stylus">
   @import '~assets/stylus/variable.styl'
   .scroll
-    position: relative;
-  .m-list-view
-    width 100%
-    overflow hidden
-    .list-group
-      padding-bottom 30px
-      .list-group-title
-        height 30px
-        line-height 30px
-        padding-left 20px
-        font-size $font-size-small
-        color $color-text-l
-        background $color-highlight-background
-      .singer-wrapper
-        display flex
-        align-items center
-        padding 20px 0 0 30px
-        .avatar
-          width 50px
-          height 50px
-          border-radius 50%
-        .name
-          margin-left 20px
+    position relative
+    .m-list-view
+      width 100%
+      overflow hidden
+      .list-group
+        padding-bottom 30px
+        .list-group-title
+          height 30px
+          line-height 30px
+          padding-left 20px
+          font-size $font-size-small
           color $color-text-l
-          font-size $font-size-median
+          background $color-highlight-background
+        .singer-wrapper
+          display flex
+          align-items center
+          padding 20px 0 0 30px
+          .avatar
+            width 50px
+            height 50px
+            border-radius 50%
+          .name
+            margin-left 20px
+            color $color-text-l
+            font-size $font-size-median
     .list-shortcut
       z-index 30
       position absolute
