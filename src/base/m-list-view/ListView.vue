@@ -1,5 +1,7 @@
 <template>
-  <scroll :data="data" ref="scroll" class="scroll">
+  <scroll :data="data" ref="scroll"
+          class="scroll"
+          :prob-type="3">
     <div class="m-list-view">
       <ul>
         <li v-for="group in data"
@@ -21,12 +23,14 @@
       </ul>
     </div>
     <div class="list-shortcut">
-      <ul @touchstart="handleTouchStart">
+      <ul @touchstart="handleTouchStart"
+          @touchmove="handleTouchMove">
         <li v-for="(item, idx) in data"
             :key="item.title + idx"
             class="shortcut-item"
             :class="{ 'current' : idx === currentIndex }"
-            :data-index="idx">
+            :data-index="idx"
+            ref="shortcuts">
           {{ item.title.slice(0, 1) }}
         </li>
       </ul>
@@ -35,10 +39,12 @@
 </template>
 
 <script lang="ts">
-    import {Prop, Component, Vue} from 'vue-property-decorator'
+    import {Prop, Component, Vue, Watch} from 'vue-property-decorator'
     import { SingerInstance } from 'src/assets/ts/Singer'
     import Scroll from 'base/m-scroll/Scroll.vue'
     import { getData } from 'src/assets/ts/dom'
+
+    const SHORTCUT_HEIGHT = 22
 
     interface Data {
       title: string;
@@ -55,16 +61,62 @@
 
       currentIndex = 0
 
-      handleTouchStart(event: TouchEvent) {
-        const target: HTMLElement = event.target as HTMLElement
-        const index: number = getData(target, 'index')
-        const element: HTMLElement = (this.$refs.groups as any)[index]
-        this.currentIndex = Number(index)
-        this._scrollToElement(element)
+      shortcutRange = {
+        firstTop: 0,
+        lastTop: 0
       }
 
-      _scrollToElement(element: HTMLElement) {
-        this.$refs.scroll && (this.$refs.scroll as any).scrollToElement(element)
+      touch = {
+        y1: 0,
+        y2: 0,
+        anchorIndex: 0
+      }
+
+      @Watch('data')
+      whenDataChange() {
+        this._initShortcutRange()
+      }
+
+      @Watch('currentIndex')
+      shouldScroll() {
+        this._scrollToElement(this.$refs.groups as Element[], this.currentIndex)
+      }
+
+      mounted() {
+        setTimeout(() => {
+          this._initShortcutRange()
+        }, 100)
+      }
+
+      handleTouchStart(event: TouchEvent) {
+        const target = event.target as HTMLElement
+        const index: number = parseInt(getData(target, 'index'))
+        this.currentIndex = this.touch.anchorIndex = index
+        this.touch.y1 = this.shortcutRange.firstTop + index * SHORTCUT_HEIGHT
+      }
+
+      handleTouchMove(event: TouchEvent) {
+        const y2 = (this.touch.y2 = event.touches[0].clientY)
+        if (y2 >= this.shortcutRange.firstTop &&
+            y2 <= this.shortcutRange.lastTop + SHORTCUT_HEIGHT) {
+          const delta = this.touch.y2 - this.touch.y1
+          const deltaIndex = (delta / SHORTCUT_HEIGHT) | 0
+          this.currentIndex = this.touch.anchorIndex + deltaIndex
+        }
+      }
+
+      _scrollToElement(elements: Element[], index: number) {
+        this.$refs.scroll && (this.$refs.scroll as any).scrollToElement(elements[index], 0)
+      }
+
+      _initShortcutRange() {
+        const shortcuts: Element[] = this.$refs.shortcuts as Element[]
+        if (shortcuts) {
+          const len = shortcuts.length
+          this.shortcutRange.firstTop = shortcuts[0].getBoundingClientRect().top
+          this.shortcutRange.lastTop = shortcuts[len - 1].getBoundingClientRect().top
+          console.log(this.shortcutRange)
+        }
       }
     }
 </script>
