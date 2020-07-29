@@ -1,7 +1,9 @@
 <template>
   <scroll :data="data" ref="scroll"
           class="scroll"
-          :prob-type="3">
+          :prob-type="3"
+          :listen-scroll="true"
+          @onscroll="handleScroll">
     <div class="m-list-view">
       <ul>
         <li v-for="group in data"
@@ -23,8 +25,8 @@
       </ul>
     </div>
     <div class="list-shortcut">
-      <ul @touchstart="handleTouchStart"
-          @touchmove="handleTouchMove">
+      <ul @touchstart.stop="handleTouchStart"
+          @touchmove.stop="handleTouchMove">
         <li v-for="(item, idx) in data"
             :key="item.title + idx"
             class="shortcut-item"
@@ -60,6 +62,7 @@
       @Prop({default: []}) readonly data!: Array<Data>
 
       currentIndex = 0
+      groupHeights: Array<number> = []
 
       shortcutRange = {
         firstTop: 0,
@@ -77,14 +80,10 @@
         this._initShortcutRange()
       }
 
-      @Watch('currentIndex')
-      shouldScroll() {
-        this._scrollToElement(this.$refs.groups as Element[], this.currentIndex)
-      }
-
       mounted() {
         setTimeout(() => {
           this._initShortcutRange()
+          this._initGroupsHeights()
         }, 100)
       }
 
@@ -93,6 +92,8 @@
         const index: number = parseInt(getData(target, 'index'))
         this.currentIndex = this.touch.anchorIndex = index
         this.touch.y1 = this.shortcutRange.firstTop + index * SHORTCUT_HEIGHT
+
+        this._scrollToElement(this.$refs.groups as Element[], this.currentIndex)
       }
 
       handleTouchMove(event: TouchEvent) {
@@ -102,6 +103,23 @@
           const delta = this.touch.y2 - this.touch.y1
           const deltaIndex = (delta / SHORTCUT_HEIGHT) | 0
           this.currentIndex = this.touch.anchorIndex + deltaIndex
+
+          this._scrollToElement(this.$refs.groups as Element[], this.currentIndex)
+        }
+      }
+
+      handleScroll(pos: any) {
+        const y: number = Math.abs(pos.y)
+
+        let i: string
+        for (i in this.groupHeights) {
+          const index: number = parseInt(i)
+          const height = this.groupHeights[index]
+          const prevheight = this.groupHeights[index - 1] | 0
+          if (y < height && y >= prevheight) {
+            this.currentIndex = index
+            break
+          }
         }
       }
 
@@ -110,13 +128,28 @@
       }
 
       _initShortcutRange() {
-        const shortcuts: Element[] = this.$refs.shortcuts as Element[]
+        const shortcuts = this.$refs.shortcuts as Element[]
         if (shortcuts) {
           const len = shortcuts.length
           this.shortcutRange.firstTop = shortcuts[0].getBoundingClientRect().top
           this.shortcutRange.lastTop = shortcuts[len - 1].getBoundingClientRect().top
-          console.log(this.shortcutRange)
         }
+      }
+
+      _initGroupsHeights() {
+        const heights: Array<number> = []
+        const groups = this.$refs.groups as Element[]
+        groups.forEach(item => {
+          heights.push(item.clientHeight)
+        })
+
+        let total = 0
+        heights.reduce((prev: number, next: number) => {
+          this.groupHeights.push(prev)
+          total = prev + next
+          return total
+        })
+        this.groupHeights.push(total)
       }
     }
 </script>

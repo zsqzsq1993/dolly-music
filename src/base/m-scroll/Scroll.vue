@@ -13,6 +13,7 @@
       @Prop({default: null}) readonly data!: any
       @Prop({default: 1}) readonly probType!: number
       @Prop({default: false}) readonly click!: boolean
+      @Prop({default: false}) readonly listenScroll!: boolean
 
       @Watch('data')
       whenDataChange() {
@@ -37,6 +38,10 @@
           probeType: this.probType,
           click: this.click
         })
+
+        if (this.listenScroll) {
+          this._listenScroll()
+        }
       }
 
       refresh() {
@@ -57,6 +62,12 @@
 
       scrollToElement() {
         this.scroll && this.scroll.scrollToElement.apply(this.scroll, arguments)
+      }
+
+      _listenScroll() {
+        this.scroll && this.scroll.on('scroll', (pos: any) => {
+          this.$emit('onscroll', pos)
+        })
       }
     }
 </script>
