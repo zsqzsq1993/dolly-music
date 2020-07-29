@@ -14,6 +14,7 @@
       @Prop({default: 1}) readonly probType!: number
       @Prop({default: false}) readonly click!: boolean
       @Prop({default: false}) readonly listenScroll!: boolean
+      @Prop({default: true}) readonly momentum!: boolean
 
       @Watch('data')
       whenDataChange() {
@@ -36,7 +37,8 @@
       _initScroll() {
         this.scroll = new BScroll('.m-scroll', {
           probeType: this.probType,
-          click: this.click
+          click: this.click,
+          momentum: this.momentum
         })
 
         if (this.listenScroll) {

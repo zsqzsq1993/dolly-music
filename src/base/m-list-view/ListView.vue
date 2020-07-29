@@ -1,7 +1,9 @@
 <template>
-  <scroll :data="data" ref="scroll"
+  <scroll ref="scroll"
           class="scroll"
+          :data="data"
           :prob-type="3"
+          :momentum="true"
           :listen-scroll="true"
           @onscroll="handleScroll">
     <div class="m-list-view">
@@ -37,6 +39,11 @@
         </li>
       </ul>
     </div>
+    <div class="fixed-top" ref="fixedTop">
+      <h2 class="fixed-top-title">
+        {{fixedTitle}}
+      </h2>
+    </div>
   </scroll>
 </template>
 
@@ -47,6 +54,7 @@
     import { getData } from 'src/assets/ts/dom'
 
     const SHORTCUT_HEIGHT = 22
+    const TITLE_HEIGHT = 30
 
     interface Data {
       title: string;
@@ -62,6 +70,9 @@
       @Prop({default: []}) readonly data!: Array<Data>
 
       currentIndex = 0
+
+      offset = 0
+
       groupHeights: Array<number> = []
 
       shortcutRange = {
@@ -85,6 +96,12 @@
           this._initShortcutRange()
           this._initGroupsHeights()
         }, 100)
+      }
+
+      get fixedTitle() {
+        return this.data.length
+          ? this.data[this.currentIndex].title
+          : ''
       }
 
       handleTouchStart(event: TouchEvent) {
@@ -118,9 +135,25 @@
           const prevheight = this.groupHeights[index - 1] | 0
           if (y < height && y >= prevheight) {
             this.currentIndex = index
+            this._handleFixedTop(height, y)
             break
           }
         }
+      }
+
+      _handleFixedTop(height: number, y: number) {
+        const diff = height - y
+        const offset = (diff <= TITLE_HEIGHT && diff >= 0)
+          ? diff - TITLE_HEIGHT
+          : 0
+
+        if (this.offset === offset) {
+          return
+        }
+
+        this.offset = offset;
+        (this.$refs.fixedTop as HTMLElement).style.transform =
+          `translate3d(0, ${offset}px, 0)`
       }
 
       _scrollToElement(elements: Element[], index: number) {
@@ -200,4 +233,16 @@
         color $color-text-l
         &.current
           color $color-theme
+    .fixed-top
+      position absolute
+      top -1px
+      width 100%
+      .fixed-top-title
+        height 30px
+        line-height 30px
+        padding-left 20px
+        font-size $font-size-small
+        color $color-text-l
+        background $color-highlight-background
+
 </style>
