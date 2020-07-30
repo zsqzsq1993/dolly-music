@@ -16,7 +16,8 @@
           <ul class="singers-in-group">
             <li class="singer-wrapper"
                 v-for="singer in group.items"
-                :key="singer.id">
+                :key="singer.id"
+                @click.stop="selectItem(singer)">
               <img class="avatar"
                    v-lazy="singer.avatar"
                    :alt="singer.name">
@@ -144,6 +145,10 @@
             break
           }
         }
+      }
+
+      selectItem(singer: SingerInstance) {
+        this.$emit('select', singer)
       }
 
       _handleFixedTop(height: number, y: number) {

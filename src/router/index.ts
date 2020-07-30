@@ -23,7 +23,11 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: '/singers',
-    component: () => import('components/m-singers/MySingers.vue')
+    component: () => import('components/m-singers/MySingers.vue'),
+    children: [{
+      path: ':id',
+      component: () => import('components/m-singer-detail/SingerDetail.vue')
+    }]
   }
 ]
 
