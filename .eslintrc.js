@@ -27,6 +27,7 @@ module.exports = {
     '@typescript-eslint/camelcase': 0,
     '@typescript-eslint/no-explicit-any': 0,
     'prefer-rest-params': 0,
-    'prefer-spread': 0
+    'prefer-spread': 0,
+    '@typescript-eslint/no-use-before-define': 0
   }
 }

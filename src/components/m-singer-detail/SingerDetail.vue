@@ -7,10 +7,13 @@
   import {Component, Vue} from 'vue-property-decorator'
   import {Getter} from 'vuex-class'
   import {getSingerDetail} from 'src/api/getSingers'
+  import {Song, createSong, SongConfig} from 'src/assets/ts/Song'
 
   @Component
   export default class extends Vue {
     @Getter('singer') singer: any
+
+    songs: Array<Song | undefined> = []
 
     created() {
       this._getSingerDetail(this.singer.id)
@@ -19,12 +22,24 @@
     _getSingerDetail(id: string) {
       if (!id) {
         this.$router.push({path: '/singers'})
+        return
       }
+
       getSingerDetail(id).then(response => {
-        if (response.code === 0) {
-          console.log(response.data.list)
-        }
+        this._genSongs(response)
+        console.log(this.songs)
       })
+    }
+
+    _genSongs(response: any) {
+      if (response.code === 0) {
+        const dataList: Array<any> = response.data && response.data.list
+        dataList.forEach(data => {
+          this.songs.push(createSong(data.musicData as SongConfig))
+        })
+      } else {
+        throw Error('can not get singer detail.')
+      }
     }
   }
 </script>
