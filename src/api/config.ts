@@ -76,3 +76,13 @@ export const singerListData = {
   needNewCode: 0,
   platform: 'yqq'
 }
+
+export const singerDetailData = {
+  hostUin: 0,
+  needNewCode: 0,
+  platform: 'yqq',
+  order: 'listen',
+  begin: 0,
+  num: 80,
+  songstatus: 1
+}

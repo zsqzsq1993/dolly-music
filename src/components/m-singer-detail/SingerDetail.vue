@@ -6,13 +6,25 @@
 <script lang="ts">
   import {Component, Vue} from 'vue-property-decorator'
   import {Getter} from 'vuex-class'
+  import {getSingerDetail} from 'src/api/getSingers'
 
   @Component
   export default class extends Vue {
     @Getter('singer') singer: any
 
-    mounted() {
-      console.log(this.singer)
+    created() {
+      this._getSingerDetail(this.singer.id)
+    }
+
+    _getSingerDetail(id: string) {
+      if (!id) {
+        this.$router.push({path: '/singers'})
+      }
+      getSingerDetail(id).then(response => {
+        if (response.code === 0) {
+          console.log(response.data.list)
+        }
+      })
     }
   }
 </script>
