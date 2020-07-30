@@ -46,3 +46,11 @@ function stringfySinger(singer: Array<{name: string}>): string {
   })
   return ret.join('/')
 }
+
+export function isValidSong(musicData: any) {
+  return (
+    musicData.songid &&
+    musicData.albumid &&
+    (!musicData.pay || !musicData.pay.payalbumprice)
+  )
+}

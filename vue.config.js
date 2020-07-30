@@ -1,6 +1,7 @@
 /* eslint-disable */
 const path = require('path')
 const axios = require('axios')
+const bodyParser = require('body-parser')
 /* eslint-enable */
 
 const resolve = dir => {
@@ -93,6 +94,21 @@ module.exports = {
           } else {
             res.json(response)
           }
+        }).catch(e => {
+          console.log(e)
+        })
+      })
+
+      app.post('/api/getSongUrl', bodyParser.json(), (req, res) => {
+        const url = 'https://u.y.qq.com/cgi-bin/musicu.fcg'
+        axios.post(url, req.body, {
+          headers: {
+            referer: 'https://y.qq.com/',
+            origin: 'https://y.qq.com',
+            'Content-type': 'application/x-www-form-urlencoded'
+          }
+        }).then(response => {
+          res.json(response.data)
         }).catch(e => {
           console.log(e)
         })

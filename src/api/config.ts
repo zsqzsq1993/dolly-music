@@ -86,3 +86,11 @@ export const singerDetailData = {
   num: 80,
   songstatus: 1
 }
+
+export const songUrlData = {
+  g_tk: 5381,
+  format: 'json',
+  platform: 'h5',
+  needNewCode: 1,
+  uin: 0
+}
