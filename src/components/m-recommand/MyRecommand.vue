@@ -1,7 +1,7 @@
 <template>
   <div class="m-recommand">
     <scroll :data="list">
-      <div >
+      <div>
         <div class="slider-outer-wrapper">
           <div class="slider-inner-wrapper">
             <slider v-if="slider.length">
@@ -40,50 +40,48 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue'
-    import Component from 'vue-class-component'
-    import {getRecommandCarousel, getRecommandList, SliderData, ListData } from 'src/api/getRecommand'
-    import Slider from 'base/m-slider/Slider.vue'
-    import Scroll from 'base/m-scroll/Scroll.vue'
-    import Loading from 'base/m-loading/Loading.vue'
+  import {Vue, Component} from 'vue-property-decorator'
+  import {getRecommandCarousel, getRecommandList, SliderData, ListData} from 'src/api/getRecommand'
+  import Slider from 'base/m-slider/Slider.vue'
+  import Scroll from 'base/m-scroll/Scroll.vue'
+  import Loading from 'base/m-loading/Loading.vue'
 
-    @Component({
-        components: {
-          Slider,
-          Scroll,
-          Loading
-        }
-    })
-
-    export default class extends Vue {
-      slider: Array<undefined | SliderData> = []
-      list: Array<undefined | ListData> = []
-
-      created() {
-        this._getRecommandCarousel()
-        this._getRecommandList()
-      }
-
-      _getRecommandCarousel() {
-        getRecommandCarousel().then(response => {
-          if (response.code === 0) {
-            this.slider = response.data
-          } else {
-            throw new Error('can not catch carousel data.')
-          }
-        })
-      }
-
-      _getRecommandList() {
-        getRecommandList().then(response => {
-          if (response.code === 0) {
-            this.list = response.data
-          } else {
-            throw new Error('can not catch carousel data.')
-          }
-        })
-      }
+  @Component({
+    components: {
+      Slider,
+      Scroll,
+      Loading
     }
+  })
+  export default class extends Vue {
+    slider: Array<undefined | SliderData> = []
+    list: Array<undefined | ListData> = []
+
+    created() {
+      this._getRecommandCarousel()
+      this._getRecommandList()
+    }
+
+    _getRecommandCarousel() {
+      getRecommandCarousel().then(response => {
+        if (response.code === 0) {
+          this.slider = response.data
+        } else {
+          throw new Error('can not catch carousel data.')
+        }
+      })
+    }
+
+    _getRecommandList() {
+      getRecommandList().then(response => {
+        if (response.code === 0) {
+          this.list = response.data
+        } else {
+          throw new Error('can not catch carousel data.')
+        }
+      })
+    }
+  }
 </script>
 
 <style lang="stylus">
@@ -94,21 +92,26 @@
     width 100%
     top: 88px
     bottom 0
+
     .recommand-content
       height 100%
       overflow hidden
+
     .slider-outer-wrapper
       position relative
       width 100%
       padding-top 40%
+
       background red
         overflow hidden
+
       .slider-inner-wrapper
         position absolute
         top 0
         left 0
         width 100%
         height 100%
+
     .list-wrapper
       .title
         height 65px
@@ -116,22 +119,28 @@
         text-align center
         font-size $font-size-median
         color: $color-theme
+
       .list-item
         display flex
         padding 0 20px 20px
+
         .img-wrapper
           flex 0 0 60px
           padding-right 20px
+
         .text-wrapper
           display flex
           flex-direction column
           justify-content space-around
           flex 1 1 0
           font-size $font-size-median
+
           .sub-title
             color $color-text
+
           .disc
             color $color-text-d
+
     .loading-wrapper
       position: absolute
       width: 100%

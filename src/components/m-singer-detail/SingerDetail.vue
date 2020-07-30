@@ -1,20 +1,20 @@
 <template>
-    <div class="m-singer-detail">
-    </div>
+  <div class="m-singer-detail">
+  </div>
 </template>
 
 <script lang="ts">
-    import { Component, Vue } from 'vue-property-decorator'
-    import { Getter } from 'vuex-class'
+  import {Component, Vue} from 'vue-property-decorator'
+  import {Getter} from 'vuex-class'
 
-    @Component
-    export default class extends Vue {
-      @Getter('singer') singer: any
+  @Component
+  export default class extends Vue {
+    @Getter('singer') singer: any
 
-      mounted() {
-        console.log(this.singer)
-      }
+    mounted() {
+      console.log(this.singer)
     }
+  }
 </script>
 
 <style lang="stylus">

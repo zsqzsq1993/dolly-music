@@ -1,18 +1,18 @@
 <template>
-    <div class="m-singers">
-      <list-view :data="singers" @select="selectSinger"></list-view>
-      <transition name="slide">
-        <router-view></router-view>
-      </transition>
-    </div>
+  <div class="m-singers">
+    <list-view :data="singers" @select="selectSinger"></list-view>
+    <transition name="slide">
+      <router-view></router-view>
+    </transition>
+  </div>
 </template>
 
 <script lang="ts">
-  import { getSingerList } from 'src/api/getSingers'
-  import { Vue, Component } from 'vue-property-decorator'
+  import {getSingerList} from 'src/api/getSingers'
+  import {Vue, Component} from 'vue-property-decorator'
   import {Singer, SingerInstance} from 'src/assets/ts/Singer'
   import ListView from 'base/m-list-view/ListView.vue'
-  import { Mutation } from 'vuex-class'
+  import {Mutation} from 'vuex-class'
 
   const HOT_LEN = 10
   const HOT_NAME = '热门'
@@ -112,8 +112,10 @@
     top 88px
     bottom 0
     width 100%
+
     .slide-enter-active, .slide-leave-active
       transition all .3s
+
     .slide-enter, .slide-leave-to
       transform translate3d(-100%, 0, 0)
 </style>

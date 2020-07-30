@@ -1,21 +1,21 @@
 <template>
-    <div class="">
-      aaa
-    </div>
+  <div class="">
+    aaa
+  </div>
 </template>
 
 <script lang="ts">
-    import Vue from 'vue'
-    import Component from 'vue-class-component'
+  import Vue from 'vue'
+  import Component from 'vue-class-component'
 
-    @Component({
-        props: {},
+  @Component({
+    props: {},
 
-        components: {}
-    })
+    components: {}
+  })
 
-    export default class extends Vue {
-    }
+  export default class extends Vue {
+  }
 </script>
 
 <style lang="stylus"></style>
