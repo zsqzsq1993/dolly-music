@@ -34,8 +34,7 @@
       </div>
     </scroll>
     <div class="loading-wrapper">
-      <loading :show="!list.length">
-      </loading>
+      <loading :show="!list.length"></loading>
     </div>
   </div>
 </template>
@@ -137,5 +136,5 @@
       position: absolute
       width: 100%
       top: 50%
-      // transform: translateY(-50%)
+      transform: translateY(-50%)
 </style>

@@ -44,6 +44,9 @@
         {{fixedTitle}}
       </h2>
     </div>
+    <div class="loading-wrapper">
+      <loading :show="!data.length"></loading>
+    </div>
   </scroll>
 </template>
 
@@ -51,6 +54,7 @@
     import {Prop, Component, Vue, Watch} from 'vue-property-decorator'
     import { SingerInstance } from 'src/assets/ts/Singer'
     import Scroll from 'base/m-scroll/Scroll.vue'
+    import Loading from 'base/m-loading/Loading.vue'
     import { getData } from 'src/assets/ts/dom'
 
     const SHORTCUT_HEIGHT = 22
@@ -63,7 +67,8 @@
 
     @Component({
       components: {
-        Scroll
+        Scroll,
+        Loading
       }
     })
     export default class extends Vue {
@@ -245,4 +250,9 @@
         color $color-text-l
         background $color-highlight-background
 
+    .loading-wrapper
+      position absolute
+      top 50%
+      transform translateY(-50%)
+      width 100%
 </style>
