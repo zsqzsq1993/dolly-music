@@ -1,6 +1,11 @@
 <template>
-  <div class="m-singer-detail">
-  </div>
+  <transition name="slide">
+    <music-list
+      :title="singer.name"
+      :avatar="singer.avatar"
+      :songs="songs">
+    </music-list>
+  </transition>
 </template>
 
 <script lang="ts">
@@ -9,8 +14,13 @@
   import {getSingerDetail} from 'src/api/getSingers'
   import {Song, createSong, SongConfig, isValidSong} from 'src/assets/ts/Song'
   import {getSongUrl} from 'src/api/getSongs'
+  import MusicList from 'components/m-music-list/MusicList.vue'
 
-  @Component
+  @Component({
+    components: {
+      MusicList
+    }
+  })
   export default class extends Vue {
     @Getter('singer') singer: any
 
@@ -32,7 +42,6 @@
         return this._getSongUrl(songs)
       }).then((songs: Array<Song>) => {
         this.songs = songs
-        console.log(this.songs) // tempt
       })
     }
 
@@ -63,14 +72,9 @@
 </script>
 
 <style lang="stylus">
-  @import '~assets/stylus/variable.styl'
+  .slide-enter-active, .slide-leave-active
+    transition all .3s
 
-  .m-singer-detail
-    position fixed
-    z-index 100
-    top 0
-    right 0
-    bottom 0
-    left 0
-    background $color-background
+  .slide-enter, .slide-leave-to
+    transform translate3d(-100%, 0, 0)
 </style>

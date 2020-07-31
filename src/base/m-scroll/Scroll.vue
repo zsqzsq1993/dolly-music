@@ -32,7 +32,7 @@
     }
 
     _initScroll() {
-      this.scroll = new BScroll('.m-scroll', {
+        this.scroll = new BScroll('.m-scroll', {
         probeType: this.probType,
         click: this.click,
         momentum: this.momentum
