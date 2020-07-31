@@ -10,9 +10,12 @@
          ref="avatar">
     </div>
     <div class="filter"></div>
-    <scroll class="songs-list-wrapper" :data="songs" ref="scroll">
-      <songs-list :songs="songs"></songs-list>
-    </scroll>
+    <div class="scroll-wrapper" ref="scrollWrapper">
+      <scroll :data="songs">
+        <songs-list :songs="songs"></songs-list>
+        <loading :show="!songs.length" class="loading"></loading>
+      </scroll>
+    </div>
   </div>
 </template>
 
@@ -20,12 +23,14 @@
   import {Prop, Component, Vue} from 'vue-property-decorator'
   import SongsList from 'base/m-songs-list/SongsList.vue'
   import Scroll from 'base/m-scroll/Scroll.vue'
+  import Loading from 'base/m-loading/Loading.vue'
   import {Song} from 'src/assets/ts/Song'
 
   @Component({
     components: {
       SongsList,
-      Scroll
+      Scroll,
+      Loading
     }
   })
   export default class extends Vue {
@@ -42,7 +47,7 @@
     }
 
     mounted() {
-      (this.$refs.scroll as any).$el.style.top =
+      (this.$refs.scrollWrapper as any).style.top =
         (this.$refs.avatar as HTMLElement).clientHeight + 'px'
     }
 
@@ -101,7 +106,16 @@
       width 100%
       padding-top 70%
       background rgba(7, 17, 27, 0.4)
-    .songs-list-wrapper
+
+    .scroll-wrapper
       position absolute
+      top 0
       bottom 0
+      width 100%
+      overflow hidden
+
+      .loading
+        position absolute
+        top 50%
+        transform translateY(-50%)
 </style>
