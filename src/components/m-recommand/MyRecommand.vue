@@ -1,6 +1,6 @@
 <template>
   <div class="m-recommand">
-    <scroll :data="list">
+    <scroll :data="list" class="recommand-scroll">
       <div>
         <div class="slider-outer-wrapper">
           <div class="slider-inner-wrapper">
@@ -92,6 +92,11 @@
     width 100%
     top: 88px
     bottom 0
+
+    .recommand-scroll
+      width 100%
+      height 100%
+      overflow hidden
 
     .recommand-content
       height 100%

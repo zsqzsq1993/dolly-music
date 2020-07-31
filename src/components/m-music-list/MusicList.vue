@@ -10,16 +10,20 @@
          ref="avatar">
     </div>
     <div class="filter"></div>
-    <div class="scroll-wrapper" ref="scrollWrapper">
-      <scroll
-        :data="songs"
-        :click="true">
-        <div class="songs-list-wrapper">
-          <songs-list :songs="songs"></songs-list>
-        </div>
-      </scroll>
-      <loading :show="true"></loading>
-    </div>
+    <div class="bg-layer" ref="layer"></div>
+    <scroll
+      :data="songs"
+      :click="true"
+      :listen-scroll="true"
+      :probType="3"
+      @onscroll="askLayerToFollow"
+      class="songs-scroll"
+      ref="scroll">
+      <div class="songs-list-wrapper">
+        <songs-list :songs="songs"></songs-list>
+      </div>
+      <loading :show="!songs.length" class="loading"></loading>
+    </scroll>
   </div>
 </template>
 
@@ -51,12 +55,16 @@
     }
 
     mounted() {
-      (this.$refs.scrollWrapper as any).style.top =
+      (this.$refs.scroll as any).$el.style.top =
         (this.$refs.avatar as HTMLElement).clientHeight + 'px'
     }
 
     goBack() {
       this.$router.back()
+    }
+
+    askLayerToFollow(pos: { x: number; y: number }): void {
+      console.log(pos)
     }
   }
 </script>
@@ -113,7 +121,13 @@
       padding-top 70%
       background rgba(7, 17, 27, 0.4)
 
-    .scroll-wrapper
+    .bg-layer
+      position: relative;
+      width 100%
+      height 100%
+      background $color-background
+
+    .songs-scroll
       position absolute
       top 0
       bottom 0
@@ -124,7 +138,6 @@
 
       .loading
         position absolute
-        z-index 200
-        top 0
+        top 50%
         transform translateY(-50%)
 </style>
