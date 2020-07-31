@@ -1,5 +1,5 @@
 <template>
-  <transition name="slide">
+  <transition appear name="slide"> // 初次渲染，想要有transition效果，要加appear
     <music-list
       :title="singer.name"
       :avatar="singer.avatar"
@@ -32,7 +32,9 @@
 
     _getSingerDetail(id: string) {
       if (!id) {
-        this.$router.push({path: '/singers'})
+        this.$router.push({
+          path: '/singers'
+        })
         return
       }
 
@@ -76,5 +78,5 @@
     transition all 1s
 
   .slide-enter, .slide-leave-to
-    transform translate3d(-100%, 0, 0)
+    transform translate3d(100%, 0, 0)
 </style>

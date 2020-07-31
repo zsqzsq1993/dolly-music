@@ -1,13 +1,13 @@
 import Vue from 'vue'
-import VueRouter, { RouteConfig } from 'vue-router'
+import VueRouter, {RawLocation, RouteConfig} from 'vue-router'
 import MyRecommand from 'components/m-recommand/MyRecommand.vue'
 
 Vue.use(VueRouter)
 
 const originPush = VueRouter.prototype.push
 
-VueRouter.prototype.push = function () {
-  return (originPush.apply(this, arguments as any) as any).catch((e: Error) => e)
+VueRouter.prototype.push = function (location: RawLocation) {
+  return (originPush.call(this, location) as any).catch((e: Error) => e)
 }
 
 const routes: Array<RouteConfig> = [
@@ -30,10 +30,12 @@ const routes: Array<RouteConfig> = [
   {
     path: '/singers',
     component: () => import('components/m-singers/MySingers.vue'),
-    children: [{
-      path: ':id',
-      component: () => import('components/m-singer-detail/SingerDetail.vue')
-    }]
+    children: [
+      {
+        path: ':id',
+        component: () => import('components/m-singer-detail/SingerDetail.vue')
+      }
+    ]
   }
 ]
 

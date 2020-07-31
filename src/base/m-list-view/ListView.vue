@@ -200,7 +200,11 @@
 <style lang="stylus">
   @import '~assets/stylus/variable.styl'
   .scroll
-    position relative
+    position: relative
+    width: 100%
+    height: 100%
+    overflow: hidden
+    background: $color-background
 
     .m-list-view
       width 100%

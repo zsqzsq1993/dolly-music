@@ -11,11 +11,14 @@
     </div>
     <div class="filter"></div>
     <div class="scroll-wrapper" ref="scrollWrapper">
-      <scroll :data="songs" :click="true">
+      <scroll
+        :data="songs"
+        :click="true">
         <div class="songs-list-wrapper">
           <songs-list :songs="songs"></songs-list>
         </div>
       </scroll>
+      <loading :show="true"></loading>
     </div>
   </div>
 </template>
@@ -60,6 +63,7 @@
 
 <style lang="stylus">
   @import '~assets/stylus/variable.styl'
+  @import '~assets/stylus/mixin.styl'
 
   .m-music-list
     position fixed
@@ -78,7 +82,7 @@
 
       .icon-back
         display inline-block
-        padding 6px
+        padding 10px
         font-size $font-size-large-x
         color $color-theme
 
@@ -88,6 +92,7 @@
       width 100%
       top 0
       left 0
+      no-wrap()
       text-align center
       line-height 40px
       font-size $font-size-large
@@ -113,14 +118,13 @@
       top 0
       bottom 0
       width 100%
-      overflow hidden
 
       .songs-list-wrapper
         padding 20px 30px
 
-      .loading-container
+      .loading
         position absolute
-        top 50%
-        width 100%
+        z-index 200
+        top 0
         transform translateY(-50%)
 </style>

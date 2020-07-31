@@ -1,5 +1,5 @@
 <template>
-  <div class="m-scroll">
+  <div class="m-scroll" ref="wrapper">
     <slot></slot>
   </div>
 </template>
@@ -32,7 +32,7 @@
     }
 
     _initScroll() {
-        this.scroll = new BScroll('.m-scroll', {
+      this.scroll = new BScroll(this.$refs.wrapper as HTMLElement, {
         probeType: this.probType,
         click: this.click,
         momentum: this.momentum

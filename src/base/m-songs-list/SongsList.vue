@@ -4,8 +4,10 @@
       <li v-for="song in songs"
           :key="song.songid"
           class="song-wrapper">
-        <h2 class="song-title">{{song.songname}}</h2>
-        <p class="song-desc">{{song.singer}}·{{song.albumname}}</p>
+        <div class="song-content">
+          <h2 class="song-title">{{song.songname}}</h2>
+          <p class="song-desc">{{song.singer}}·{{song.albumname}}</p>
+        </div>
       </li>
     </ul>
   </div>
@@ -32,17 +34,19 @@
   .m-songs-list
     .song-wrapper
       display flex
-      flex-direction column
-      justify-content center
+      align-items  center
+      box-sizing border-box
       height 64px
-      line-height 20px
       font-size $font-size-median
-      .song-title
-        color $color-text
-        no-wrap()
-      .song-desc
-        margin-top 4px
-        color $color-text-d
-        no-wrap()
-
+      .song-content
+        flex 1
+        line-height: 20px
+        overflow: hidden
+        .song-title
+          color $color-text
+          no-wrap()
+        .song-desc
+          margin-top 4px
+          color $color-text-d
+          no-wrap()
 </style>
