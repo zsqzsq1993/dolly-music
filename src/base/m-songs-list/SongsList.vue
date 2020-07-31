@@ -27,9 +27,9 @@
 
 <style lang="stylus">
   @import '~assets/stylus/variable.styl'
+  @import '~assets/stylus/mixin.styl'
 
   .m-songs-list
-    padding 20px 30px
     .song-wrapper
       display flex
       flex-direction column
@@ -39,8 +39,10 @@
       font-size $font-size-median
       .song-title
         color $color-text
+        no-wrap()
       .song-desc
         margin-top 4px
         color $color-text-d
+        no-wrap()
 
 </style>

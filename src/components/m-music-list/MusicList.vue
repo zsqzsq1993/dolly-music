@@ -1,7 +1,7 @@
 <template>
   <div class="m-music-list">
     <div class="back-icon-wrapper"
-         @click.stop.prevent="goBack">
+         @click="goBack">
       <i class="icon-back"></i>
     </div>
     <h1 class="title" v-html="title"></h1>
@@ -11,9 +11,10 @@
     </div>
     <div class="filter"></div>
     <div class="scroll-wrapper" ref="scrollWrapper">
-      <scroll :data="songs">
-        <songs-list :songs="songs"></songs-list>
-        <loading :show="!songs.length" class="loading"></loading>
+      <scroll :data="songs" :click="true">
+        <div class="songs-list-wrapper">
+          <songs-list :songs="songs"></songs-list>
+        </div>
       </scroll>
     </div>
   </div>
@@ -114,8 +115,12 @@
       width 100%
       overflow hidden
 
-      .loading
+      .songs-list-wrapper
+        padding 20px 30px
+
+      .loading-container
         position absolute
         top 50%
+        width 100%
         transform translateY(-50%)
 </style>

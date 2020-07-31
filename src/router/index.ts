@@ -4,6 +4,12 @@ import MyRecommand from 'components/m-recommand/MyRecommand.vue'
 
 Vue.use(VueRouter)
 
+const originPush = VueRouter.prototype.push
+
+VueRouter.prototype.push = function () {
+  return (originPush.apply(this, arguments as any) as any).catch((e: Error) => e)
+}
+
 const routes: Array<RouteConfig> = [
   {
     path: '/',
