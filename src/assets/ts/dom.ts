@@ -48,6 +48,7 @@ export const prefixStyle = (() => {
       }
       return prefix + style.charAt(0).toUpperCase() + style.slice(1)
     } else {
+      console.warn(`style property ${style} does not exist`)
       return false
     }
   }

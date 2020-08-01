@@ -8,7 +8,7 @@
     <div class="avatar"
          :style="bgImage"
          ref="avatar">
-      <div class="filter"></div>
+      <div class="filter" ref="filter"></div>
     </div>
     <div class="bg-layer" ref="layer"></div>
     <scroll
@@ -38,6 +38,7 @@
   const RESERVED_HEIGHT = 40
   const ZINDEX = '10'
   const transform = prefixStyle('transform') || 'transform'
+  const backdrop = prefixStyle('backdrop-filter') || 'backdrop-filter'
 
   @Component({
     components: {
@@ -56,7 +57,6 @@
     }) readonly songs!: Array<undefined | Song>
 
     imgHeight = 0
-    scrollState = -1
 
     get bgImage() {
       return `background-image: url(${this.avatar})` // do not use background
@@ -109,7 +109,15 @@
             avatarStyle.zIndex = zIndex
           }
 
+        const handleBlur = (y: number) => {
+          const ratio = y / this.imgHeight
+          const maxBlur = 20
+          const blur = Math.min(maxBlur, maxBlur * ratio);
+          (this.$refs.filter as any).style[backdrop] = `blur(${blur}px)`
+        }
+
         const handleScrolling = (y: number) => {
+          handleBlur(y)
           layerStyle[transform] = `translate3d(0, ${-y}px, 0)`
           setAvatarStyle('70%', '0', '')
           reachTop = false
