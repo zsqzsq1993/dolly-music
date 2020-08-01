@@ -17,7 +17,7 @@
             <li class="singer-wrapper"
                 v-for="singer in group.items"
                 :key="singer.id"
-                @click.stop="selectItem(singer)">
+                @click.stop.prevent="selectItem(singer)">
               <img class="avatar"
                    v-lazy="singer.avatar"
                    :alt="singer.name">
@@ -28,8 +28,8 @@
       </ul>
     </div>
     <div class="list-shortcut">
-      <ul @touchstart.stop="handleTouchStart"
-          @touchmove.stop="handleTouchMove">
+      <ul @touchstart.stop.prevent="handleTouchStart"
+          @touchmove.stop.prevent="handleTouchMove">
         <li v-for="(item, idx) in data"
             :key="item.title + idx"
             class="shortcut-item"
@@ -249,7 +249,7 @@
       font-family Helvetica
 
       .shortcut-item
-        padding 5px 3px
+        padding 3px
         text-align center
         font-size $font-size-small
         color $color-text-l
