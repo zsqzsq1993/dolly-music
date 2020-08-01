@@ -36,6 +36,7 @@
   import {prefixStyle} from 'src/assets/ts/dom'
 
   const RESERVED_HEIGHT = 40
+  const ZINDEX = '10'
   const transform = prefixStyle('transform') || 'transform'
 
   @Component({
@@ -64,6 +65,7 @@
     mounted() {
       this._initScrollTop()
       this._initHandleNegativeScroll()
+      this._initHandlePositiveScroll()
     }
 
     goBack() {
@@ -85,7 +87,11 @@
     }
 
     _handleNegativeScroll(y: number) {
-      // placeHolder
+      console.log(y) // placeHolder
+    }
+
+    _handlePositiveScroll(y: number) {
+      console.log(y) // placeHolder
     }
 
     _initHandleNegativeScroll() {
@@ -113,7 +119,7 @@
           if (reachTop) {
             return
           }
-          setAvatarStyle('0', `${RESERVED_HEIGHT}px`, '10')
+          setAvatarStyle('0', `${RESERVED_HEIGHT}px`, ZINDEX)
           reachTop = true
         }
 
@@ -128,8 +134,16 @@
       })()
     }
 
-    _handlePositiveScroll(y: number) {
-      // placeholder
+    _initHandlePositiveScroll() {
+      this._handlePositiveScroll = (() => {
+        const avatarStyle = (this.$refs.avatar as any).style
+
+        return (y: number) => {
+          const scale = y / this.imgHeight + 1
+          avatarStyle[transform] = `scale(${scale})`
+          avatarStyle.zIndex = ZINDEX
+        }
+      })()
     }
   }
 </script>
