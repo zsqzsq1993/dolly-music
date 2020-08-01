@@ -8,15 +8,15 @@
     <div class="avatar"
          :style="bgImage"
          ref="avatar">
+      <div class="filter"></div>
     </div>
-    <div class="filter"></div>
     <div class="bg-layer" ref="layer"></div>
     <scroll
       :data="songs"
       :click="true"
       :listen-scroll="true"
       :probType="3"
-      @onscroll="askLayerToFollow"
+      @onscroll="handleScroll"
       class="songs-scroll"
       ref="scroll">
       <div class="songs-list-wrapper">
@@ -33,6 +33,10 @@
   import Scroll from 'base/m-scroll/Scroll.vue'
   import Loading from 'base/m-loading/Loading.vue'
   import {Song} from 'src/assets/ts/Song'
+  import {prefixStyle} from 'src/assets/ts/dom'
+
+  const RESERVED_HEIGHT = 40
+  const transform = prefixStyle('transform') || 'transform'
 
   @Component({
     components: {
@@ -50,21 +54,82 @@
       }
     }) readonly songs!: Array<undefined | Song>
 
+    imgHeight = 0
+    scrollState = -1
+
     get bgImage() {
       return `background-image: url(${this.avatar})` // do not use background
     }
 
     mounted() {
-      (this.$refs.scroll as any).$el.style.top =
-        (this.$refs.avatar as HTMLElement).clientHeight + 'px'
+      this._initScrollTop()
+      this._initHandleNegativeScroll()
     }
 
     goBack() {
       this.$router.back()
     }
 
-    askLayerToFollow(pos: { x: number; y: number }): void {
-      console.log(pos)
+    handleScroll(pos: { x: number; y: number }): void {
+      const scrollY = pos.y
+      if (scrollY < 0) {
+        this._handleNegativeScroll(scrollY)
+      } else {
+        this._handlePositiveScroll(scrollY)
+      }
+    }
+
+    _initScrollTop() {
+      (this.$refs.scroll as any).$el.style.top =
+        (this.imgHeight = (this.$refs.avatar as HTMLElement).clientHeight) + 'px'
+    }
+
+    _handleNegativeScroll(y: number) {
+      // placeHolder
+    }
+
+    _initHandleNegativeScroll() {
+      this._handleNegativeScroll = (() => {
+        let reachTop = false
+
+        const maxScroll = this.imgHeight - RESERVED_HEIGHT
+        const avatarStyle = (this.$refs.avatar as any).style
+        const layerStyle = (this.$refs.layer as any).style
+
+        const setAvatarStyle =
+          (paddingTop: string, height: string, zIndex: string) => {
+            avatarStyle.paddingTop = paddingTop
+            avatarStyle.height = height
+            avatarStyle.zIndex = zIndex
+          }
+
+        const handleScrolling = (y: number) => {
+          layerStyle[transform] = `translate3d(0, ${-y}px, 0)`
+          setAvatarStyle('70%', '0', '')
+          reachTop = false
+        }
+
+        const handleReachTop = () => {
+          if (reachTop) {
+            return
+          }
+          setAvatarStyle('0', `${RESERVED_HEIGHT}px`, '10')
+          reachTop = true
+        }
+
+        return (y: number) => {
+          y = Math.abs(y)
+          if (y < maxScroll) {
+            return handleScrolling(y)
+          } else {
+            return handleReachTop()
+          }
+        }
+      })()
+    }
+
+    _handlePositiveScroll(y: number) {
+      // placeholder
     }
   }
 </script>
@@ -107,19 +172,19 @@
       color $color-text
 
     .avatar
+      position relative
       width 100%
       height 0
       padding-top 70%
       background-size cover
 
-    .filter
-      position absolute
-      top 0
-      left 0
-      z-index 30
-      width 100%
-      padding-top 70%
-      background rgba(7, 17, 27, 0.4)
+      .filter
+        position absolute
+        top 0
+        left 0
+        width 100%
+        height 100%
+        background rgba(7, 17, 27, 0.4)
 
     .bg-layer
       position: relative;
