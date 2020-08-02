@@ -32,7 +32,13 @@
     }
 
     _initScroll() {
-      this.scroll = new BScroll(this.$refs.wrapper as HTMLElement, {
+      const wrapper = this.$refs.wrapper as HTMLElement
+
+      if (!wrapper) {
+        return
+      }
+
+      this.scroll = new BScroll(wrapper, {
         probeType: this.probType,
         click: this.click,
         momentum: this.momentum

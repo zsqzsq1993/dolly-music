@@ -94,14 +94,10 @@
 
     @Watch('data')
     whenDataChange() {
-      this._initShortcutRange()
-    }
-
-    mounted() {
-      setTimeout(() => {
+      this.$nextTick(() => {
         this._initShortcutRange()
         this._initGroupsHeights()
-      }, 100)
+      })
     }
 
     get fixedTitle() {

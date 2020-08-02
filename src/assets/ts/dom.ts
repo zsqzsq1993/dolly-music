@@ -22,7 +22,7 @@ export const prefixStyle = (() => {
 
   let prefix: string | boolean = false
 
-  const map = {
+  const map: any = {
     webkit: 'webkitTransform',
     Moz: 'MozTransform',
     O: 'OTransform',
@@ -33,7 +33,7 @@ export const prefixStyle = (() => {
   if (!prefix) {
     prefix = (() => {
       for (const key in map) {
-        if ((div.style as any)[key] !== undefined) {
+        if ((div.style as any)[map[key]] !== undefined) {
           return key
         }
       }
