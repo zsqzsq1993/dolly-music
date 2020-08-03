@@ -15,6 +15,7 @@
   import {Song, createSong, SongConfig, isValidSong} from 'src/assets/ts/Song'
   import {getSongUrl} from 'src/api/getSongs'
   import MusicList from 'components/m-music-list/MusicList.vue'
+  import {SingerInstance} from 'src/assets/ts/Singer'
 
   @Component({
     components: {
@@ -22,7 +23,7 @@
     }
   })
   export default class extends Vue {
-    @Getter('singer') singer: any
+    @Getter('singer') singer!: SingerInstance
 
     songs: Array<Song | undefined> = []
 

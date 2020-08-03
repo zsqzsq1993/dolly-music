@@ -2,6 +2,7 @@
     <div class="app">
       <my-header></my-header>
       <my-tab></my-tab>
+      <my-player></my-player>
       <keep-alive>
         <router-view></router-view>
       </keep-alive>
@@ -13,11 +14,13 @@
     import Component from 'vue-class-component'
     import MyHeader from 'components/m-header/MyHeader.vue'
     import MyTab from 'components/m-tab/MyTab.vue'
+    import MyPlayer from 'src/components/m-player/MyPlayer.vue'
 
     @Component({
         components: {
           MyHeader,
-          MyTab
+          MyTab,
+          MyPlayer
         }
     })
 
