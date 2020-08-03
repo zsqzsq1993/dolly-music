@@ -24,7 +24,10 @@
       class="songs-scroll"
       ref="scroll">
       <div class="songs-list-wrapper">
-        <songs-list :songs="songs"></songs-list>
+        <songs-list
+          :songs="songs"
+          @select="selectItem">
+        </songs-list>
       </div>
       <loading :show="!songs.length" class="loading"></loading>
     </scroll>
@@ -38,6 +41,7 @@
   import Loading from 'base/m-loading/Loading.vue'
   import {Song} from 'src/assets/ts/Song'
   import {prefixStyle} from 'src/assets/ts/dom'
+  import {Action} from 'vuex-class'
 
   const RESERVED_HEIGHT = 40
   const ZINDEX = '10'
@@ -59,6 +63,8 @@
         return []
       }
     }) readonly songs!: Array<undefined | Song>
+
+    @Action('activatePlayer') activatePlayer: any
 
     imgHeight = 0
 
@@ -83,6 +89,13 @@
       } else {
         this._handlePositiveScroll(scrollY)
       }
+    }
+
+    selectItem(song: Song, index: number) {
+      this.activatePlayer({
+        list: this.songs,
+        index
+      })
     }
 
     _initScrollTop() {

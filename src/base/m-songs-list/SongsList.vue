@@ -1,9 +1,10 @@
 <template>
   <div class="m-songs-list">
     <ul>
-      <li v-for="song in songs"
+      <li v-for="(song, index) in songs"
           :key="song.songid"
-          class="song-wrapper">
+          class="song-wrapper"
+          @click="selectItem(song, index)">
         <div class="song-content">
           <h2 class="song-title">{{song.songname}}</h2>
           <p class="song-desc">{{song.singer}}·{{song.albumname}}</p>
@@ -24,6 +25,10 @@
         return []
       }
     }) readonly songs!: Array<undefined | Song>
+
+    selectItem(song: Song, index: number) {
+      this.$emit('select', song, index)
+    }
   }
 </script>
 

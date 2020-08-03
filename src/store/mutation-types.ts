@@ -6,7 +6,7 @@ export const SET_PLAY_LIST = 'set_play_list'
 
 export const SET_PLAY_MODE = 'set_play_mode'
 
-export const SET_PLAYING = 'set_playing'
+export const SET_PLAYING_STATE = 'set_playing'
 
 export const SET_FULL_SCREEN = 'set_full_screen'
 

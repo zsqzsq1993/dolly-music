@@ -1,16 +1,17 @@
 import * as types from './mutation-types'
 import { SingerInstance } from 'src/assets/ts/Singer'
+import {Song} from 'src/assets/ts/Song'
 
 const mutations = {
   [types.SET_SINGER] (state: any, singer: SingerInstance) {
     state.singer = singer
   },
 
-  [types.SET_SEQUENCE_LIST] (state: any, list: Array<any>) {
+  [types.SET_SEQUENCE_LIST] (state: any, list: Array<Song>) {
     state.sequenceList = list
   },
 
-  [types.SET_PLAY_LIST] (state: any, list: Array<any>) {
+  [types.SET_PLAY_LIST] (state: any, list: Array<Song>) {
     state.playList = list
   },
 
@@ -18,7 +19,7 @@ const mutations = {
     state.playMode = mode
   },
 
-  [types.SET_PLAYING] (state: any, flag: boolean) {
+  [types.SET_PLAYING_STATE] (state: any, flag: boolean) {
     state.playing = flag
   },
 
