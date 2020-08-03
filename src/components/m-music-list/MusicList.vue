@@ -9,6 +9,10 @@
          :style="bgImage"
          ref="avatar">
       <div class="filter" ref="filter"></div>
+      <div class="random-play" ref="playBtn">
+        <i class="icon-play"></i>
+        <span class="play-text">随机播放</span>
+      </div>
     </div>
     <div class="bg-layer" ref="layer"></div>
     <scroll
@@ -101,6 +105,7 @@
         const maxScroll = this.imgHeight - RESERVED_HEIGHT
         const avatarStyle = (this.$refs.avatar as any).style
         const layerStyle = (this.$refs.layer as any).style
+        const btnStyle = (this.$refs.playBtn as any).style
 
         const setAvatarStyle =
           (paddingTop: string, height: string, zIndex: string) => {
@@ -108,6 +113,10 @@
             avatarStyle.height = height
             avatarStyle.zIndex = zIndex
           }
+
+        const setPlayBtnStyle = (value: string) => {
+          btnStyle.display = value
+        }
 
         const handleBlur = (y: number) => {
           const ratio = y / this.imgHeight
@@ -120,6 +129,7 @@
           handleBlur(y)
           layerStyle[transform] = `translate3d(0, ${-y}px, 0)`
           setAvatarStyle('70%', '0', '')
+          setPlayBtnStyle('')
           reachTop = false
         }
 
@@ -128,6 +138,7 @@
             return
           }
           setAvatarStyle('0', `${RESERVED_HEIGHT}px`, ZINDEX)
+          setPlayBtnStyle('none')
           reachTop = true
         }
 
@@ -200,6 +211,29 @@
       padding-top 70%
       background-size cover
 
+      .random-play
+        position absolute
+        left 50%
+        transform translateX(-50%)
+        bottom 20px
+        width 135px
+        padding 7px 0
+        text-align center
+        vertical-align middle
+        color $color-theme
+        border 1px solid $color-theme
+        border-radius 100px
+        font-size 0
+
+        .icon-play
+          margin-right 6px
+          vertical-align middle
+          font-size $font-size-median-x
+
+        .play-text
+          vertical-align middle
+          font-size $font-size-small
+
       .filter
         position absolute
         top 0
@@ -208,23 +242,23 @@
         height 100%
         background rgba(7, 17, 27, 0.4)
 
-    .bg-layer
-      position: relative;
-      width 100%
-      height 100%
-      background $color-background
+  .bg-layer
+    position: relative;
+    width 100%
+    height 100%
+    background $color-background
 
-    .songs-scroll
+  .songs-scroll
+    position absolute
+    top 0
+    bottom 0
+    width 100%
+
+    .songs-list-wrapper
+      padding 20px 30px
+
+    .loading
       position absolute
-      top 0
-      bottom 0
-      width 100%
-
-      .songs-list-wrapper
-        padding 20px 30px
-
-      .loading
-        position absolute
-        top 50%
-        transform translateY(-50%)
+      top 50%
+      transform translateY(-50%)
 </style>
