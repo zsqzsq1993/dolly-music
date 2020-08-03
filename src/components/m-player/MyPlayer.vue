@@ -1,77 +1,85 @@
 <template>
     <div class="m-player" v-show="playList.length">
-      <div class="normal-player" v-show="fullScreen">
-        <div class="bg-image">
-          <img :src="song.image" width="100%" height="100%">
-        </div>
-        <div class="top-wrapper">
-          <div class="icon-wrapper" @click="minimize">
-            <i class="icon-back"></i>
+      <transition name="normal"
+                  @enter="enter"
+                  @after-enter="afterEnter"
+                  @leave="leave"
+                  @after-leave="afterLeave">
+        <div class="normal-player" v-show="fullScreen">
+          <div class="bg-image">
+            <img :src="song.image" width="100%" height="100%">
           </div>
-          <h1 class="song-name" v-html="song.songname"></h1>
-          <h2 class="song-singer" v-html="song.singer"></h2>
-        </div>
-        <div class="middle-wrapper">
-          <div class="middle-wrapper-left">
-            <div class="cd-wrapper">
-              <img class="cd" :src="song.image">
+          <div class="top-wrapper">
+            <div class="icon-wrapper" @click="minimize">
+              <i class="icon-back"></i>
             </div>
-            <div class="lyrics-wrapper">
-              hi, I am placeholder, more text overflow is hidden
+            <h1 class="song-name" v-html="song.songname"></h1>
+            <h2 class="song-singer" v-html="song.singer"></h2>
+          </div>
+          <div class="middle-wrapper">
+            <div class="middle-wrapper-left">
+              <div class="cd-wrapper" ref="cd">
+                <img class="cd" :src="song.image">
+              </div>
+              <div class="lyrics-wrapper">
+                hi, I am placeholder, more text overflow is hidden
+              </div>
+            </div>
+            <div class="middle-wrapper-right"></div>
+          </div>
+          <div class="bottom-wrapper">
+            <div class="dots-wrapper">
+              <ul>
+                <li class="dot"
+                    v-for="(item, idx) in dots"
+                    :key="idx"
+                    :class="{'current': idx === currentIndex}"></li>
+              </ul>
+            </div>
+            <div class="progress-wrapper">
+              <span class="played-time time">0:01</span>
+              <span class="progress-bar"></span>
+              <span class="total-time time">4:22</span>
+            </div>
+            <div class="controls-wrapper">
+              <div class="play-mode-button icon-wrapper i-left">
+                <i class="icon-loop"></i>
+              </div>
+              <div class="prev-song-button icon-wrapper i-left">
+                <i class="icon-prev"></i>
+              </div>
+              <div class="playing-button icon-wrapper i-center">
+                <i v-show="!playing" class="icon-play"></i>
+                <i v-show="playing" class="icon-pause"></i>
+              </div>
+              <div class="next-song-wrapper icon-wrapper i-right">
+                <i class="icon-next"></i>
+              </div>
+              <div class="favourite-song-wrapper icon-wrapper i-right">
+                <i class="icon-not-favorite"></i>
+              </div>
             </div>
           </div>
-          <div class="middle-wrapper-right"></div>
         </div>
-        <div class="bottom-wrapper">
-          <div class="dots-wrapper">
-            <ul>
-              <li class="dot"
-                  v-for="(item, idx) in dots"
-                  :key="idx"
-                  :class="{'current': idx === currentIndex}"></li>
-            </ul>
+      </transition>
+      <transition name="mini">
+        <div class="mini-player" v-show="!fullScreen" @click="maximize">
+          <div class="avatar-wrapper">
+            <img :src="song.image" class="avatar">
           </div>
-          <div class="progress-wrapper">
-            <span class="played-time time">0:01</span>
-            <span class="progress-bar"></span>
-            <span class="total-time time">4:22</span>
+          <div class="content-wrapper">
+            <h1 class="song-name" v-html="song.songname"></h1>
+            <h2 class="song-singer" v-html="song.singer"></h2>
           </div>
-          <div class="controls-wrapper">
-            <div class="play-mode-button icon-wrapper i-left">
-              <i class="icon-loop"></i>
-            </div>
-            <div class="prev-song-button icon-wrapper i-left">
-              <i class="icon-prev"></i>
-            </div>
-            <div class="playing-button icon-wrapper i-center">
-              <i v-show="!playing" class="icon-play"></i>
-              <i v-show="playing" class="icon-pause"></i>
-            </div>
-            <div class="next-song-wrapper icon-wrapper i-right">
-              <i class="icon-next"></i>
-            </div>
-            <div class="favourite-song-wrapper icon-wrapper i-right">
-              <i class="icon-not-favorite"></i>
-            </div>
+          <div class="play-button-wrapper icon-wrapper">
+            <i class="icon-play icon" v-show="!playing"></i>
+            <i class="icon-pause icon" v-show="playing"></i>
+          </div>
+          <div class="expansion-button-wrapper icon-wrapper">
+            <i class="icon-playlist icon"></i>
           </div>
         </div>
-      </div>
-      <div class="mini-player" v-show="!fullScreen" @click="maximize">
-        <div class="avatar-wrapper">
-          <img :src="song.image" class="avatar">
-        </div>
-        <div class="content-wrapper">
-          <h1 class="song-name" v-html="song.songname"></h1>
-          <h2 class="song-singer" v-html="song.singer"></h2>
-        </div>
-        <div class="play-button-wrapper icon-wrapper">
-          <i class="icon-play icon" v-show="!playing"></i>
-          <i class="icon-pause icon" v-show="playing"></i>
-        </div>
-        <div class="expansion-button-wrapper icon-wrapper">
-          <i class="icon-playlist icon"></i>
-        </div>
-      </div>
+      </transition>
     </div>
 </template>
 
@@ -80,6 +88,9 @@
     import {Getter, Mutation} from 'vuex-class'
     import {Song} from 'src/assets/ts/Song'
     import * as types from 'src/store/mutation-types'
+    import {prefixStyle} from 'src/assets/ts/dom'
+
+    const transform = prefixStyle('transform') || 'transform'
 
     @Component
     export default class extends Vue {
@@ -100,6 +111,45 @@
       maximize() {
         this.setfullScreen(true)
       }
+
+      enter(element: HTMLElement, done: any) {
+        const {x, y, scale} = this._getPosAndScale()
+        const target = this.$refs.cd as HTMLElement
+        (target.style as any)[transform] =
+          `translate3d(${x}px, ${y}px, 0) scale(${scale})`;
+          (target.style as any).transition = 'all .9s'
+        target.addEventListener('transitionend', done)
+      }
+
+      afterEnter() {
+        const target = this.$refs.cd as HTMLElement
+        (target.style as any)[transform] = '';
+        (target.style as any).transition = ''
+      }
+
+      leave() {
+        //
+      }
+
+      afterLeave() {
+        //
+      }
+
+      _getPosAndScale() {
+        const paddingLeft = 40
+        const paddingTop = 80
+        const paddingBottom = 30
+        const halfViewPortWidth = window.innerWidth / 2
+        const viewPortHeight = window.innerHeight
+        const bigRadius = 0.8 * halfViewPortWidth
+        const smalRadius = 20
+        const x = paddingLeft - halfViewPortWidth
+        const y = viewPortHeight - (paddingTop + paddingBottom)
+        const scale = smalRadius / bigRadius
+        return {
+          x, y, scale
+        }
+      }
     }
 </script>
 
@@ -108,6 +158,16 @@
   @import '~assets/stylus/mixin.styl'
 
   .m-player
+    .normal-enter-active, .normal-leave-active
+      transition all .4s
+      .top-wrapper, .bottom-wrapper
+        transition all .4s cubic-bezier(0.86, 0.18, 0.82, 1.32)
+    .normal-enter, .normal-leave-to
+      opacity 0
+      .top-wrapper
+        transform translate3d(0, -100%, 0)
+      .bottom-wrapper
+        transform translate3d(0, 100%, 0)
     .normal-player
       position fixed
       z-index 150
