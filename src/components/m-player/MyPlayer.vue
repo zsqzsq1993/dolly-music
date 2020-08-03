@@ -1,28 +1,111 @@
 <template>
     <div class="m-player" v-show="playList.length">
       <div class="normal-player" v-show="fullScreen">
-        this is normal player
+        <div class="bg-image">
+          <img :src="song.image" width="100%" height="100%">
+        </div>
+        <div class="top-wrapper">
+          <div class="icon-wrapper" @click="minimize">
+            <i class="icon-back"></i>
+          </div>
+          <h1 class="song-name" v-html="song.songname"></h1>
+          <h2 class="song-singer" v-html="song.singer"></h2>
+        </div>
+        <div class="middle-wrapper">
+          <div class="middle-wrapper-left">
+            <div class="cd-wrapper">
+              <img class="cd" :src="song.image">
+            </div>
+            <div class="lyrics-wrapper">
+              hi, I am placeholder, more text overflow is hidden
+            </div>
+          </div>
+          <div class="middle-wrapper-right"></div>
+        </div>
+        <div class="bottom-wrapper">
+          <div class="dots-wrapper">
+            <ul>
+              <li class="dot"
+                  v-for="(item, idx) in dots"
+                  :key="idx"
+                  :class="{'current': idx === currentIndex}"></li>
+            </ul>
+          </div>
+          <div class="progress-wrapper">
+            <span class="played-time time">0:01</span>
+            <span class="progress-bar"></span>
+            <span class="total-time time">4:22</span>
+          </div>
+          <div class="controls-wrapper">
+            <div class="play-mode-button icon-wrapper i-left">
+              <i class="icon-loop"></i>
+            </div>
+            <div class="prev-song-button icon-wrapper i-left">
+              <i class="icon-prev"></i>
+            </div>
+            <div class="playing-button icon-wrapper i-center">
+              <i v-show="!playing" class="icon-play"></i>
+              <i v-show="playing" class="icon-pause"></i>
+            </div>
+            <div class="next-song-wrapper icon-wrapper i-right">
+              <i class="icon-next"></i>
+            </div>
+            <div class="favourite-song-wrapper icon-wrapper i-right">
+              <i class="icon-not-favorite"></i>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="mini-player" v-show="!fullScreen">
-        this is mini player
+      <div class="mini-player" v-show="!fullScreen" @click="maximize">
+        <div class="avatar-wrapper">
+          <img :src="song.image" class="avatar">
+        </div>
+        <div class="content-wrapper">
+          <h1 class="song-name" v-html="song.songname"></h1>
+          <h2 class="song-singer" v-html="song.singer"></h2>
+        </div>
+        <div class="play-button-wrapper icon-wrapper">
+          <i class="icon-play icon" v-show="!playing"></i>
+          <i class="icon-pause icon" v-show="playing"></i>
+        </div>
+        <div class="expansion-button-wrapper icon-wrapper">
+          <i class="icon-playlist icon"></i>
+        </div>
       </div>
     </div>
 </template>
 
 <script lang="ts">
     import {Component, Vue} from 'vue-property-decorator'
-    import {Getter} from 'vuex-class'
+    import {Getter, Mutation} from 'vuex-class'
     import {Song} from 'src/assets/ts/Song'
+    import * as types from 'src/store/mutation-types'
 
     @Component
     export default class extends Vue {
       @Getter('playList') playList!: Array<Song>
       @Getter('fullScreen') fullScreen!: boolean
+      @Getter('currentSong') song!: Song
+      @Getter('playing') playing!: boolean
+
+      @Mutation(types.SET_FULL_SCREEN) setfullScreen: any
+
+      dots: Array<undefined> = Array(2)
+      currentIndex = 0
+
+      minimize() {
+        this.setfullScreen(false)
+      }
+
+      maximize() {
+        this.setfullScreen(true)
+      }
     }
 </script>
 
 <style lang="stylus">
   @import '~assets/stylus/variable.styl'
+  @import '~assets/stylus/mixin.styl'
 
   .m-player
     .normal-player
@@ -33,12 +116,165 @@
       bottom 0
       left 0
       background $color-background
+      .bg-image
+        position absolute
+        z-index -1
+        top 0
+        right 0
+        bottom 0
+        left 0
+        opacity 0.6
+        filter: blur(20px)
+      .top-wrapper
+        position relative
+        margin-bottom 25px
+        .icon-wrapper
+          position absolute
+          z-index 50
+          top 0
+          left 6px
+          .icon-back
+            display block
+            padding 9px
+            color $color-theme
+            font-size $font-size-large-x
+            transform rotate(-90deg)
+        .song-name
+          z-index 40
+          width 100%
+          line-height 40px
+          text-align center
+          color $color-text
+          font-size $font-size-large
+          no-wrap()
+        .song-singer
+          z-index 40
+          width 100%
+          line-height 20px
+          text-align center
+          color $color-text
+          font-size $font-size-median
+          no-wrap()
+      .middle-wrapper
+        position absolute
+        top 80px
+        right 0
+        bottom 170px
+        left 0
+        .middle-wrapper-left
+          display inline-block
+          position relative
+          width 100%
+          height 0
+          padding-top 80%
+          .cd-wrapper
+            position absolute
+            top 0
+            left 10%
+            width 80%
+            height 100%
+            .cd
+              width 100%
+              height 100%
+              border-radius 50%
+              box-sizing border-box
+              border: 10px solid rgba(255, 255, 255, 0.1)
+          .lyrics-wrapper
+            margin 30px auto 0
+            width 80%
+            height 20px
+            line-height 20px
+            text-align center
+            overflow hidden
+            color $color-text-l
+            font-size $font-size-median
+      .bottom-wrapper
+        position absolute
+        bottom 50px
+        left 0
+        right 0
+        .dots-wrapper
+          text-align center
+          .dot
+            display inline-block
+            margin 0 4px
+            width 8px
+            height 8px
+            background $color-text-l
+            border-radius 50%
+            &.current
+              width 20px
+              border-radius 5px
+              background $color-text-ll
+        .progress-wrapper
+          display flex
+          justify-content space-between
+          align-items center
+          width 80%
+          margin 0 auto
+          padding 10px 0
+        .time
+          flex 0 0 30px
+          line-height 30px
+          vertical-align top
+          font-size $font-size-small
+          color $color-text
+          .played-time
+            text-align left
+          .total-time
+            text-align right
+        .controls-wrapper
+          display flex
+          align-items center
+          .icon-wrapper
+            flex 1
+            color $color-theme
+            font-size 30px
+            &.i-left
+              text-align right
+            &.i-center
+              padding 0 20px
+              font-size 40px
+              text-align center
+            &.i-right
+              text-align left
     .mini-player
       display flex
+      align-items center
       position fixed
       z-index 180
       bottom 0
       height 60px
       width 100%
       background $color-highlight-background
+      .avatar-wrapper
+        flex 0 0 40px
+        height 40px
+        padding 0 10px 0 20px
+        .avatar
+          width 100%
+          height 100%
+          border-radius 50%
+      .content-wrapper
+        flex 1
+        display flex
+        flex-direction column
+        justify-content center
+        line-height 20px
+        .song-name
+          margin-bottom 2px
+          font-size $font-size-median
+          color $color-text
+          no-wrap()
+        .song-singer
+          font-size $font-size-small
+          color $color-text-d
+          no-wrap()
+      .icon-wrapper
+        flex 0 0 30px
+        height 30px
+        padding 0 10px
+        .icon
+          color $color-theme
+          font-size 30px
 </style>

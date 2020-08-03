@@ -11,6 +11,7 @@
   import {Singer, SingerInstance} from 'src/assets/ts/Singer'
   import ListView from 'base/m-list-view/ListView.vue'
   import {Mutation} from 'vuex-class'
+  import * as types from 'src/store/mutation-types'
 
   const HOT_LEN = 10
   const HOT_NAME = '热门'
@@ -29,7 +30,7 @@
   export default class extends Vue {
     singers: any[] = []
 
-    @Mutation('set_singer') setSinger: any
+    @Mutation(types.SET_SINGER) setSinger: any
 
     created() {
       getSingerList().then(response => {
