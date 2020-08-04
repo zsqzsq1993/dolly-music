@@ -49,9 +49,9 @@
             <div class="prev-song-button icon-wrapper i-left">
               <i class="icon-prev"></i>
             </div>
-            <div class="playing-button icon-wrapper i-center">
-              <i v-show="!playing" class="icon-play"></i>
-              <i v-show="playing" class="icon-pause"></i>
+            <div class="playing-button icon-wrapper i-center"
+                 @click="togglePlaying">
+              <i :class="playIcon"></i>
             </div>
             <div class="next-song-wrapper icon-wrapper i-right">
               <i class="icon-next"></i>
@@ -72,20 +72,21 @@
           <h1 class="song-name" v-html="song.songname"></h1>
           <h2 class="song-singer" v-html="song.singer"></h2>
         </div>
-        <div class="play-button-wrapper icon-wrapper">
-          <i class="icon-play icon" v-show="!playing"></i>
-          <i class="icon-pause icon" v-show="playing"></i>
+        <div class="play-button-wrapper icon-wrapper"
+             @click.stop="togglePlaying">
+          <i class="icon" :class="playIcon"></i>
         </div>
         <div class="expansion-button-wrapper icon-wrapper">
           <i class="icon-playlist icon"></i>
         </div>
       </div>
     </transition>
+    <audio :src="song.url" ref="audio"></audio>
   </div>
 </template>
 
 <script lang="ts">
-  import {Component, Vue} from 'vue-property-decorator'
+  import {Component, Vue, Watch} from 'vue-property-decorator'
   import {Getter, Mutation} from 'vuex-class'
   import {Song} from 'src/assets/ts/Song'
   import * as types from 'src/store/mutation-types'
@@ -109,11 +110,54 @@
     @Getter('playing') playing!: boolean
 
     @Mutation(types.SET_FULL_SCREEN) setfullScreen: any
+    @Mutation(types.SET_PLAYING_STATE) setPlayingState: any
 
     dots: Array<undefined> = Array(2)
     cd: HTMLElement | undefined = undefined
+    audio: HTMLAudioElement | undefined = undefined
     posAndScale: any = undefined
     currentIndex = 0
+
+    @Watch('song')
+    whenSongChange() {
+      this.$nextTick(() => {
+        this.setPlayingState(true)
+        this.play()
+      })
+    }
+
+    @Watch('playing')
+    playOrPause() {
+      this.$nextTick(() => {
+        this.playing
+          ? this.play()
+          : this.pause()
+      })
+    }
+
+    get playIcon() {
+      return this.playing
+        ? 'icon-pause'
+        : 'icon-play'
+    }
+
+    play() {
+      const target = this.audio
+        ? this.audio
+        : this.audio = this.$refs.audio as HTMLAudioElement
+      target.play()
+    }
+
+    pause() {
+      const target = this.audio
+        ? this.audio
+        : this.audio = this.$refs.audio as HTMLAudioElement
+      target.pause()
+    }
+
+    togglePlaying() {
+      this.setPlayingState(!this.playing)
+    }
 
     minimize() {
       this.setfullScreen(false)
