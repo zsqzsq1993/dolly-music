@@ -20,7 +20,9 @@
         <div class="middle-wrapper">
           <div class="middle-wrapper-left">
             <div class="cd-wrapper" ref="cd">
-              <img class="cd" :src="song.image">
+              <img class="cd"
+                   :class="animateClass"
+                   :src="song.image">
             </div>
             <div class="lyrics-wrapper">
               hi, I am placeholder, more text overflow is hidden
@@ -34,7 +36,7 @@
               <li class="dot"
                   v-for="(item, idx) in dots"
                   :key="idx"
-                  :class="{'current': idx === currentIndex}"></li>
+                  :class="{'current': idx === dotIndex}"></li>
             </ul>
           </div>
           <div class="progress-wrapper">
@@ -46,15 +48,17 @@
             <div class="play-mode-button icon-wrapper i-left">
               <i class="icon-loop"></i>
             </div>
-            <div class="prev-song-button icon-wrapper i-left">
-              <i class="icon-prev"></i>
+            <div class="prev-song-button icon-wrapper i-left"
+                 @click="prev">
+              <i class="icon-prev" :class="{'disabled' : !audioReady}"></i>
             </div>
             <div class="playing-button icon-wrapper i-center"
                  @click="togglePlaying">
               <i :class="playIcon"></i>
             </div>
-            <div class="next-song-wrapper icon-wrapper i-right">
-              <i class="icon-next"></i>
+            <div class="next-song-wrapper icon-wrapper i-right"
+                 @click="next">
+              <i class="icon-next" :class="{'disabled' : !audioReady}"></i>
             </div>
             <div class="favourite-song-wrapper icon-wrapper i-right">
               <i class="icon-not-favorite"></i>
@@ -66,7 +70,9 @@
     <transition name="mini">
       <div class="mini-player" v-show="!fullScreen" @click="maximize">
         <div class="avatar-wrapper" ref="miniCd">
-          <img :src="song.image" class="avatar">
+          <img :src="song.image"
+               class="avatar"
+               :class="animateClass">
         </div>
         <div class="content-wrapper">
           <h1 class="song-name" v-html="song.songname"></h1>
@@ -81,7 +87,11 @@
         </div>
       </div>
     </transition>
-    <audio :src="song.url" ref="audio"></audio>
+    <audio :src="song.url"
+           ref="audio"
+           @error="onerror"
+           @canplay="onready">
+    </audio>
   </div>
 </template>
 
@@ -108,55 +118,106 @@
     @Getter('fullScreen') fullScreen!: boolean
     @Getter('currentSong') song!: Song
     @Getter('playing') playing!: boolean
+    @Getter('currentIndex') currentIndex!: number
 
     @Mutation(types.SET_FULL_SCREEN) setfullScreen: any
     @Mutation(types.SET_PLAYING_STATE) setPlayingState: any
+    @Mutation(types.SET_CURRENT_INDEX) setCurrentIndex: any
 
     dots: Array<undefined> = Array(2)
     cd: HTMLElement | undefined = undefined
-    audio: HTMLAudioElement | undefined = undefined
     posAndScale: any = undefined
-    currentIndex = 0
+    audio: HTMLAudioElement | undefined = undefined
+    dotIndex = 0
+    audioReady = false
 
     @Watch('song')
     whenSongChange() {
-      this.$nextTick(() => {
-        this.setPlayingState(true)
-        this.play()
-      })
+      if (!this.playing) {
+        this.togglePlaying(true)
+      } else {
+        this.$nextTick(() => {
+          this.play()
+        })
+      }
     }
 
     @Watch('playing')
-    playOrPause() {
+    playOrPause(newVal: boolean) {
       this.$nextTick(() => {
-        this.playing
+        newVal
           ? this.play()
           : this.pause()
       })
     }
 
     get playIcon() {
-      return this.playing
+      const disable = this.audioReady
+        ? ''
+        : 'disabled'
+      const icon = this.playing
         ? 'icon-pause'
         : 'icon-play'
+      return icon + ' ' + disable
+    }
+
+    get animateClass() {
+      return this.playing
+        ? 'play'
+        : 'play pause'
+    }
+
+    onready() {
+      this.audioReady = true
+    }
+
+    onerror() {
+      console.warn('loading audio resource error, try another song.')
+      this.audioReady = true
     }
 
     play() {
-      const target = this.audio
-        ? this.audio
-        : this.audio = this.$refs.audio as HTMLAudioElement
+      const target = this.audio ||
+        (this.audio = this.$refs.audio as HTMLAudioElement)
       target.play()
     }
 
     pause() {
-      const target = this.audio
-        ? this.audio
-        : this.audio = this.$refs.audio as HTMLAudioElement
+      const target = this.audio ||
+        (this.audio = this.$refs.audio as HTMLAudioElement)
       target.pause()
     }
 
-    togglePlaying() {
-      this.setPlayingState(!this.playing)
+    prev() {
+      if (!this.audioReady) {
+        return
+      }
+
+      let index = this.currentIndex - 1
+      if (index === -1) {
+        index = this.playList.length - 1
+      }
+      this.setCurrentIndex(index)
+      this.audioReady = false
+    }
+
+    next() {
+      if (!this.audioReady) {
+        return
+      }
+
+      let index = this.currentIndex + 1
+      if (index === this.playList.length) {
+        index = 0
+      }
+      this.setCurrentIndex(index)
+      this.audioReady = false
+    }
+
+    togglePlaying(bool: boolean | Event) {
+      typeof bool !== 'boolean'
+        ? this.setPlayingState(!this.playing)
+        : this.setPlayingState(bool)
     }
 
     minimize() {
@@ -264,6 +325,11 @@
 <style lang="stylus">
   @import '~assets/stylus/variable.styl'
   @import '~assets/stylus/mixin.styl'
+  @keyframes rotate
+    0%
+      transform rotate(0)
+    100%
+      transform rotate(360deg)
 
   .m-player
     .normal-enter-active, .normal-leave-active
@@ -363,6 +429,12 @@
               box-sizing border-box
               border: 10px solid rgba(255, 255, 255, 0.1)
 
+              &.play
+                animation rotate 20s linear infinite
+
+              &.pause
+                animation-play-state paused
+
           .lyrics-wrapper
             margin 30px auto 0
             width 80%
@@ -436,6 +508,9 @@
             &.i-right
               text-align left
 
+            .disabled
+              color $color-theme-d
+
     .mini-player
       display flex
       align-items center
@@ -455,6 +530,12 @@
           width 100%
           height 100%
           border-radius 50%
+
+          &.play
+            animation rotate 20s linear infinite
+
+          &.pause
+            animation-play-state paused
 
       .content-wrapper
         flex 1
