@@ -28,6 +28,8 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 0,
     'prefer-rest-params': 0,
     'prefer-spread': 0,
-    '@typescript-eslint/no-use-before-define': 0
+    '@typescript-eslint/no-use-before-define': 0,
+    'no-return-assign': 0,
+    '@typescript-eslint/no-non-null-assertion': 0
   }
 }
