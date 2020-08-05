@@ -40,9 +40,14 @@
             </ul>
           </div>
           <div class="progress-wrapper">
-            <span class="played-time time">0:01</span>
-            <span class="progress-bar"></span>
-            <span class="total-time time">4:22</span>
+            <span class="played-time time">{{currentTime | timeFilter}}</span>
+            <span class="progress-bar">
+              <progress-bar
+                :percentage="percentage"
+                @touch-end="handleMoveEnd">
+              </progress-bar>
+            </span>
+            <span class="total-time time">{{song.interval | timeFilter}}</span>
           </div>
           <div class="controls-wrapper">
             <div class="play-mode-button icon-wrapper i-left">
@@ -90,7 +95,8 @@
     <audio :src="song.url"
            ref="audio"
            @error="onerror"
-           @canplay="onready">
+           @canplay="onready"
+           @timeupdate="onTimeUpdate">
     </audio>
   </div>
 </template>
@@ -101,6 +107,7 @@
   import {Song} from 'src/assets/ts/Song'
   import * as types from 'src/store/mutation-types'
   import {prefixStyle} from 'src/assets/ts/dom'
+  import ProgressBar from 'base/m-progress-bar/ProgressBar.vue'
 
   const transform = prefixStyle('transform') || 'transform'
 
@@ -112,7 +119,23 @@
     callback?: any;
   }
 
-  @Component
+  @Component({
+    filters: {
+      timeFilter(timestamp: number) {
+        timestamp = timestamp | 0
+        const minitue = (timestamp / 60 | 0).toString()
+        let second = (timestamp % 60).toString()
+        if (second.length === 1) {
+          second = '0' + second
+        }
+        return `${minitue}:${second}`
+      }
+    },
+
+    components: {
+      ProgressBar
+    }
+  })
   export default class extends Vue {
     @Getter('playList') playList!: Array<Song>
     @Getter('fullScreen') fullScreen!: boolean
@@ -130,6 +153,7 @@
     audio: HTMLAudioElement | undefined = undefined
     dotIndex = 0
     audioReady = false
+    currentTime = 0
 
     @Watch('song')
     whenSongChange() {
@@ -151,6 +175,15 @@
       })
     }
 
+    @Watch('percentage')
+    autoNext(val: number) {
+      if (val === 1) {
+        setTimeout(() => {
+          this.next()
+        }, 50)
+      }
+    }
+
     get playIcon() {
       const disable = this.audioReady
         ? ''
@@ -167,6 +200,10 @@
         : 'play pause'
     }
 
+    get percentage() {
+      return this.currentTime / this.song.interval
+    }
+
     onready() {
       this.audioReady = true
     }
@@ -174,6 +211,11 @@
     onerror() {
       console.warn('loading audio resource error, try another song.')
       this.audioReady = true
+    }
+
+    onTimeUpdate(event: Event) {
+      const target = event.target as HTMLAudioElement
+      this.currentTime = target.currentTime
     }
 
     play() {
@@ -226,6 +268,15 @@
 
     maximize() {
       this.setfullScreen(true)
+    }
+
+    handleMoveEnd(percentage: number) {
+      this.changeCurrentTime(percentage)
+    }
+
+    changeCurrentTime(percentage: number) {
+      this.audio!.currentTime = percentage * this.song.interval
+      this.togglePlaying(true)
     }
 
     beforeEnter() {
@@ -469,24 +520,26 @@
 
         .progress-wrapper
           display flex
-          justify-content space-between
           align-items center
           width 80%
           margin 0 auto
           padding 10px 0
 
-        .time
-          flex 0 0 30px
-          line-height 30px
-          vertical-align top
-          font-size $font-size-small
-          color $color-text
+          .progress-bar
+            flex: 1
 
-          .played-time
-            text-align left
+          .time
+            flex 0 0 30px
+            line-height 30px
+            vertical-align top
+            font-size $font-size-small
+            color $color-text
 
-          .total-time
-            text-align right
+            &.played-time
+              text-align left
+
+            &.total-time
+              text-align right
 
         .controls-wrapper
           display flex
