@@ -85,7 +85,9 @@
         </div>
         <div class="play-button-wrapper icon-wrapper"
              @click.stop="togglePlaying">
-          <i class="icon" :class="playIcon"></i>
+          <progress-circle class="progress-circle" :percentage="percentage">
+            <i class="icon icon-play" :class="playIcon"></i>
+          </progress-circle>
         </div>
         <div class="expansion-button-wrapper icon-wrapper">
           <i class="icon-playlist icon"></i>
@@ -108,6 +110,7 @@
   import * as types from 'src/store/mutation-types'
   import {prefixStyle} from 'src/assets/ts/dom'
   import ProgressBar from 'base/m-progress-bar/ProgressBar.vue'
+  import ProgressCircle from 'src/base/m-progress-circle/ProgressCircle.vue'
 
   const transform = prefixStyle('transform') || 'transform'
 
@@ -133,7 +136,8 @@
     },
 
     components: {
-      ProgressBar
+      ProgressBar,
+      ProgressCircle
     }
   })
   export default class extends Vue {
@@ -611,10 +615,16 @@
 
       .icon-wrapper
         flex 0 0 30px
+        width 30px
         height 30px
         padding 0 10px
 
         .icon
-          color $color-theme
+          color $color-theme-d
           font-size 30px
+          &.icon-play
+            font-size 32px
+            position absolute
+            top 0
+            left 0
 </style>
