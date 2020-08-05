@@ -1,13 +1,15 @@
 <template>
     <div class="m-progress-bar">
-      <div class="total-progress" ref="total">
+      <div class="total-progress" ref="total" @click="click">
         <div class="played-progress" ref="played"></div>
-        <div class="progress-button"
-             ref="button"
-             @touchstart.prevent="touchstart"
-             @touchmove.prevent="touchmove"
-             @touchend.prevent="touchend">
-          <div class="progress-button-image"></div>
+        <div class="button-wrapper">
+          <div class="progress-button"
+               ref="button"
+               @touchstart.prevent="touchstart"
+               @touchmove.prevent="touchmove"
+               @touchend.prevent="touchend">
+            <div class="progress-button-image"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -15,6 +17,8 @@
 
 <script lang="ts">
     import {Prop, Component, Vue, Watch} from 'vue-property-decorator'
+
+    const HALF_BUTTON_WIDTH = 8
 
     interface MyTouch {
       activated: boolean;
@@ -48,17 +52,13 @@
         this.initRefs()
       }
 
+      click(event: MouseEvent) {
+        this._triggerPercentage(this._getPercentage(event))
+      }
+
       changeBarPosition(percentage: number) {
-        this.changePlayedProgress(percentage)
-        this.changeButtonPosition(percentage)
-      }
-
-      changePlayedProgress(percent: number) {
-        this.refPlayed!.style.width = this.refTotal!.clientWidth * percent + 'px'
-      }
-
-      changeButtonPosition(percent: number) {
-        this.refButton!.style.left = this.refTotal!.clientWidth * percent + 'px'
+        this._changePlayedProgress(percentage)
+        this._changeButtonPosition(percentage)
       }
 
       initRefs() {
@@ -76,7 +76,7 @@
 
       touchmove(event: TouchEvent) {
         if (this.touch.activated) {
-          const percentage = this._getPercentage(event.touches[0])
+          const percentage = this._getPercentage(event)
           this.changeBarPosition(percentage)
           this.touch.percentage = percentage
         }
@@ -87,14 +87,30 @@
         this._triggerPercentage()
       }
 
-      _getPercentage(touch: Touch) {
-        const delta =  touch.pageX - this.touch.touchX
-        const percentage = (delta + this.touch.left) / this.refTotal!.clientWidth
+      _getPercentage(event: TouchEvent | MouseEvent) {
+        let delta: number
+        let percentage: number
+        if (event instanceof TouchEvent) {
+          delta =  event.touches[0].pageX - this.touch.touchX
+          percentage = (delta + this.touch.left) / this.refTotal!.clientWidth
+        } else {
+          delta = event.pageX - this.refButton!.getBoundingClientRect().left - HALF_BUTTON_WIDTH
+          percentage = (this.refPlayed!.clientWidth + delta) / this.refTotal!.clientWidth
+        }
+
         return Math.max(0, Math.min(percentage, 1))
       }
 
-      _triggerPercentage() {
-        this.$emit('touch-end', this.touch.percentage)
+      _triggerPercentage(percentage?: number) {
+        this.$emit('touch-end', percentage || this.touch.percentage)
+      }
+
+      _changePlayedProgress(percent: number) {
+        this.refPlayed!.style.width = this.refTotal!.clientWidth * percent + 'px'
+      }
+
+      _changeButtonPosition(percent: number) {
+        this.refButton!.style.left = this.refTotal!.clientWidth * percent - HALF_BUTTON_WIDTH + 'px'
       }
     }
 </script>
@@ -103,9 +119,11 @@
   @import '~assets/stylus/variable.styl'
 
   .m-progress-bar
+    width 100%
     .total-progress
       position relative
-      width 100%
+      margin 0 auto
+      width 95%
       height 4px
       background rgba(0, 0, 0, 0.3)
       border-radius 5px
@@ -113,17 +131,18 @@
         width 0
         height 100%
         background  $color-theme
-      .progress-button
-        position absolute
-        left -4px
-        top -6px
-        width 16px
-        height 16px
-        .progress-button-image
-          width 100%
-          height 100%
-          box-sizing border-box
-          border 3px solid $color-text
-          border-radius 50%
-          background $color-theme
+      .button-wrapper
+        .progress-button
+          position absolute
+          left -4px
+          top -6px
+          width 16px
+          height 16px
+          .progress-button-image
+            width 100%
+            height 100%
+            box-sizing border-box
+            border 3px solid $color-text
+            border-radius 50%
+            background $color-theme
 </style>

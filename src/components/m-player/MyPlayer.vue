@@ -436,7 +436,8 @@
 
         .song-name
           z-index 40
-          width 100%
+          width 70%
+          margin 0 auto
           line-height 40px
           text-align center
           color $color-text
