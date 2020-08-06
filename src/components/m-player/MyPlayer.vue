@@ -86,7 +86,7 @@
         <div class="play-button-wrapper icon-wrapper"
              @click.stop="togglePlaying">
           <progress-circle :percentage="percentage">
-            <i class="icon icon-play" :class="playIcon"></i>
+            <i class="icon icon-play" :class="playIconMini"></i>
           </progress-circle>
         </div>
         <div class="expansion-button-wrapper icon-wrapper">
@@ -189,6 +189,16 @@
     }
 
     get playIcon() {
+      const disable = this.audioReady
+        ? ''
+        : 'disabled'
+      const icon = this.playing
+        ? 'icon-pause'
+        : 'icon-play'
+      return icon + ' ' + disable
+    }
+
+    get playIconMini() {
       const disable = this.audioReady
         ? ''
         : 'disabled'
