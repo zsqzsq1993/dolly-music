@@ -85,7 +85,7 @@
         </div>
         <div class="play-button-wrapper icon-wrapper"
              @click.stop="togglePlaying">
-          <progress-circle class="progress-circle" :percentage="percentage">
+          <progress-circle :percentage="percentage">
             <i class="icon icon-play" :class="playIcon"></i>
           </progress-circle>
         </div>
@@ -193,8 +193,8 @@
         ? ''
         : 'disabled'
       const icon = this.playing
-        ? 'icon-pause'
-        : 'icon-play'
+        ? 'icon-pause-mini'
+        : 'icon-play-mini'
       return icon + ' ' + disable
     }
 
