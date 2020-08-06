@@ -2,7 +2,7 @@ import {Song} from 'src/assets/ts/Song'
 import {commonData, devMode, songUrlData, songLyricData} from 'src/api/config'
 import dollyAxios from 'dolly-axios'
 
-export function getLyric(song: Song): Promise<string> {
+export function getLyric(song: Song): Promise<any> {
   const url = devMode
     ? '/api/getLyric'
     : ''
@@ -15,13 +15,7 @@ export function getLyric(song: Song): Promise<string> {
     params: data
   }).then((response: any) => {
     response = response.data
-    if (response.code === 0) {
-      return response.lyric
-    } else {
-      throw new Error('can not get lyric.')
-    }
-  }).catch(e => {
-    console.log(e)
+    return response
   })
 }
 

@@ -114,7 +114,7 @@
   import ProgressCircle from 'src/base/m-progress-circle/ProgressCircle.vue'
   import {playmode} from 'src/assets/ts/config'
   import {shuffle} from 'src/assets/ts/util'
-  import {Base64} from 'js-base64'
+  import LyricParser from 'src/assets/ts/LyricParser'
 
   const transform = prefixStyle('transform') || 'transform'
 
@@ -168,7 +168,7 @@
     currentTime = 0
 
     @Watch('song')
-    whenSongChange(newSong: Song, oldSong: Song) {
+    startToPlay(newSong: Song, oldSong: Song) {
       if (newSong.songid === oldSong.songid) {
         return
       }
@@ -179,11 +179,15 @@
           this.play()
         })
       }
+    }
 
+    @Watch('song')
+    getLyric(newSong: Song) {
       newSong.getLyric().then((lyric: string) => {
-        return this._parseLyric(lyric)
-      }).then((lyric: string) => {
-        console.log(lyric)
+        const obj = new LyricParser(lyric)
+        console.log(obj)
+      }).catch(e => {
+        console.log(e)
       })
     }
 
@@ -448,10 +452,6 @@
       return list.findIndex(item => {
         return this.song.songid === item.songid
       })
-    }
-
-    _parseLyric(lyric: string) {
-      return Base64.decode(lyric)
     }
   }
 </script>

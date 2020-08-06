@@ -1,4 +1,5 @@
 import {getLyric} from 'src/api/getSongs'
+import {Base64} from 'js-base64'
 
 export interface SongConfig {
   albumname: string;
@@ -20,6 +21,7 @@ export class Song {
   url: string
   image: string
   interval: number
+  lyric: string
 
   constructor(config: SongConfig) {
     this.albumname = config.albumname
@@ -31,10 +33,23 @@ export class Song {
     this.url = '' // placeholder
     this.image =
       `https://y.gtimg.cn/music/photo_new/T002R300x300M000${config.albummid}_${config.belongCD}.jpg`
+    this.lyric = ''
   }
 
-  getLyric() {
-    return getLyric(this)
+  getLyric(): Promise<string> {
+    if (this.lyric) {
+      return Promise.resolve(this.lyric)
+    }
+
+    return new Promise((resolve, reject) => {
+      getLyric(this).then((response: any) => {
+        if (response.code === 0) {
+          resolve(Base64.decode(response.lyric))
+        } else {
+          reject(new Error('obtain lyric error.'))
+        }
+      })
+    })
   }
 }
 
