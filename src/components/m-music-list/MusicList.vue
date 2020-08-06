@@ -9,7 +9,7 @@
          :style="bgImage"
          ref="avatar">
       <div class="filter" ref="filter"></div>
-      <div class="random-play" ref="playBtn">
+      <div class="random-play" ref="playBtn" @click="randomPlay">
         <i class="icon-play"></i>
         <span class="play-text">随机播放</span>
       </div>
@@ -65,6 +65,7 @@
     }) readonly songs!: Array<undefined | Song>
 
     @Action('activatePlayer') activatePlayer: any
+    @Action('randomlyActivePlayer') randomlyActivePlayer: any
 
     imgHeight = 0
 
@@ -95,6 +96,12 @@
       this.activatePlayer({
         list: this.songs,
         index
+      })
+    }
+
+    randomPlay() {
+      this.randomlyActivePlayer({
+        list: this.songs
       })
     }
 
