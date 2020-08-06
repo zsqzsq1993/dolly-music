@@ -50,8 +50,8 @@
             <span class="total-time time">{{song.interval | timeFilter}}</span>
           </div>
           <div class="controls-wrapper">
-            <div class="play-mode-button icon-wrapper i-left">
-              <i class="icon-loop"></i>
+            <div class="play-mode-button icon-wrapper i-left" @click="changePlayMode">
+              <i :class="modeIcon"></i>
             </div>
             <div class="prev-song-button icon-wrapper i-left"
                  @click="prev">
@@ -98,7 +98,8 @@
            ref="audio"
            @error="onerror"
            @canplay="onready"
-           @timeupdate="onTimeUpdate">
+           @timeupdate="onTimeUpdate"
+           @ended="autoNext">
     </audio>
   </div>
 </template>
@@ -111,6 +112,8 @@
   import {prefixStyle} from 'src/assets/ts/dom'
   import ProgressBar from 'base/m-progress-bar/ProgressBar.vue'
   import ProgressCircle from 'src/base/m-progress-circle/ProgressCircle.vue'
+  import {playmode} from 'src/assets/ts/config'
+  import {shuffle} from 'src/assets/ts/util'
 
   const transform = prefixStyle('transform') || 'transform'
 
@@ -142,14 +145,18 @@
   })
   export default class extends Vue {
     @Getter('playList') playList!: Array<Song>
+    @Getter('sequenceList') sequenceList!: Array<Song>
     @Getter('fullScreen') fullScreen!: boolean
     @Getter('currentSong') song!: Song
     @Getter('playing') playing!: boolean
     @Getter('currentIndex') currentIndex!: number
+    @Getter('playMode') playMode!: number
 
     @Mutation(types.SET_FULL_SCREEN) setfullScreen: any
     @Mutation(types.SET_PLAYING_STATE) setPlayingState: any
     @Mutation(types.SET_CURRENT_INDEX) setCurrentIndex: any
+    @Mutation(types.SET_PLAY_MODE) setPlayMode: any
+    @Mutation(types.SET_PLAY_LIST) setPlayList: any
 
     dots: Array<undefined> = Array(2)
     cd: HTMLElement | undefined = undefined
@@ -160,7 +167,10 @@
     currentTime = 0
 
     @Watch('song')
-    whenSongChange() {
+    whenSongChange(newSong: Song, oldSong: Song) {
+      if (newSong.songid === oldSong.songid) {
+        return
+      }
       if (!this.playing) {
         this.togglePlaying(true)
       } else {
@@ -177,15 +187,6 @@
           ? this.play()
           : this.pause()
       })
-    }
-
-    @Watch('percentage')
-    autoNext(val: number) {
-      if (val === 1) {
-        setTimeout(() => {
-          this.next()
-        }, 50)
-      }
     }
 
     get playIcon() {
@@ -206,6 +207,24 @@
         ? 'icon-pause-mini'
         : 'icon-play-mini'
       return icon + ' ' + disable
+    }
+
+    get modeIcon() {
+      let className = 'icon-'
+      switch (this.playMode) {
+        case playmode.loop:
+          className += 'loop'
+          break
+        case playmode.sequence:
+          className += 'sequence'
+          break
+        case playmode.random:
+          className += 'random'
+          break
+        default:
+          break
+      }
+      return className
     }
 
     get animateClass() {
@@ -270,7 +289,30 @@
       this.audioReady = false
     }
 
-    togglePlaying(bool: boolean | Event) {
+    autoNext() {
+      if (this.playMode === playmode.loop) {
+        this.audio!.currentTime = 0
+        if (!this.playing) {
+          this.togglePlaying()
+        } else {
+          this.play()
+        }
+      } else {
+        this.next()
+      }
+    }
+
+    changePlayMode() {
+      const newMode = (this.playMode + 1) % 3
+      this.setPlayMode(newMode)
+      const newPlayList = this._refreshPlayList()
+      const newIndex = this._refreshIndex(newPlayList)
+
+      this.setPlayList(newPlayList)
+      this.setCurrentIndex(newIndex)
+    }
+
+    togglePlaying(bool?: boolean | Event) {
       typeof bool !== 'boolean'
         ? this.setPlayingState(!this.playing)
         : this.setPlayingState(bool)
@@ -383,6 +425,22 @@
         const scale = smalRadius / bigRadius
         return this.posAndScale = {x, y, scale}
       }
+    }
+
+    _refreshPlayList() {
+      let list: Array<Song>
+      if (this.playMode === playmode.random) {
+        list = shuffle(this.sequenceList)
+      } else {
+        list = this.sequenceList
+      }
+      return list
+    }
+
+    _refreshIndex(list: Array<Song>) {
+      return list.findIndex(item => {
+        return this.song.songid === item.songid
+      })
     }
   }
 </script>
