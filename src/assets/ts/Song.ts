@@ -1,3 +1,5 @@
+import {getLyric} from 'src/api/getSongs'
+
 export interface SongConfig {
   albumname: string;
   songname: string;
@@ -29,6 +31,10 @@ export class Song {
     this.url = '' // placeholder
     this.image =
       `https://y.gtimg.cn/music/photo_new/T002R300x300M000${config.albummid}_${config.belongCD}.jpg`
+  }
+
+  getLyric() {
+    return getLyric(this)
   }
 }
 

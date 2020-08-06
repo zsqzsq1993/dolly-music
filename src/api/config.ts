@@ -94,3 +94,12 @@ export const songUrlData = {
   needNewCode: 1,
   uin: 0
 }
+
+export const songLyricData = {
+  pcachetime: +new Date(),
+  hostUin: 0,
+  format: 'json',
+  inCharset: 'utf8',
+  needNewCode: 0,
+  categoryId: 10000000
+}

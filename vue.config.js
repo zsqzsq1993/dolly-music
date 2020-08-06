@@ -113,6 +113,22 @@ module.exports = {
           console.log(e)
         })
       })
+
+      app.get('/api/getLyric', (req, res) => {
+        const url = 'https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg'
+
+        const data = req.query
+
+        axios(url, {
+          params: data,
+          headers: {
+            referer: 'https://c.y.qq.com/',
+            host: 'c.y.qq.com'
+          }
+        }).then(response => {
+          res.json(response.data)
+        })
+      })
     }
   }
 }
