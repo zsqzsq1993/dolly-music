@@ -17,26 +17,38 @@
           <h1 class="song-name" v-html="song.songname"></h1>
           <h2 class="song-singer" v-html="song.singer"></h2>
         </div>
-        <div class="middle-wrapper">
-          <div class="middle-wrapper-left">
+        <div class="middle-wrapper"
+             @touchstart.prevent="middleTouchStart"
+             @touchmove.prevent="middleTouchMove"
+             @touchend.prevent="middleTouchEnd">
+          <div class="middle-wrapper-left" ref="left">
             <div class="cd-wrapper" ref="cd">
               <img class="cd"
                    :class="animateClass"
                    :src="song.image">
             </div>
-            <div class="lyrics-wrapper">
+            <div class="shortcut-lyric-wrapper">
               hi, I am placeholder, more text overflow is hidden
             </div>
           </div>
-          <div class="middle-wrapper-right"></div>
+          <div class="middle-wrapper-right" ref="right">
+            <scroll class="lyric-wrapper"
+                    :data="lyrics">
+              <div>
+                <li class="lyric-content"
+                    v-for="line in lyrics"
+                    :key="line.time">
+                  <span>{{line.text}}</span>
+                </li>
+              </div>
+            </scroll>
+          </div>
         </div>
         <div class="bottom-wrapper">
           <div class="dots-wrapper">
             <ul>
-              <li class="dot"
-                  v-for="(item, idx) in dots"
-                  :key="idx"
-                  :class="{'current': idx === dotIndex}"></li>
+              <li class="dot" :class="{'current': currentPage === 0}"></li>
+              <li class="dot" :class="{'current': currentPage === 1}"></li>
             </ul>
           </div>
           <div class="progress-wrapper">
@@ -115,8 +127,11 @@
   import {playmode} from 'src/assets/ts/config'
   import {shuffle} from 'src/assets/ts/util'
   import LyricParser from 'src/assets/ts/LyricParser'
+  import Scroll from 'base/m-scroll/Scroll.vue'
 
   const transform = prefixStyle('transform') || 'transform'
+  const PAGE_CD = 0
+  const PAGE_LYRIC = 1
 
   interface TransitionConfig {
     setTransform?: boolean;
@@ -124,6 +139,19 @@
     setTransition?: boolean;
     done?: boolean;
     callback?: any;
+  }
+
+  interface Line {
+    time: number;
+    text: string;
+  }
+
+  interface MiddleTouch {
+    activated?: boolean;
+    pageX?: number;
+    pageY?: number;
+    percentage?: number;
+    valid?: boolean;
   }
 
   @Component({
@@ -141,7 +169,8 @@
 
     components: {
       ProgressBar,
-      ProgressCircle
+      ProgressCircle,
+      Scroll
     }
   })
   export default class extends Vue {
@@ -159,13 +188,14 @@
     @Mutation(types.SET_PLAY_MODE) setPlayMode: any
     @Mutation(types.SET_PLAY_LIST) setPlayList: any
 
-    dots: Array<undefined> = Array(2)
     cd: HTMLElement | undefined = undefined
     posAndScale: any = undefined
     audio: HTMLAudioElement | undefined = undefined
-    dotIndex = 0
+    currentPage = PAGE_CD
     audioReady = false
     currentTime = 0
+    lyrics: Array<Line> = []
+    middleTouch: MiddleTouch = {}
 
     @Watch('song')
     startToPlay(newSong: Song, oldSong: Song) {
@@ -185,7 +215,7 @@
     getLyric(newSong: Song) {
       newSong.getLyric().then((lyric: string) => {
         const obj = new LyricParser(lyric)
-        console.log(obj)
+        this.lyrics = obj.lines
       }).catch(e => {
         console.log(e)
       })
@@ -346,6 +376,76 @@
       this.togglePlaying(true)
     }
 
+    middleTouchStart(event: TouchEvent) {
+      this.middleTouch.activated = true
+      this.middleTouch.pageX = event.touches[0].pageX
+      this.middleTouch.pageY = event.touches[0].pageY
+      this._setTransition(false)
+    }
+
+    middleTouchMove(event: TouchEvent) {
+      if (!this.middleTouch.activated) {
+        return
+      }
+
+      const deltaX = event.touches[0].pageX - this.middleTouch.pageX!
+      const deltaY = event.touches[0].pageY - this.middleTouch.pageY!
+
+      const absDeltaX = Math.abs(deltaX)
+      const absDeltaY = Math.abs(deltaY)
+
+      if (absDeltaX > absDeltaY) {
+        this._dispatchTransform(deltaX)
+      }
+    }
+
+    _dispatchTransform(delta: number) {
+      if (delta < 0 && this.currentPage === PAGE_CD) {
+        this._setTransform(delta + 'px')
+        this._calPercentage(delta)
+        this._blurLeftWrapper(false)
+        this.middleTouch.valid = true
+      } else if (delta > 0 && this.currentPage === PAGE_LYRIC) {
+        this._setTransform(-window.innerWidth + delta + 'px')
+        this._calPercentage(delta)
+        this._blurLeftWrapper(true)
+        this.middleTouch.valid = true
+      }
+    }
+
+    _blurLeftWrapper(positiveRelation: boolean, percentage?: number) {
+      if (typeof percentage !== 'undefined') {
+        ((this.$refs.left as HTMLElement).style as any).opacity = percentage
+      } else {
+        ((this.$refs.left as HTMLElement).style as any).opacity = positiveRelation
+          ? this.middleTouch.percentage!
+          : 1 - this.middleTouch.percentage!
+      }
+    }
+
+    middleTouchEnd() {
+      if (!this.middleTouch.valid) {
+        return
+      }
+
+      if (this.middleTouch.percentage! > 0.2) {
+        this.currentPage = (this.currentPage + 1) % 2
+      }
+
+      this._setTransition(true)
+
+      if (this.currentPage === PAGE_CD) {
+        this._setTransform('0')
+        this._blurLeftWrapper(true, 1)
+      } else {
+        this._setTransform('-100%')
+        this._blurLeftWrapper(true, 0)
+      }
+
+      this.middleTouch.activated = false
+      this.middleTouch.valid = false
+    }
+
     beforeEnter() {
       this._transitionHookHelper({
         setTransform: true,
@@ -453,6 +553,24 @@
         return this.song.songid === item.songid
       })
     }
+
+    _setTransform(delta: string) {
+      ((this.$refs.right as HTMLElement).style as any)[transform] = `translate3d(${delta}, 0, 0)`
+    }
+
+    _calPercentage(delta: number) {
+      this.middleTouch.percentage = Math.abs(delta) / window.innerWidth
+    }
+
+    _setTransition(set: boolean, duration?: number) {
+      duration = duration || 300
+
+      if (set) {
+        (this.$refs.right as HTMLElement).style.transitionDuration = `${duration}ms`
+      } else {
+        (this.$refs.right as HTMLElement).style.transitionDuration = ''
+      }
+    }
   }
 </script>
 
@@ -542,6 +660,8 @@
         right 0
         bottom 170px
         left 0
+        white-space nowrap
+        font-size 0
 
         .middle-wrapper-left
           display inline-block
@@ -549,6 +669,7 @@
           width 100%
           height 0
           padding-top 80%
+          vertical-align top
 
           .cd-wrapper
             position absolute
@@ -570,7 +691,7 @@
               &.pause
                 animation-play-state paused
 
-          .lyrics-wrapper
+          .shortcut-lyric-wrapper
             margin 30px auto 0
             width 80%
             height 20px
@@ -579,6 +700,23 @@
             overflow hidden
             color $color-text-l
             font-size $font-size-median
+
+        .middle-wrapper-right
+          display inline-block
+          width 100%
+          height 100%
+          overflow hidden
+
+          .lyric-wrapper
+            width 80%
+            height 100%
+            margin 0 auto
+            text-align center
+
+            .lyric-content
+              line-height 32px
+              font-size $font-size-median
+              color $color-text-l
 
       .bottom-wrapper
         position absolute
@@ -701,6 +839,7 @@
         .icon
           color $color-theme-d
           font-size 30px
+
           &.icon-play
             font-size 32px
             position absolute

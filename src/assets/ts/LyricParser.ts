@@ -49,13 +49,15 @@ export default class LyricParser {
       if (timeExp.test(line)) {
         this.parseTime(line)
       } else {
-        console.log(line)
         this.parseTags(line)
       }
     }
   }
 
   parseTags(line: string): void {
+    if (!line) {
+      return
+    }
     const keyVal = line.split(':')
     const key = keyVal[0].slice(1).toLowerCase().trim()
     const val = keyVal[1].slice(0, -1).trim();
@@ -78,7 +80,5 @@ export default class LyricParser {
       time: minTimeStamp + secTimeStamp + decTimeStamp,
       text: lyric
     })
-
-    console.log(this.lrc)
   }
 }
