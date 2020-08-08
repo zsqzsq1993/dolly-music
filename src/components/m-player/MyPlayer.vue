@@ -59,6 +59,7 @@
             <span class="progress-bar">
               <progress-bar
                 :percentage="percentage"
+                @changing-percent="handleLyricJump"
                 @touch-end="handleMoveEnd">
               </progress-bar>
             </span>
@@ -387,6 +388,11 @@
           ? this.lyricParser.restart()
           : this.lyricParser.pause()
       }
+    }
+
+    handleLyricJump(deltaPercent: number) {
+      const deltaTime = deltaPercent * this.song.interval | 0
+      this.lyricParser!.jumpTo(deltaTime)
     }
 
     minimize() {

@@ -98,6 +98,8 @@
           percentage = (this.refPlayed!.clientWidth + delta) / this.refTotal!.clientWidth
         }
 
+        this.$emit('changing-percent', delta / this.refTotal!.clientWidth)
+
         return Math.max(0, Math.min(percentage, 1))
       }
 

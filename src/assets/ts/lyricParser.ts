@@ -18,6 +18,7 @@ export interface LyricParser {
   play: (callback: any) => void;
   restart: any;
   pause: any;
+  jumpTo: any;
 }
 
 const lyricParser: any = function () {
@@ -70,7 +71,6 @@ const lyricParser: any = function () {
     if (!startTime) {
       startTime = timestamp
     }
-
     const delta = timestamp - startTime
 
     if (!linesCopy.length) {
@@ -160,6 +160,10 @@ const lyricParser: any = function () {
     linesCopy = lines.slice()
   }
 
+  function jumpTo(deltaTime: number) {
+    startTime -= deltaTime
+  }
+
   return function (lyric: string): LyricParser {
     lrc = lyric
     init()
@@ -171,7 +175,8 @@ const lyricParser: any = function () {
       tags,
       play,
       restart,
-      pause
+      pause,
+      jumpTo
     }
   }
 }
