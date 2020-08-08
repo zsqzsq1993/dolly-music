@@ -32,11 +32,14 @@
             </div>
           </div>
           <div class="middle-wrapper-right" ref="right">
-            <scroll class="lyric-wrapper"
+            <scroll ref="scroll"
+                    class="lyric-wrapper"
                     :data="lyrics">
               <div>
-                <li class="lyric-content"
-                    v-for="line in lyrics"
+                <li ref="lyrics"
+                    class="lyric-content"
+                    :class="{'highlight': highLightIndex === idx}"
+                    v-for="(line, idx) in lyrics"
                     :key="line.time">
                   {{line.text}}
                 </li>
@@ -195,7 +198,9 @@
     audioReady = false
     currentTime = 0
     lyrics: Array<Line> = []
+    lyricsCopy: Array<Line> = []
     middleTouch: MiddleTouch = {}
+    highLightIndex = 0
 
     @Watch('song')
     startToPlay(newSong: Song, oldSong: Song) {
@@ -216,6 +221,7 @@
       newSong.getLyric().then((lyric: string) => {
         const obj = new LyricParser(lyric)
         this.lyrics = obj.lines
+        this.lyricsCopy = this.lyrics.slice()
       }).catch(e => {
         console.log(e)
       })
@@ -228,6 +234,31 @@
           ? this.play()
           : this.pause()
       })
+    }
+
+    @Watch('currentTime')
+    lyricFollowCurrentTime(time: number) {
+      console.log(time)
+      if (time.toString() === this.lyricsCopy[0].toString()) {
+        this.lyricsCopy.shift()
+        const index = this.lyrics.length - this.lyricsCopy.length - 1
+        this._highLightLyric(index)
+        this._scrollLyric(index)
+      }
+    }
+
+    _highLightLyric(index: number) {
+      if (index) {
+        this.highLightIndex = index
+      }
+    }
+
+    _scrollLyric(index: number) {
+      const scroll = this.$refs.scroll as any
+      const lyrics = this.$refs.lyrics as any
+      if (index && scroll && lyrics) {
+        scroll.scrollToElement(lyrics[index])
+      }
     }
 
     get playIcon() {
@@ -720,6 +751,8 @@
               font-size $font-size-median
               color $color-text-l
               white-space normal
+              &.highlight
+                color $color-theme
 
       .bottom-wrapper
         position absolute
