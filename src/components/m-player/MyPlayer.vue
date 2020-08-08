@@ -130,7 +130,7 @@
   import {playmode} from 'src/assets/ts/config'
   import {shuffle} from 'src/assets/ts/util'
   import Scroll from 'base/m-scroll/Scroll.vue'
-  import lyricParser from 'src/assets/ts/lyricParser'
+  import lyricParser, {LyricParser} from 'src/assets/ts/lyricParser'
 
   const transform = prefixStyle('transform') || 'transform'
   const PAGE_CD = 0
@@ -200,6 +200,7 @@
     lyrics: Array<Line> = []
     middleTouch: MiddleTouch = {}
     highLightIndex = 0
+    lyricParser: LyricParser | null = null
 
     @Watch('song')
     startToPlay(newSong: Song, oldSong: Song) {
@@ -218,11 +219,25 @@
     @Watch('song')
     getLyric(newSong: Song) {
       newSong.getLyric().then((lyric: string) => {
-        const obj = lyricParser(lyric)
+        const obj = this.lyricParser = lyricParser(lyric)
         this.lyrics = obj.lines
+        obj.play(this._playCallback)
       }).catch(e => {
         console.log(e)
       })
+    }
+
+    _highLightLyric(index: number) {
+      this.highLightIndex = index
+    }
+
+    _scrollToHightLight(index: number) {
+      (this.$refs.scroll as any).scrollToElement((this.$refs.lyrics as any)[index], 500)
+    }
+
+    _playCallback(index: number) {
+      this._highLightLyric(index)
+      this._scrollToHightLight(index)
     }
 
     @Watch('playing')
@@ -358,9 +373,20 @@
     }
 
     togglePlaying(bool?: boolean | Event) {
-      typeof bool !== 'boolean'
-        ? this.setPlayingState(!this.playing)
-        : this.setPlayingState(bool)
+      if (typeof bool !== 'boolean') {
+        this.setPlayingState(!this.playing)
+        this.toggleLyric()
+      } else {
+        this.setPlayingState(bool)
+      }
+    }
+
+    toggleLyric() {
+      if (this.lyricParser) {
+        this.playing
+          ? this.lyricParser.restart()
+          : this.lyricParser.pause()
+      }
     }
 
     minimize() {

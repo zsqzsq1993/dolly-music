@@ -11,22 +11,24 @@ interface Tags {
   offset?: number;
 }
 
-interface LyricParser {
+export interface LyricParser {
   lrc: string;
   lines: Array<Line>;
   tags: Tags;
   play: (callback: any) => void;
+  restart: any;
+  pause: any;
 }
 
-const lyricParser: any = (function () {
+const lyricParser: any = function () {
   let lrc: string
   let startTime: number
   let callback: any
-  let exit: any
-  let id: number
   let linesCopy: Array<Line>
-  const lines: Array<Line> = []
-  const tags: Tags = {}
+  let lines: Array<Line> = []
+  let tags: Tags = {}
+  let id: number
+  let pausedTime: number
 
   const timeExp = /^\[(\d{2}):(\d{2})\.(\d{2})](.*)$/
 
@@ -71,14 +73,14 @@ const lyricParser: any = (function () {
 
     const delta = timestamp - startTime
 
-    if (Math.abs(delta - linesCopy[0].time * 1000) < 200) {
+    if (!linesCopy.length) {
+      return
+    }
+
+    if (Math.abs(delta - linesCopy[0].time * 1000) < 50) {
       linesCopy.shift()
       const index = lines.length - linesCopy.length - 1
       callback(index)
-    }
-
-    if (!linesCopy.length) {
-      exit()
     }
 
     id = requestAnimationFrame(step)
@@ -92,12 +94,29 @@ const lyricParser: any = (function () {
 
     callback = _callback
 
-    return new Promise(resolve => {
-      exit = resolve
-      id = requestAnimationFrame(step)
-    }).then(() => {
-      cancelAnimationFrame(id)
-    })
+    requestAnimationFrame(step)
+  }
+
+  function pause() {
+    cancelAnimationFrame(id)
+    pausedTime = +new Date()
+  }
+
+  function restart() {
+    const duration = +new Date() - pausedTime
+    startTime += duration
+    requestAnimationFrame(step)
+  }
+
+  function init() {
+    if (Object.keys(tags).length) {
+      tags = {}
+    }
+    if (lines.length) {
+      lines = []
+      linesCopy = []
+    }
+    startTime = 0
   }
 
   function parse() {
@@ -143,15 +162,18 @@ const lyricParser: any = (function () {
 
   return function (lyric: string): LyricParser {
     lrc = lyric
+    init()
     parse()
 
     return {
       lrc,
       lines,
       tags,
-      play
+      play,
+      restart,
+      pause
     }
   }
-})()
+}
 
-export default lyricParser
+export default lyricParser()
