@@ -11,7 +11,6 @@ import 'src/assets/stylus/base.styl'
 import 'src/assets/stylus/icon.styl'
 import lazyload from 'vue-lazyload'
 
-import FastClick from 'fastclick'
 Vue.use(lazyload, {
   attempt: 2,
   error: require('@/assets/images/pizza.png'),
@@ -19,10 +18,6 @@ Vue.use(lazyload, {
 })
 
 Vue.config.productionTip = false
-
-// eslint-disable-next-line
-// @ts-ignore
-FastClick.attach(document.body)
 
 new Vue({
   router,

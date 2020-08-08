@@ -12,7 +12,7 @@
   export default class extends Vue {
     @Prop({default: null}) readonly data!: any
     @Prop({default: 1}) readonly probType!: number
-    @Prop({default: false}) readonly click!: boolean
+    @Prop({default: true}) readonly click!: boolean
     @Prop({default: false}) readonly listenScroll!: boolean
     @Prop({default: true}) readonly momentum!: boolean
 

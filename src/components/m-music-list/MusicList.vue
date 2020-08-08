@@ -17,7 +17,6 @@
     <div class="bg-layer" ref="layer"></div>
     <scroll
       :data="songs"
-      :click="true"
       :listen-scroll="true"
       :probType="3"
       @onscroll="handleScroll"

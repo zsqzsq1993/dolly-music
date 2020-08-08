@@ -38,7 +38,7 @@
                 <li class="lyric-content"
                     v-for="line in lyrics"
                     :key="line.time">
-                  <span>{{line.text}}</span>
+                  {{line.text}}
                 </li>
               </div>
             </scroll>
@@ -714,9 +714,12 @@
             text-align center
 
             .lyric-content
+              display block
+              width 100%
               line-height 32px
               font-size $font-size-median
               color $color-text-l
+              white-space normal
 
       .bottom-wrapper
         position absolute

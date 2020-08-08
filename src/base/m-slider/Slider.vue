@@ -28,6 +28,7 @@
     @Prop({default: true}) readonly loop!: boolean
     @Prop({default: true}) readonly autoplay!: boolean
     @Prop({default: 4000}) readonly interval!: number
+    @Prop({default: true}) readonly click!: boolean
 
     slider: null | BScroll = null
     currentIndex = 0
@@ -68,6 +69,7 @@
       this.slider = new BScroll('.m-slider', {
         scrollX: true,
         scrollY: false,
+        click: this.click,
         slide: {
           loop: this.loop,
           threshold: 0.3,
