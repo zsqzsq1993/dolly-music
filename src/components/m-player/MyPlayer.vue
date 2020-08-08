@@ -129,8 +129,8 @@
   import ProgressCircle from 'src/base/m-progress-circle/ProgressCircle.vue'
   import {playmode} from 'src/assets/ts/config'
   import {shuffle} from 'src/assets/ts/util'
-  import LyricParser from 'src/assets/ts/LyricParser'
   import Scroll from 'base/m-scroll/Scroll.vue'
+  import lyricParser from 'src/assets/ts/lyricParser'
 
   const transform = prefixStyle('transform') || 'transform'
   const PAGE_CD = 0
@@ -198,7 +198,6 @@
     audioReady = false
     currentTime = 0
     lyrics: Array<Line> = []
-    lyricsCopy: Array<Line> = []
     middleTouch: MiddleTouch = {}
     highLightIndex = 0
 
@@ -219,9 +218,8 @@
     @Watch('song')
     getLyric(newSong: Song) {
       newSong.getLyric().then((lyric: string) => {
-        const obj = new LyricParser(lyric)
+        const obj = lyricParser(lyric)
         this.lyrics = obj.lines
-        this.lyricsCopy = this.lyrics.slice()
       }).catch(e => {
         console.log(e)
       })
@@ -234,31 +232,6 @@
           ? this.play()
           : this.pause()
       })
-    }
-
-    @Watch('currentTime')
-    lyricFollowCurrentTime(time: number) {
-      console.log(time)
-      if (time.toString() === this.lyricsCopy[0].toString()) {
-        this.lyricsCopy.shift()
-        const index = this.lyrics.length - this.lyricsCopy.length - 1
-        this._highLightLyric(index)
-        this._scrollLyric(index)
-      }
-    }
-
-    _highLightLyric(index: number) {
-      if (index) {
-        this.highLightIndex = index
-      }
-    }
-
-    _scrollLyric(index: number) {
-      const scroll = this.$refs.scroll as any
-      const lyrics = this.$refs.lyrics as any
-      if (index && scroll && lyrics) {
-        scroll.scrollToElement(lyrics[index])
-      }
     }
 
     get playIcon() {
