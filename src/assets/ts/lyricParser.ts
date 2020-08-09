@@ -146,6 +146,9 @@ const lyricParser: any = function () {
     const second = matches![2]
     const decimals = matches![3]
     const lyric = matches![4]
+    if (!lyric) {
+      return
+    }
 
     const minTimeStamp = parseInt(minitue) * 60
     const secTimeStamp = parseInt(second)

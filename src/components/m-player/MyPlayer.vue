@@ -228,19 +228,6 @@
       })
     }
 
-    _highLightLyric(index: number) {
-      this.highLightIndex = index
-    }
-
-    _scrollToHightLight(index: number) {
-      (this.$refs.scroll as any).scrollToElement((this.$refs.lyrics as any)[index], 500)
-    }
-
-    _playCallback(index: number) {
-      this._highLightLyric(index)
-      this._scrollToHightLight(index)
-    }
-
     @Watch('playing')
     playOrPause(newVal: boolean) {
       this.$nextTick(() => {
@@ -435,30 +422,6 @@
       }
     }
 
-    _dispatchTransform(delta: number) {
-      if (delta < 0 && this.currentPage === PAGE_CD) {
-        this._setTransform(delta + 'px')
-        this._calPercentage(delta)
-        this._blurLeftWrapper(false)
-        this.middleTouch.valid = true
-      } else if (delta > 0 && this.currentPage === PAGE_LYRIC) {
-        this._setTransform(-window.innerWidth + delta + 'px')
-        this._calPercentage(delta)
-        this._blurLeftWrapper(true)
-        this.middleTouch.valid = true
-      }
-    }
-
-    _blurLeftWrapper(positiveRelation: boolean, percentage?: number) {
-      if (typeof percentage !== 'undefined') {
-        ((this.$refs.left as HTMLElement).style as any).opacity = percentage
-      } else {
-        ((this.$refs.left as HTMLElement).style as any).opacity = positiveRelation
-          ? this.middleTouch.percentage!
-          : 1 - this.middleTouch.percentage!
-      }
-    }
-
     middleTouchEnd() {
       if (!this.middleTouch.valid) {
         return
@@ -606,6 +569,47 @@
       } else {
         (this.$refs.right as HTMLElement).style.transitionDuration = ''
       }
+    }
+
+    _dispatchTransform(delta: number) {
+      if (delta < 0 && this.currentPage === PAGE_CD) {
+        this._setTransform(delta + 'px')
+        this._calPercentage(delta)
+        this._blurLeftWrapper(false)
+        this.middleTouch.valid = true
+      } else if (delta > 0 && this.currentPage === PAGE_LYRIC) {
+        this._setTransform(-window.innerWidth + delta + 'px')
+        this._calPercentage(delta)
+        this._blurLeftWrapper(true)
+        this.middleTouch.valid = true
+      }
+    }
+
+    _blurLeftWrapper(positiveRelation: boolean, percentage?: number) {
+      if (typeof percentage !== 'undefined') {
+        ((this.$refs.left as HTMLElement).style as any).opacity = percentage
+      } else {
+        ((this.$refs.left as HTMLElement).style as any).opacity = positiveRelation
+          ? this.middleTouch.percentage!
+          : 1 - this.middleTouch.percentage!
+      }
+    }
+
+    _highLightLyric(index: number) {
+      this.highLightIndex = index
+    }
+
+    _scrollToHightLight(index: number) {
+      if (index > 5) {
+        (this.$refs.scroll as any).scrollToElement((this.$refs.lyrics as any)[index - 5], 1000)
+      } else {
+        (this.$refs.scroll as any).scrollTo(0, 0, 1000)
+      }
+    }
+
+    _playCallback(index: number) {
+      this._highLightLyric(index)
+      this._scrollToHightLight(index)
     }
   }
 </script>
