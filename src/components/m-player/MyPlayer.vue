@@ -59,8 +59,8 @@
             <span class="progress-bar">
               <progress-bar
                 :percentage="percentage"
-                @changing-percent="handleLyricJump"
-                @touch-end="handleMoveEnd">
+                @touch-end="handleMoveEnd"
+                @percentage-change="handleLyricChange">
               </progress-bar>
             </span>
             <span class="total-time time">{{song.interval | timeFilter}}</span>
@@ -115,7 +115,7 @@
            @error="onerror"
            @canplay="onready"
            @timeupdate="onTimeUpdate"
-           @ended="autoNext">
+           @ended="autoNextOrLoop">
     </audio>
   </div>
 </template>
@@ -337,7 +337,7 @@
       this.audioReady = false
     }
 
-    autoNext() {
+    autoNextOrLoop() {
       if (this.playMode === playmode.loop) {
         this.audio!.currentTime = 0
         if (!this.playing) {
@@ -345,6 +345,7 @@
         } else {
           this.play()
         }
+        this.lyricParser && this.lyricParser.refreshStartTime()
       } else {
         this.next()
       }
@@ -377,11 +378,6 @@
       }
     }
 
-    handleLyricJump(deltaPercent: number) {
-      const deltaTime = deltaPercent * this.song.interval | 0
-      this.lyricParser!.jumpTo(deltaTime)
-    }
-
     minimize() {
       this.setfullScreen(false)
     }
@@ -397,6 +393,11 @@
     changeCurrentTime(percentage: number) {
       this.audio!.currentTime = percentage * this.song.interval
       this.togglePlaying(true)
+    }
+
+    handleLyricChange(percent: number) {
+      const timeChange = percent * this.song.interval
+      this.lyricParser && this.lyricParser.jumpTo(timeChange)
     }
 
     middleTouchStart(event: TouchEvent) {

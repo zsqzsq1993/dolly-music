@@ -19,17 +19,18 @@ export interface LyricParser {
   restart: any;
   pause: any;
   jumpTo: any;
+  refreshStartTime: any;
 }
 
 const lyricParser: any = function () {
   let lrc: string
   let startTime: number
   let callback: any
-  let linesCopy: Array<Line>
   let lines: Array<Line> = []
   let tags: Tags = {}
   let id: number
   let pausedTime: number
+  let currentIndex = 0
 
   const timeExp = /^\[(\d{2}):(\d{2})\.(\d{2})](.*)$/
 
@@ -73,17 +74,24 @@ const lyricParser: any = function () {
     }
     const delta = timestamp - startTime
 
-    if (!linesCopy.length) {
+    if (currentIndex === lines.length - 1) {
       return
     }
 
-    if (Math.abs(delta - linesCopy[0].time * 1000) < 50) {
-      linesCopy.shift()
-      const index = lines.length - linesCopy.length - 1
-      callback(index)
-    }
+    currentIndex = calCurrentIndex(delta)
+
+    callback(currentIndex)
 
     id = requestAnimationFrame(step)
+  }
+
+  function calCurrentIndex(time: number) {
+    for (let i = 0; i < lines.length; i++) {
+      if (time <= lines[i].time * 1000) {
+        return i - 1
+      }
+    }
+    return lines.length - 1
   }
 
   function play(_callback: any) {
@@ -114,9 +122,9 @@ const lyricParser: any = function () {
     }
     if (lines.length) {
       lines = []
-      linesCopy = []
     }
     startTime = 0
+    currentIndex = 0
   }
 
   function parse() {
@@ -156,15 +164,17 @@ const lyricParser: any = function () {
     const decTimeStamp = parseInt(decList[0]) * 0.1 + parseInt(decList[1]) * 0.01
 
     lines.push({
-      time: minTimeStamp + secTimeStamp + decTimeStamp,
+      time: minTimeStamp + secTimeStamp + decTimeStamp + (tags.offset || 0),
       text: lyric
     })
-
-    linesCopy = lines.slice()
   }
 
-  function jumpTo(deltaTime: number) {
-    startTime -= deltaTime
+  function refreshStartTime() {
+    startTime = +new Date()
+  }
+
+  function jumpTo(timeChange: number) {
+    startTime -= timeChange * 1000
   }
 
   return function (lyric: string): LyricParser {
@@ -179,7 +189,8 @@ const lyricParser: any = function () {
       play,
       restart,
       pause,
-      jumpTo
+      jumpTo,
+      refreshStartTime
     }
   }
 }
