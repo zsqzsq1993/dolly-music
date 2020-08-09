@@ -1,5 +1,5 @@
 <template>
-  <div class="m-player" v-show="playList.length">
+  <div class="m-player" v-show="playList.length > 0">
     <transition name="normal"
                 @before-enter="beforeEnter"
                 @enter="enter"
@@ -28,7 +28,7 @@
                    :src="song.image">
             </div>
             <div class="shortcut-lyric-wrapper">
-              hi, I am placeholder, more text overflow is hidden
+              {{currentLyric}}
             </div>
           </div>
           <div class="middle-wrapper-right" ref="right">
@@ -202,6 +202,7 @@
     middleTouch: MiddleTouch = {}
     highLightIndex = 0
     lyricParser: LyricParser | null = null
+    currentLyric = ''
 
     @Watch('song')
     startToPlay(newSong: Song, oldSong: Song) {
@@ -226,9 +227,17 @@
         const obj = this.lyricParser = lyricParser(lyric, this.song.interval)
         this.lyrics = obj.lines
         obj.play(this._playCallback)
-      }).catch(e => {
-        console.log(e)
+      }).catch(() => {
+        this.lyricParser = null
+        this.lyrics = []
       })
+    }
+
+    @Watch('song')
+    defaultPageCd() {
+      this.currentPage = PAGE_CD
+      this._setTransform('0')
+      this._blurLeftWrapper(true, 1)
     }
 
     @Watch('playing')
@@ -353,7 +362,7 @@
         } else {
           this.play()
         }
-        this.lyricParser && this.lyricParser.refresh()
+        this.lyricParser && this.lyricParser.repeat()
       } else {
         this.next()
       }
@@ -621,9 +630,14 @@
       }
     }
 
+    _setCurrentLyric(index: number) {
+      this.currentLyric = this.lyrics && (this.lyrics as any)[index].text
+    }
+
     _playCallback(index: number) {
       this._highLightLyric(index)
       this._scrollToHightLight(index)
+      this._setCurrentLyric(index)
     }
   }
 </script>

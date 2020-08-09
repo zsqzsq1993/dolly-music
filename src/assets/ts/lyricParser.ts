@@ -19,23 +19,23 @@ export interface LyricParser {
   restart: any;
   pause: any;
   seek: any;
-  refresh: any;
+  repeat: any;
 }
 
 const lyricParser: any = function () {
   let lrc: string
   let startTime: number
   let callback: any
-  let lines: Array<Line> = []
-  let tags: Tags = {}
+  let lines: Array<Line>
+  let tags: Tags
   let id: number
   let pausedTime: number
-  let currentIndex = 0
-  let requiredTime = 0
-  let skipTime = false
+  let currentIndex: number
+  let requiredTime: number
+  let skipTime: boolean
   let duration: number
 
-  const timeExp = /^\[(\d{2}):(\d{2})\.(\d{2})](.*)$/
+  const timeExp = /\[(\d{2}):(\d{2})\.(\d{2})](.*)/
 
   const requestAnimationFrame: any = (() => {
     return window.requestAnimationFrame ||
@@ -71,6 +71,18 @@ const lyricParser: any = function () {
     }
   }
 
+  function play(_callback: any) {
+    if (!lines.length) {
+      console.warn('Initializing is not done yet.')
+      return
+    }
+
+    callback = _callback
+
+    cancelAnimationFrame(id)
+    id = requestAnimationFrame(step)
+  }
+
   function step(timestamp: number) {
     if (!startTime) {
       startTime = timestamp
@@ -93,7 +105,12 @@ const lyricParser: any = function () {
       callback(currentIndex)
     }
 
-    id = requestAnimationFrame(step)
+    goLoop()
+  }
+
+  function goLoop() {
+    cancelAnimationFrame(id)
+    requestAnimationFrame(step)
   }
 
   function hanleSkipTime(currentTime: number) {
@@ -106,22 +123,10 @@ const lyricParser: any = function () {
   function calCurrentIndex(currentTime: number) {
     for (let i = 0; i < lines.length; i++) {
       if (currentTime <= lines[i].time * 1000) {
-        return i - 1
+        return i - 1 < 0 ? 0 : (i - 1)
       }
     }
     return lines.length - 1
-  }
-
-  function play(_callback: any) {
-    if (!lines.length) {
-      console.warn('Initializing is not done yet.')
-      return
-    }
-
-    callback = _callback
-
-    cancelAnimationFrame(id)
-    id = requestAnimationFrame(step)
   }
 
   function pause() {
@@ -134,7 +139,7 @@ const lyricParser: any = function () {
       const duration = +new Date() - pausedTime
       startTime += duration
       pausedTime = 0
-      id = requestAnimationFrame(step)
+      goLoop()
     }
   }
 
@@ -146,6 +151,9 @@ const lyricParser: any = function () {
     currentIndex = 0
     requiredTime = 0
     skipTime = false
+    id = 0
+    pausedTime = 0
+    duration = 0
   }
 
   function parse() {
@@ -192,13 +200,12 @@ const lyricParser: any = function () {
     })
   }
 
-  function refresh() {
+  function repeat() {
     currentIndex = 0
     startTime = 0
     requiredTime = 0
     skipTime = false
-    cancelAnimationFrame(id)
-    id = requestAnimationFrame(step)
+    goLoop()
   }
 
   function seek(currentTime: number) {
@@ -208,8 +215,10 @@ const lyricParser: any = function () {
 
   return function (lyric: string, interval: number): LyricParser {
     init()
+
     lrc = lyric
     duration = interval * 1000
+
     parse()
 
     return {
@@ -220,7 +229,7 @@ const lyricParser: any = function () {
       restart,
       pause,
       seek,
-      refresh
+      repeat
     }
   }
 }
