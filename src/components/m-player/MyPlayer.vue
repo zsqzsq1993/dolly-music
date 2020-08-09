@@ -59,8 +59,8 @@
             <span class="progress-bar">
               <progress-bar
                 :percentage="percentage"
-                @touch-end="handleMoveEnd"
-                @percentage-change="handleLyricChange">
+                @percent-change="handlePercentChange"
+                @percent-changing="handlePercentChanging">
               </progress-bar>
             </span>
             <span class="total-time time">{{song.interval | timeFilter}}</span>
@@ -218,9 +218,12 @@
     }
 
     @Watch('song')
-    getLyric(newSong: Song) {
+    getLyric(newSong: Song, oldSong: Song) {
+      if (newSong.songid === oldSong.songid) {
+        return
+      }
       newSong.getLyric().then((lyric: string) => {
-        const obj = this.lyricParser = lyricParser(lyric)
+        const obj = this.lyricParser = lyricParser(lyric, this.song.interval)
         this.lyrics = obj.lines
         obj.play(this._playCallback)
       }).catch(e => {
@@ -235,6 +238,11 @@
           ? this.play()
           : this.pause()
       })
+    }
+
+    @Watch('playing')
+    playOrPauseLyric(newVal: boolean) {
+      this.toggleLyric(newVal)
     }
 
     get playIcon() {
@@ -345,7 +353,7 @@
         } else {
           this.play()
         }
-        this.lyricParser && this.lyricParser.refreshStartTime()
+        this.lyricParser && this.lyricParser.refresh()
       } else {
         this.next()
       }
@@ -364,15 +372,14 @@
     togglePlaying(bool?: boolean | Event) {
       if (typeof bool !== 'boolean') {
         this.setPlayingState(!this.playing)
-        this.toggleLyric()
       } else {
         this.setPlayingState(bool)
       }
     }
 
-    toggleLyric() {
+    toggleLyric(playing: boolean) {
       if (this.lyricParser) {
-        this.playing
+        playing
           ? this.lyricParser.restart()
           : this.lyricParser.pause()
       }
@@ -386,18 +393,24 @@
       this.setfullScreen(true)
     }
 
-    handleMoveEnd(percentage: number) {
-      this.changeCurrentTime(percentage)
+    handlePercentChange(percentage: number) {
+      const currentTime = percentage * this.song.interval
+      this.changeCurrentTime(currentTime)
+      this.changeLyricTime(currentTime)
     }
 
-    changeCurrentTime(percentage: number) {
-      this.audio!.currentTime = percentage * this.song.interval
+    handlePercentChanging(percentage: number) {
+      const currentTime = percentage * this.song.interval
+      this.changeLyricTime(currentTime)
+    }
+
+    changeCurrentTime(currentTime: number) {
+      this.audio!.currentTime = currentTime
       this.togglePlaying(true)
     }
 
-    handleLyricChange(percent: number) {
-      const timeChange = percent * this.song.interval
-      this.lyricParser && this.lyricParser.jumpTo(timeChange)
+    changeLyricTime(currentTime: number) {
+      this.lyricParser && this.lyricParser.seek(currentTime)
     }
 
     middleTouchStart(event: TouchEvent) {

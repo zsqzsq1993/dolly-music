@@ -53,7 +53,7 @@
       }
 
       click(event: MouseEvent) {
-        this._triggerPercentage(this._getPercentage(event))
+        this._triggerPercentage(this._getPercentage(event), 'percent-change')
       }
 
       changeBarPosition(percentage: number) {
@@ -79,37 +79,31 @@
           const percentage = this._getPercentage(event)
           this.changeBarPosition(percentage)
           this.touch.percentage = percentage
+          this._triggerPercentage(percentage, 'percent-changing')
         }
       }
 
       touchend() {
         this.touch.activated = false
-        this._triggerPercentage()
+        this._triggerPercentage(this.touch.percentage, 'percent-change')
       }
 
       _getPercentage(event: TouchEvent | MouseEvent) {
         let delta: number
-        let changing: number
         let percentage: number
 
         if (event instanceof TouchEvent) {
           delta =  event.touches[0].pageX - this.touch.touchX
-          changing = delta / this.refTotal!.clientWidth
-          percentage = this.touch.left / this.refTotal!.clientWidth + changing
+          percentage = (this.touch.left + delta) / this.refTotal!.clientWidth
         } else {
           delta = event.pageX - this.refButton!.getBoundingClientRect().left - HALF_BUTTON_WIDTH
-          changing = delta / this.refTotal!.clientWidth
-          percentage = this.refPlayed!.clientWidth / this.refTotal!.clientWidth + changing
+          percentage = (this.refPlayed!.clientWidth + delta) / this.refTotal!.clientWidth
         }
         return Math.max(0, Math.min(percentage, 1))
       }
 
-      _triggerPercentage(percentage?: number) {
-        this.$emit('touch-end', percentage || this.touch.percentage)
-      }
-
-      _triggerLyricChange(changing: number) {
-        this.$emit('percentage-change', changing)
+      _triggerPercentage(percentage: number, eventName: 'percent-change' | 'percent-changing') {
+        this.$emit(eventName, percentage)
       }
 
       _changePlayedProgress(percent: number) {

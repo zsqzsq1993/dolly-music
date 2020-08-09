@@ -18,8 +18,8 @@ export interface LyricParser {
   play: (callback: any) => void;
   restart: any;
   pause: any;
-  jumpTo: any;
-  refreshStartTime: any;
+  seek: any;
+  refresh: any;
 }
 
 const lyricParser: any = function () {
@@ -31,6 +31,9 @@ const lyricParser: any = function () {
   let id: number
   let pausedTime: number
   let currentIndex = 0
+  let requiredTime = 0
+  let skipTime = false
+  let duration: number
 
   const timeExp = /^\[(\d{2}):(\d{2})\.(\d{2})](.*)$/
 
@@ -72,22 +75,37 @@ const lyricParser: any = function () {
     if (!startTime) {
       startTime = timestamp
     }
-    const delta = timestamp - startTime
 
-    if (currentIndex === lines.length - 1) {
+    if (timestamp > duration) {
       return
     }
 
-    currentIndex = calCurrentIndex(delta)
+    let currentTime = timestamp - startTime
 
-    callback(currentIndex)
+    if (skipTime) {
+      currentTime = hanleSkipTime(currentTime)
+    }
+
+    const index = calCurrentIndex(currentTime)
+
+    if (index !== currentIndex) {
+      currentIndex = index
+      callback(currentIndex)
+    }
 
     id = requestAnimationFrame(step)
   }
 
-  function calCurrentIndex(time: number) {
+  function hanleSkipTime(currentTime: number) {
+    const deltaTime = requiredTime - currentTime
+    startTime -= deltaTime
+    skipTime = false
+    return requiredTime
+  }
+
+  function calCurrentIndex(currentTime: number) {
     for (let i = 0; i < lines.length; i++) {
-      if (time <= lines[i].time * 1000) {
+      if (currentTime <= lines[i].time * 1000) {
         return i - 1
       }
     }
@@ -102,7 +120,8 @@ const lyricParser: any = function () {
 
     callback = _callback
 
-    requestAnimationFrame(step)
+    cancelAnimationFrame(id)
+    id = requestAnimationFrame(step)
   }
 
   function pause() {
@@ -111,20 +130,22 @@ const lyricParser: any = function () {
   }
 
   function restart() {
-    const duration = +new Date() - pausedTime
-    startTime += duration
-    requestAnimationFrame(step)
+    if (pausedTime) {
+      const duration = +new Date() - pausedTime
+      startTime += duration
+      pausedTime = 0
+      id = requestAnimationFrame(step)
+    }
   }
 
   function init() {
-    if (Object.keys(tags).length) {
-      tags = {}
-    }
-    if (lines.length) {
-      lines = []
-    }
+    lrc = ''
+    lines = []
+    tags = {}
     startTime = 0
     currentIndex = 0
+    requiredTime = 0
+    skipTime = false
   }
 
   function parse() {
@@ -144,8 +165,10 @@ const lyricParser: any = function () {
     }
     const keyVal = line.split(':')
     const key = keyVal[0].slice(1).toLowerCase().trim()
-    const val = keyVal[1].slice(0, -1).trim();
-    (strategies as any)[key](val)
+    const val = keyVal[1].slice(0, -1).trim()
+    if ((strategies as any)[key]) {
+      (strategies as any)[key](val)
+    }
   }
 
   function parseTime(line: string): void {
@@ -169,17 +192,24 @@ const lyricParser: any = function () {
     })
   }
 
-  function refreshStartTime() {
-    startTime = +new Date()
+  function refresh() {
+    currentIndex = 0
+    startTime = 0
+    requiredTime = 0
+    skipTime = false
+    cancelAnimationFrame(id)
+    id = requestAnimationFrame(step)
   }
 
-  function jumpTo(timeChange: number) {
-    startTime -= timeChange * 1000
+  function seek(currentTime: number) {
+    skipTime = true
+    requiredTime = currentTime * 1000
   }
 
-  return function (lyric: string): LyricParser {
-    lrc = lyric
+  return function (lyric: string, interval: number): LyricParser {
     init()
+    lrc = lyric
+    duration = interval * 1000
     parse()
 
     return {
@@ -189,8 +219,8 @@ const lyricParser: any = function () {
       play,
       restart,
       pause,
-      jumpTo,
-      refreshStartTime
+      seek,
+      refresh
     }
   }
 }
