@@ -58,7 +58,7 @@
   import Loading from 'base/m-loading/Loading.vue'
   import {getData} from 'src/assets/ts/dom'
 
-  const SHORTCUT_HEIGHT = 22
+  const SHORTCUT_HEIGHT = 18
   const TITLE_HEIGHT = 30
 
   interface Data {
