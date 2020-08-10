@@ -17,7 +17,11 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: '/recommand',
-    component: MyRecommand
+    component: MyRecommand,
+    children: [{
+      path: ':id',
+      component: () => import('components/m-recommand-detail/RecommandDetail.vue')
+    }]
   },
   {
     path: '/rank',

@@ -18,7 +18,8 @@
           <h1 class="title">热门歌单推荐</h1>
           <div class="list-item"
                v-for="(item,idx) in list"
-               :key="item.creator.name + idx">
+               :key="item.creator.name + idx"
+               @click="selectItem(item)">
             <div class="img-wrapper">
               <img width="60"
                    height="60"
@@ -36,18 +37,20 @@
     <div class="loading-wrapper">
       <loading :show="!list.length"></loading>
     </div>
+    <router-view></router-view>
   </div>
 </template>
 
 <script lang="ts">
   import {Component, Mixins} from 'vue-property-decorator'
-  import {Getter} from 'vuex-class'
+  import {Getter, Mutation} from 'vuex-class'
   import {getRecommandCarousel, getRecommandList, SliderData, ListData} from 'src/api/getRecommand'
   import Slider from 'base/m-slider/Slider.vue'
   import Scroll from 'base/m-scroll/Scroll.vue'
   import Loading from 'base/m-loading/Loading.vue'
   import {playListMixin} from 'src/assets/ts/mixins'
   import {Song} from 'src/assets/ts/Song'
+  import * as types from 'src/store/mutation-types'
 
   @Component({
     components: {
@@ -59,12 +62,16 @@
   export default class extends Mixins(playListMixin) {
     @Getter('playList') readonly playList!: Array<Song>
 
+    @Mutation(types.SET_DISS) setDiss: any
+
     slider: Array<undefined | SliderData> = []
     list: Array<undefined | ListData> = []
 
     created() {
       this._getRecommandCarousel()
-      this._getRecommandList()
+      this._getRecommandList().then(() => {
+        console.log(this.list)
+      })
     }
 
     handlePlayList() {
@@ -75,8 +82,13 @@
       scroll.refresh()
     }
 
+    selectItem(item: any) {
+      this.setDiss(item)
+      this.$router.push(`/recommand/${item.dissid}`)
+    }
+
     _getRecommandCarousel() {
-      getRecommandCarousel().then(response => {
+      return getRecommandCarousel().then(response => {
         if (response.code === 0) {
           this.slider = response.data
         } else {
@@ -86,7 +98,7 @@
     }
 
     _getRecommandList() {
-      getRecommandList().then(response => {
+      return getRecommandList().then(response => {
         if (response.code === 0) {
           this.list = response.data
         } else {

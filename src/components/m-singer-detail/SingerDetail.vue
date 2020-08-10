@@ -1,11 +1,11 @@
 <template>
-  <transition appear name="slide"> // 初次渲染，想要有transition效果，要加appear
+  <slide-transition> // 初次渲染，想要有transition效果，要加appear
     <music-list
       :title="singer.name"
       :avatar="singer.avatar"
       :songs="songs">
     </music-list>
-  </transition>
+  </slide-transition>
 </template>
 
 <script lang="ts">
@@ -16,10 +16,12 @@
   import {getSongUrl} from 'src/api/getSongs'
   import MusicList from 'components/m-music-list/MusicList.vue'
   import {SingerInstance} from 'src/assets/ts/Singer'
+  import SlideTransition from 'base/m-transition/SlideTransition.vue'
 
   @Component({
     components: {
-      MusicList
+      MusicList,
+      SlideTransition
     }
   })
   export default class extends Vue {
@@ -73,11 +75,3 @@
     }
   }
 </script>
-
-<style lang="stylus">
-  .slide-enter-active, .slide-leave-active
-    transition all .3s
-
-  .slide-enter, .slide-leave-to
-    transform translate3d(100%, 0, 0)
-</style>

@@ -29,6 +29,10 @@ const mutations = {
 
   [types.SET_CURRENT_INDEX] (state: any, flag: boolean) {
     state.currentIndex = flag
+  },
+
+  [types.SET_DISS] (state: any, item: any) {
+    state.diss = item
   }
 }
 

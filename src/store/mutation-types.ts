@@ -11,3 +11,5 @@ export const SET_PLAYING_STATE = 'set_playing'
 export const SET_FULL_SCREEN = 'set_full_screen'
 
 export const SET_CURRENT_INDEX = 'set_current_index'
+
+export const SET_DISS = 'set_diss'
