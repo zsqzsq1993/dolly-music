@@ -1,6 +1,6 @@
 <template>
-  <div class="m-recommand">
-    <scroll :data="list" class="recommand-scroll">
+  <div class="m-recommand" ref="recommand">
+    <scroll :data="list" class="recommand-scroll" ref="recommandScroll">
       <div>
         <div class="slider-outer-wrapper">
           <div class="slider-inner-wrapper">
@@ -40,11 +40,14 @@
 </template>
 
 <script lang="ts">
-  import {Vue, Component} from 'vue-property-decorator'
+  import {Component, Mixins} from 'vue-property-decorator'
+  import {Getter} from 'vuex-class'
   import {getRecommandCarousel, getRecommandList, SliderData, ListData} from 'src/api/getRecommand'
   import Slider from 'base/m-slider/Slider.vue'
   import Scroll from 'base/m-scroll/Scroll.vue'
   import Loading from 'base/m-loading/Loading.vue'
+  import {playListMixin} from 'src/assets/ts/mixins'
+  import {Song} from 'src/assets/ts/Song'
 
   @Component({
     components: {
@@ -53,13 +56,23 @@
       Loading
     }
   })
-  export default class extends Vue {
+  export default class extends Mixins(playListMixin) {
+    @Getter('playList') readonly playList!: Array<Song>
+
     slider: Array<undefined | SliderData> = []
     list: Array<undefined | ListData> = []
 
     created() {
       this._getRecommandCarousel()
       this._getRecommandList()
+    }
+
+    handlePlayList() {
+      const bottom = this.playList.length ? 60 : 0
+      const wrapper = this.$refs.recommand as any
+      const scroll = this.$refs.recommandScroll as any
+      wrapper.style.bottom = bottom + 'px'
+      scroll.refresh()
     }
 
     _getRecommandCarousel() {

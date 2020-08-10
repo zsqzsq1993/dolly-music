@@ -34,13 +34,14 @@
 </template>
 
 <script lang="ts">
-  import {Prop, Component, Vue} from 'vue-property-decorator'
+  import {Prop, Component, Mixins} from 'vue-property-decorator'
+  import {Getter, Action} from 'vuex-class'
   import SongsList from 'base/m-songs-list/SongsList.vue'
   import Scroll from 'base/m-scroll/Scroll.vue'
   import Loading from 'base/m-loading/Loading.vue'
   import {Song} from 'src/assets/ts/Song'
   import {prefixStyle} from 'src/assets/ts/dom'
-  import {Action} from 'vuex-class'
+  import {playListMixin} from 'src/assets/ts/mixins'
 
   const RESERVED_HEIGHT = 40
   const ZINDEX = '10'
@@ -54,7 +55,7 @@
       Loading
     }
   })
-  export default class extends Vue {
+  export default class extends Mixins(playListMixin) {
     @Prop({default: ''}) readonly title!: string
     @Prop({default: ''}) readonly avatar!: string
     @Prop({
@@ -62,6 +63,8 @@
         return []
       }
     }) readonly songs!: Array<undefined | Song>
+
+    @Getter('playList') readonly playList!: Array<Song>
 
     @Action('activatePlayer') activatePlayer: any
     @Action('randomlyActivePlayer') randomlyActivePlayer: any
@@ -102,6 +105,13 @@
       this.randomlyActivePlayer({
         list: this.songs
       })
+    }
+
+    handlePlayList() {
+      const bottom = this.playList.length ? 60 : 0
+      const scroll = this.$refs.scroll as any
+      scroll.$el.style.bottom = bottom + 'px'
+      scroll.refresh()
     }
 
     _initScrollTop() {

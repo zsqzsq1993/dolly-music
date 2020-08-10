@@ -1,17 +1,19 @@
 <template>
-  <div class="m-singers">
-    <list-view :data="singers" @select="selectSinger"></list-view>
+  <div class="m-singers" ref="singers">
+    <list-view :data="singers" @select="selectSinger" ref="singerScroll"></list-view>
     <router-view></router-view>
   </div>
 </template>
 
 <script lang="ts">
   import {getSingerList} from 'src/api/getSingers'
-  import {Vue, Component} from 'vue-property-decorator'
+  import {Component, Mixins} from 'vue-property-decorator'
   import {Singer, SingerInstance} from 'src/assets/ts/Singer'
   import ListView from 'base/m-list-view/ListView.vue'
-  import {Mutation} from 'vuex-class'
+  import {Mutation, Getter} from 'vuex-class'
   import * as types from 'src/store/mutation-types'
+  import {playListMixin} from 'src/assets/ts/mixins'
+  import {Song} from 'src/assets/ts/Song'
 
   const HOT_LEN = 10
   const HOT_NAME = '热门'
@@ -27,10 +29,12 @@
       ListView
     }
   })
-  export default class extends Vue {
+  export default class extends Mixins(playListMixin) {
     singers: any[] = []
 
     @Mutation(types.SET_SINGER) setSinger: any
+
+    @Getter('playList') readonly playList!: Array<Song>
 
     created() {
       getSingerList().then(response => {
@@ -42,6 +46,14 @@
       }).catch(e => {
         console.log(e)
       })
+    }
+
+    handlePlayList() {
+      const bottom = this.playList.length ? 60 : 0
+      const wrapper = this.$refs.singers as HTMLElement
+      const scroll = (this.$refs.singerScroll as any).$children[0]
+      wrapper.style.bottom = bottom + 'px'
+      scroll.refresh()
     }
 
     selectSinger(singer: SingerInstance) {
