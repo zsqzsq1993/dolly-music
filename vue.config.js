@@ -129,6 +129,22 @@ module.exports = {
           res.json(response.data)
         })
       })
+
+      app.get('/api/getRecommandDetail', (req, res) => {
+        const url = 'https://c.y.qq.com/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg'
+
+        const data = req.query
+
+        return axios.get(url, {
+          params: data,
+          headers: {
+            referer: 'https://c.y.qq.com/',
+            host: 'c.y.qq.com'
+          }
+        }).then(response => {
+          res.json(response.data)
+        })
+      })
     }
   }
 }

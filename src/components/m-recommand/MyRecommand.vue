@@ -69,9 +69,7 @@
 
     created() {
       this._getRecommandCarousel()
-      this._getRecommandList().then(() => {
-        console.log(this.list)
-      })
+      this._getRecommandList()
     }
 
     handlePlayList() {

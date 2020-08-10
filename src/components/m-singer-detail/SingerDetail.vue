@@ -47,6 +47,8 @@
         return this._getSongUrl(songs)
       }).then((songs: Array<Song>) => {
         this.songs = songs
+      }).catch(e => {
+        console.log(e)
       })
     }
 
@@ -61,7 +63,7 @@
         })
         return songs
       } else {
-        throw Error('can not get singer detail.')
+        throw new Error('can not get songList')
       }
     }
 

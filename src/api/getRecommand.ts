@@ -2,6 +2,7 @@ import {
   commonData,
   recommandCarouselData,
   recommandListData,
+  recommandDetailData,
   RetData,
   devMode
 } from 'src/api/config'
@@ -41,6 +42,20 @@ export function getRecommandList(): Promise<RetData<ListData>> {
   const data = Object.assign({}, commonData, recommandListData)
 
   return dollyAxios.get(url, {
+    params: data
+  }).then(response => {
+    return response.data
+  })
+}
+
+export function getRecommandDetail(disstid: number): Promise<Array<any>> {
+  const url = devMode
+    ? '/api/getRecommandDetail'
+    : ''
+
+  const data = Object.assign({}, commonData, recommandDetailData, {disstid})
+
+  return dollyAxios(url, {
     params: data
   }).then(response => {
     return response.data
