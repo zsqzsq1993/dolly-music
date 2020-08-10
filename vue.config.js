@@ -145,6 +145,24 @@ module.exports = {
           res.json(response.data)
         })
       })
+
+      app.get('/api/getTopList', (req, res) => {
+        const url = 'https://u.y.qq.com/cgi-bin/musicu.fcg'
+
+        const data = req.query
+
+        axios.get(url, {
+          params: data,
+          headers: {
+            referer: 'https://i.y.qq.com/n2/m/index.html?tab=toplist',
+            host: 'i.y.qq.com'
+          }
+        }).then(response => {
+          res.json(response.data)
+        }).catch(error => {
+          res.json(error)
+        })
+      })
     }
   }
 }
