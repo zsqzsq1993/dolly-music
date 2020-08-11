@@ -25,7 +25,11 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: '/rank',
-    component: () => import('components/m-rank/MyRank.vue')
+    component: () => import('components/m-rank/MyRank.vue'),
+    children: [{
+      path: ':topid',
+      component: () => import('components/m-toplist-detail/TopListDetail.vue')
+    }]
   },
   {
     path: '/search',

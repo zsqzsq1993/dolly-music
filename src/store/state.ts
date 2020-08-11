@@ -11,7 +11,8 @@ const state = {
   playing: false,
   fullScreen: false,
   currentIndex: -1,
-  diss: {}
+  diss: {},
+  toplist: {}
 }
 
 export default state

@@ -33,6 +33,10 @@ const mutations = {
 
   [types.SET_DISS] (state: any, item: any) {
     state.diss = item
+  },
+
+  [types.SET_TOP_LIST] (state: any, list: any) {
+    state.toplist = list
   }
 }
 

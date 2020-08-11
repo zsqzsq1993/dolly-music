@@ -13,3 +13,5 @@ export const SET_FULL_SCREEN = 'set_full_screen'
 export const SET_CURRENT_INDEX = 'set_current_index'
 
 export const SET_DISS = 'set_diss'
+
+export const SET_TOP_LIST = 'set_toplist'

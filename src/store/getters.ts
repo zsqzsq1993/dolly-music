@@ -14,6 +14,8 @@ export const playList = (state: any) => state.playList
 
 export const diss = (state: any) => state.diss
 
+export const toplist = (state: any) => state.toplist
+
 export const currentSong = (state: any) => {
   return state.playList[state.currentIndex] || {}
 }

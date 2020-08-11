@@ -148,3 +148,12 @@ export const topListData = {
   needNewCode: 1,
   platform: 'h5'
 }
+
+export const topListDetailData = {
+  needNewCode: 1,
+  uin: 0,
+  tpl: 3,
+  page: 'detail',
+  type: 'top',
+  platform: 'h5'
+}

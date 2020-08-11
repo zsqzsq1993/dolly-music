@@ -5,7 +5,8 @@
       <ul class="topList-groups">
         <li class="topList-wrapper"
             v-for="topList in topListGroups"
-            :key="topList.id">
+            :key="topList.id"
+            @click="selectTopList(topList)">
           <div class="topList-avatar">
             <img v-lazy="topList.picUrl">
           </div>
@@ -21,12 +22,13 @@
         </li>
       </ul>
     </scroll>
+    <router-view></router-view>
   </div>
 </template>
 
 <script lang="ts">
   import {Vue, Component} from 'vue-property-decorator'
-  import {getTopList} from 'src/api/getRank'
+  import {getTopList, getTopListDetail} from 'src/api/getRank'
   import Scroll from 'base/m-scroll/Scroll.vue'
 
   @Component({
@@ -41,9 +43,16 @@
       this._getRecommandList()
     }
 
+    selectTopList(topList: any) {
+      this._getTopListDetail(topList.id).then(response => {
+        console.log(response)
+      })
+    }
+
     _getRecommandList() {
       getTopList().then((response: any) => {
         this._getTopList(response)
+        console.log(this.topListGroups)
       }).catch(e => {
         console.log(e)
       })
@@ -56,6 +65,10 @@
       } else {
         throw new Error('get toplist data errors.')
       }
+    }
+
+    _getTopListDetail(id: number) {
+      return getTopListDetail(id)
     }
   }
 </script>
