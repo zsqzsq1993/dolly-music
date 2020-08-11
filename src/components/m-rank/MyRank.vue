@@ -28,8 +28,10 @@
 
 <script lang="ts">
   import {Vue, Component} from 'vue-property-decorator'
-  import {getTopList, getTopListDetail} from 'src/api/getRank'
+  import {Mutation} from 'vuex-class'
+  import {getTopList} from 'src/api/getRank'
   import Scroll from 'base/m-scroll/Scroll.vue'
+  import * as types from 'src/store/mutation-types'
 
   @Component({
     components: {
@@ -39,14 +41,15 @@
   export default class extends Vue {
     topListGroups: Array<any> = []
 
+    @Mutation(types.SET_TOP_LIST) setTopList: any
+
     created() {
       this._getRecommandList()
     }
 
     selectTopList(topList: any) {
-      this._getTopListDetail(topList.id).then(response => {
-        console.log(response)
-      })
+      this.setTopList(topList)
+      this.$router.push(`/rank/${topList.id}`)
     }
 
     _getRecommandList() {
@@ -65,10 +68,6 @@
       } else {
         throw new Error('get toplist data errors.')
       }
-    }
-
-    _getTopListDetail(id: number) {
-      return getTopListDetail(id)
     }
   }
 </script>

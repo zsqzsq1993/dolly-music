@@ -1,4 +1,4 @@
-import {getLyric} from 'src/api/getSongs'
+import {getLyric, getSongUrl} from 'src/api/getSongs'
 import {Base64} from 'js-base64'
 
 export interface SongConfig {
@@ -34,6 +34,15 @@ export class Song {
     this.image =
       `https://y.gtimg.cn/music/photo_new/T002R300x300M000${config.albummid}_${config.belongCD}.jpg`
     this.lyric = ''
+  }
+
+  static getUrls(songs: Array<Song>): Promise<Array<Song>> {
+    return getSongUrl(songs).then((map: any) => {
+      return songs.filter(song => {
+        song.url = map[song.songmid]
+        return song.url
+      })
+    })
   }
 
   getLyric(): Promise<string> {
