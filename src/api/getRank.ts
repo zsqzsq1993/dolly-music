@@ -1,16 +1,10 @@
-import {devMode, topListData} from 'src/api/config'
-import dollyAxios from 'dolly-axios'
+import {commonData, topListData, jsonpOptions} from 'src/api/config'
+import {jsonp} from 'src/assets/ts/jsonp'
 
 export function getTopList() {
-  const url = devMode
-    ? '/api/getTopList'
-    : ''
+  const url = 'https://c.y.qq.com/v8/fcg-bin/fcg_myqq_toplist.fcg'
 
-  const data = Object.assign({}, topListData)
+  const data = Object.assign({}, commonData, topListData)
 
-  return dollyAxios.get(url, {
-    params: data
-  }).then(response => {
-    return response.data
-  })
+  return jsonp(url, data, jsonpOptions)
 }
