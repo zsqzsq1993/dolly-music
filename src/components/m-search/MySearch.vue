@@ -13,13 +13,13 @@
       </ul>
     </div>
     <div class="suggest-wrapper" v-show="query">
-      <suggest></suggest>
+      <suggest ref="suggest"></suggest>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-  import {Vue, Component} from 'vue-property-decorator'
+  import {Vue, Component, Watch} from 'vue-property-decorator'
   import {getHotSearch} from 'src/api/getSearch'
   import SearchBox from 'base/m-search-box/SearchBox.vue'
   import Suggest from 'components/m-suggest/Suggest.vue'
@@ -36,6 +36,11 @@
     }
   })
   export default class extends Vue {
+    @Watch('query')
+    dispatchRequest(newVal: string) {
+     (this.$refs.suggest as any).query(newVal, 1, true)
+    }
+
     hots: Array<HotKey> = []
     query = ''
 
