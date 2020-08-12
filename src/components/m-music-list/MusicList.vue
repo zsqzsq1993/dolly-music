@@ -25,6 +25,7 @@
       <div class="songs-list-wrapper">
         <songs-list
           :songs="songs"
+          :rank="rank"
           @select="selectItem">
         </songs-list>
       </div>
@@ -56,6 +57,7 @@
     }
   })
   export default class extends Mixins(playListMixin) {
+    @Prop({default: false}) readonly rank!: boolean
     @Prop({default: ''}) readonly title!: string
     @Prop({default: ''}) readonly avatar!: string
     @Prop({

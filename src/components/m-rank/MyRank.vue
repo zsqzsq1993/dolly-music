@@ -1,7 +1,8 @@
 <template>
-  <div class="m-rank">
+  <div class="m-rank" ref="rank">
     <scroll :data="topListGroups"
-            class="topList-scroll">
+            class="topList-scroll"
+            ref="rankScroll">
       <ul class="topList-groups">
         <li class="topList-wrapper"
             v-for="topList in topListGroups"
@@ -27,19 +28,22 @@
 </template>
 
 <script lang="ts">
-  import {Vue, Component} from 'vue-property-decorator'
-  import {Mutation} from 'vuex-class'
+  import {Component, Mixins} from 'vue-property-decorator'
+  import {Mutation, Getter} from 'vuex-class'
   import {getTopList} from 'src/api/getRank'
   import Scroll from 'base/m-scroll/Scroll.vue'
   import * as types from 'src/store/mutation-types'
+  import {playListMixin} from 'src/assets/ts/mixins'
 
   @Component({
     components: {
       Scroll
     }
   })
-  export default class extends Vue {
+  export default class extends Mixins(playListMixin) {
     topListGroups: Array<any> = []
+
+    @Getter('playList') readonly playList!: any
 
     @Mutation(types.SET_TOP_LIST) setTopList: any
 
@@ -52,10 +56,18 @@
       this.$router.push(`/rank/${topList.id}`)
     }
 
+    handlePlayList() {
+      const wrapper = this.$refs.rank as HTMLElement
+      const scroll = this.$refs.rankScroll as any
+      wrapper.style.bottom = this.playList.length
+        ? '60px'
+        : '0'
+      scroll.refresh()
+    }
+
     _getRecommandList() {
       getTopList().then((response: any) => {
         this._getTopList(response)
-        console.log(this.topListGroups)
       }).catch(e => {
         console.log(e)
       })

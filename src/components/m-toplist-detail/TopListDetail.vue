@@ -2,7 +2,8 @@
   <slide-transition>
     <music-list :title="title"
                 :avatar="avatar"
-                :songs="songs"></music-list>
+                :songs="songs"
+                :rank="true"></music-list>
   </slide-transition>
 </template>
 
@@ -35,7 +36,6 @@
         return this.getSongsUrl(songs)
       }).then((songs: Array<Song>) => {
         this.songs = songs
-        console.log(this.songs)
       })
     }
 
@@ -52,7 +52,7 @@
     getSongs(): Promise<Array<Song>> {
       return getTopListDetail(this.topList.id).then(response => {
         if (response.code === 0) {
-          const songs = []
+          const songs: Array<Song> = []
           response = response.songlist
           response.forEach((item: any) => {
             if (isValidSong(item.data)) {
