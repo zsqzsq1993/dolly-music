@@ -163,6 +163,22 @@ module.exports = {
       //     res.json(error)
       //   })
       // })
+
+      app.get('/api/getHotSearch', (req, res) => {
+        const url = 'https://c.y.qq.com/splcloud/fcgi-bin/gethotkey.fcg'
+
+        const data = req.query
+
+        axios.get(url, {
+          params: data,
+          headers: {
+            referer: 'https://c.y.qq.com',
+            host: 'c.y.qq.com'
+          }
+        }).then(response => {
+          res.json(response.data)
+        })
+      })
     }
   }
 }
