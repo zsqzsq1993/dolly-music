@@ -10,11 +10,16 @@
 </template>
 
 <script lang="ts">
-  import {Prop, Component, Vue} from 'vue-property-decorator'
+  import {Prop, Component, Vue, Watch} from 'vue-property-decorator'
 
   @Component
   export default class extends Vue {
     @Prop({default: '搜索歌曲、歌手'}) placeholder!: string
+
+    @Watch('content')
+    emitQuery(newVal: string) {
+      this.$emit('query', newVal)
+    }
 
     content = ''
 

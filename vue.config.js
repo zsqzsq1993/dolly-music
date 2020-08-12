@@ -179,6 +179,22 @@ module.exports = {
           res.json(response.data)
         })
       })
+
+      app.get('/api/getSearch', (req, res) => {
+        const url = 'https://c.y.qq.com/soso/fcgi-bin/search_for_qq_cp'
+
+        const data = req.query
+
+        axios.get(url, {
+          params: data,
+          headers: {
+            referer: 'https://c.y.qq.com',
+            host: 'c.y.qq.com'
+          }
+        }).then(response => {
+          res.json(response.data)
+        })
+      })
     }
   }
 }
