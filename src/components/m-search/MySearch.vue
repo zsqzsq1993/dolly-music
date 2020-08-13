@@ -87,4 +87,10 @@
           background-color $color-highlight-background
           color $color-text-d
           font-size $font-size-median
+    .suggest-wrapper
+      position fixed
+      top 178px
+      bottom 0
+      width 100%
+      overflow hidden
 </style>
