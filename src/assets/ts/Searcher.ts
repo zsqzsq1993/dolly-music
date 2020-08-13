@@ -5,7 +5,7 @@ import {getSearch} from 'src/api/getSearch'
 const DEFAULT_CURNUM = 20
 
 interface SearcherConfig {
-  keyword: string;
+  keyword?: string;
   curnum?: number;
   singerInfo?: boolean;
 }
@@ -39,17 +39,14 @@ export default class Searcher {
   // 标志位，是否还能请求更多信息
   hasMore: boolean;
 
-  // 是否正在加载的标志位
-  loading: boolean;
-
-  constructor(config: SearcherConfig) {
-    this.keyword = config.keyword
+  constructor(config?: SearcherConfig) {
+    config = config || {}
+    this.keyword = config.keyword || ''
     this.curnum = config.curnum || DEFAULT_CURNUM
     this.singerInfo = config.singerInfo || true
     this.hasMore = true
     this.curpage = 1
     this.totalnum = 0
-    this.loading = false
 
     this.singer = null
     this.results = []
@@ -60,14 +57,14 @@ export default class Searcher {
     return getSearch(this.keyword, this.curpage, this.singerInfo, this.curnum).then((response: any) => {
       if (response.code === 0) {
         response = response.data
-        this.hasMore = this.checkMore()
-
         if (this.curpage === 1) {
           this.singer = this.singerInfo
-            ? new Singer(response.zhida.singerid, response.zhida.singername)
+            ? new Singer(response.zhida.singermid, response.zhida.singername)
             : null
           this.totalnum = response.song.totalnum
         }
+
+        this.hasMore = this.checkMore()
 
         const songs: Array<Song> = []
         response.song.list.forEach((item: any) => {
@@ -77,7 +74,9 @@ export default class Searcher {
         })
 
         Song.getUrls(songs).then((songs: Array<Song>) => {
-          if (songs.length >= this.curnum) {
+          this.currentResult = Array.prototype.concat(this.currentResult, songs)
+
+          if (this.currentResult.length >= this.curnum) {
             return this.concatResults()
           } else {
             return this.searchMore()
@@ -90,12 +89,12 @@ export default class Searcher {
   }
 
   searchMore() {
-    this.loading = true
     if (this.hasMore) {
       this.curpage++
-      this.search().then(() => {
-        this.loading = false
-      })
+      return this.search()
+    } else {
+      this.concatResults()
+      return Promise.resolve()
     }
   }
 
@@ -107,5 +106,4 @@ export default class Searcher {
     this.results = Array.prototype.concat(this.results, this.currentResult)
     this.currentResult = []
   }
-
 }

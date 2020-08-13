@@ -15,7 +15,7 @@
         </div>
         <p class="content" v-text="getText(item)"></p>
       </li>
-      <loading :show="hasMore && loading"
+      <loading :show="showLoading"
                :text="''"></loading>
     </ul>
   </scroll>
@@ -25,13 +25,11 @@
   import {Component, Prop, Vue, Watch} from 'vue-property-decorator'
   import {Mutation} from 'vuex-class'
   import * as types from 'src/store/mutation-types'
-  import {getSearch} from 'src/api/getSearch'
-  import {createSong, isValidSong, Song, SongConfig} from 'src/assets/ts/Song'
   import Scroll from 'src/base/m-scroll/Scroll.vue'
   import Loading from 'base/m-loading/Loading.vue'
   import {Singer} from 'src/assets/ts/Singer'
-
-  const PER_PAGE = 20
+  import Searcher from 'src/assets/ts/Searcher'
+  import {Song} from 'src/assets/ts/Song'
 
   @Component({
     components: {
@@ -45,14 +43,20 @@
     @Mutation(types.SET_SINGER) setSinger: any
 
     @Watch('keyword')
-    whenKeywordChange() {
-      this.startNewSearch()
+    whenKeywordChange(newVal: string) {
+      newVal && this.startNewSearch()
     }
 
-    suggestion: Array<Singer | Song> = []
-    page = 1
-    hasMore = true
+    searcher: Searcher = new Searcher()
     loading = false
+
+    get suggestion(): Array<Singer | Song> {
+      return Array.prototype.concat(this.searcher.singer, this.searcher.results)
+    }
+
+    get showLoading() {
+      return this.keyword && this.loading
+    }
 
     selectSuggestion(item: Singer | Song): void {
       if (item instanceof Singer) {
@@ -63,83 +67,33 @@
       }
     }
 
-    search(zhida?: boolean, perpage?: number): Promise<Array<Song | Singer>> {
-      zhida = (typeof zhida !== 'undefined') ? zhida : true
-      perpage = perpage || PER_PAGE
-
-      return new Promise((resolve, reject) => {
-        getSearch(this.keyword, this.page, zhida!, perpage!).then((response: any) => {
-          const singer: Array<Singer> = []
-          const songs: Array<Song> = []
-
-          if (response.code === 0) {
-            response = response.data
-            this.hasMore = this.checkMore(response.song)
-
-            if (
-              response.zhida &&
-              response.zhida.singerid &&
-              this.page === 1
-            ) {
-              const {singermid, singername} = response.zhida
-              singer.push(new Singer(singermid, singername))
-            }
-
-            if (
-              response.song &&
-              response.song.list &&
-              response.song.list.length
-            ) {
-              response.song.list.forEach((item: any) => {
-                if (isValidSong(item)) {
-                  songs.push(createSong(item as SongConfig))
-                }
-              })
-            }
-
-            Song.getUrls(songs).then((songs: Array<Song>) => {
-              const suggestion: Array<Singer | Song> = Array.prototype.concat(singer, songs)
-              resolve(this.suggestion = this.page === 1
-                  ? suggestion
-                  : this.suggestion.concat(suggestion))
-            })
-          } else {
-            reject(new Error(`can not get search results by keyword ${this.keyword}`))
-          }
-        })
-      })
-    }
-
-    searchMore() {
-      if (this.hasMore) {
-        this.loading = true
-        this.page++
-        this.search().then(() => {
-          this.loading = false
-        })
-      }
-    }
-
-    checkMore(config: any) {
-      return (config.curpage + 1) * config.curnum < config.totalnum
-    }
-
     startNewSearch() {
-      this.page = 1
-      this.search().then(() => { console.log(this.suggestion) });
+      this.searcher = new Searcher({keyword: this.keyword})
+      this.searcher.search();
       (this.$refs.suggestScroll as any).scrollTo(0, 0)
     }
 
+    async searchMore() {
+      this.loading = true
+      this.searcher && this.searcher.searchMore().then(() => {
+        this.loading = false
+      })
+    }
+
     getIconCls(item: Singer | Song) {
-      return item instanceof Singer
-        ? 'icon-mine'
-        : 'icon-music'
+      if (item) {
+        return item instanceof Singer
+          ? 'icon-mine'
+          : 'icon-music'
+      }
     }
 
     getText(item: Singer | Song) {
-      return item instanceof Singer
-        ? item.name
-        : item.songname + '-' + item.singer
+      if (item) {
+        return item instanceof Singer
+          ? item.name
+          : item.songname + '-' + item.singer
+      }
     }
   }
 </script>
