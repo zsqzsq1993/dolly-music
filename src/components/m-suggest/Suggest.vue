@@ -4,13 +4,8 @@
           :data="suggestion"
           :pull-up="true"
           :pull-down="true"
-          @scrollToEnd="searchMore"
-          @scrollToTop="refreshSearch">
+          @scrollToEnd="searchMore">
     <ul class="suggest-list">
-      <loading :show="keyword"
-               :text="'刷新...'"
-               class="refreshing"
-               ref="refreshing"></loading>
       <li v-for="(item, idx) in suggestion"
           :key="idx"
           class="suggest-item">
@@ -19,7 +14,8 @@
         </div>
         <p class="content" v-text="getText(item)"></p>
       </li>
-      <loading :text="''" :show="hasMore"></loading>
+      <loading :show="hasMore && loading"
+               :text="''"></loading>
     </ul>
   </scroll>
 </template>
@@ -56,6 +52,7 @@
     suggestion: Array<any> = []
     page = 1
     hasMore = true
+    loading = false
 
     search(zhida?: boolean, perpage?: number) {
       zhida = (typeof zhida !== 'undefined')
@@ -64,7 +61,7 @@
 
       perpage = perpage || PER_PAGE
 
-      getSearch(this.keyword, this.page, zhida, perpage).then((response: any) => {
+      return getSearch(this.keyword, this.page, zhida, perpage).then((response: any) => {
         const suggestion: Array<Singer | Song> = []
         if (response.code === 0) {
           response = response.data
@@ -95,13 +92,12 @@
 
     searchMore() {
       if (this.hasMore) {
+        this.loading = true
         this.page++
-        this.search()
+        this.search().then(() => {
+          this.loading = false
+        })
       }
-    }
-
-    refreshSearch() {
-      this.startNewSearch()
     }
 
     checkMore(config: any) {
@@ -139,12 +135,6 @@
     .suggest-list
       padding 0 30px
       position relative
-
-      .refreshing
-        position absolute
-        top 0
-        left 50%
-        transform translate3d(-50%, -100%, 0)
 
       .suggest-item
         display flex
