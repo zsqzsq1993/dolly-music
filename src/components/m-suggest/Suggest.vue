@@ -64,10 +64,7 @@
     }
 
     search(zhida?: boolean, perpage?: number): Promise<Array<Song | Singer>> {
-      zhida = (typeof zhida !== 'undefined')
-        ? zhida
-        : true
-
+      zhida = (typeof zhida !== 'undefined') ? zhida : true
       perpage = perpage || PER_PAGE
 
       return new Promise((resolve, reject) => {
