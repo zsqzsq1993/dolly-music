@@ -15,6 +15,8 @@
     @Prop({default: true}) readonly click!: boolean
     @Prop({default: false}) readonly listenScroll!: boolean
     @Prop({default: true}) readonly momentum!: boolean
+    @Prop({default: false}) readonly pullUp!: boolean
+    @Prop({default: false}) readonly pullDown!: boolean
 
     @Watch('data')
     whenDataChange() {
@@ -46,6 +48,22 @@
 
       if (this.listenScroll) {
         this._listenScroll()
+      }
+
+      if (this.pullUp) {
+        this.scroll.on('scrollEnd', () => {
+          if (this.scroll!.y <= this.scroll!.maxScrollY + 50) {
+            this.$emit('scrollToEnd')
+          }
+        })
+      }
+
+      if (this.pullDown) {
+        this.scroll.on('scrollEnd', () => {
+          if (this.scroll!.y >= this.scroll!.maxScrollY - 50) {
+            this.$emit('scrollToTop')
+          }
+        })
       }
     }
 

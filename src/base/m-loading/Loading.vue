@@ -5,7 +5,7 @@
       alt="loading image"
       width="32"
       height="32">
-    <div class="desc">{{text}}...</div>
+    <div class="desc">{{text}}</div>
   </div>
 </template>
 
@@ -14,7 +14,7 @@
 
   @Component
   export default class extends Vue {
-    @Prop({default: 'Loading'}) readonly text!: string
+    @Prop({default: 'Loading...'}) readonly text!: string
     @Prop({default: true}) readonly show!: boolean
   }
 </script>

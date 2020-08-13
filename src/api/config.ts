@@ -186,7 +186,5 @@ export const getSearchData = {
   ie: 'utf-8',
   sem: 1,
   aggr: 0,
-  perpage: 20,
-  n: 20,
   remoteplace: 'txt.mqq.all'
 }

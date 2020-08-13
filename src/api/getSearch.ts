@@ -15,7 +15,7 @@ export function getHotSearch() {
   })
 }
 
-export function getSearch(keyword: string, page: number, zhida: boolean) {
+export function getSearch(keyword: string, page: number, zhida: boolean, perpage: number) {
   const url = devMode
     ? '/api/getSearch'
     : ''
@@ -23,7 +23,9 @@ export function getSearch(keyword: string, page: number, zhida: boolean) {
   const data = Object.assign({}, getSearchData, {
     w: keyword,
     p: page,
-    catZhida: zhida ? 1 : 0
+    catZhida: zhida ? 1 : 0,
+    perpage,
+    n: perpage
   })
 
   return dollyAxios.get(url, {
