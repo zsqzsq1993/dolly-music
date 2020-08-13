@@ -42,6 +42,9 @@ export class Song {
         song.url = map[song.songmid]
         return song.url
       })
+    }).catch(e => {
+      console.warn(e)
+      return []
     })
   }
 

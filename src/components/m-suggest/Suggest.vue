@@ -70,30 +70,46 @@
 
       perpage = perpage || PER_PAGE
 
-      return getSearch(this.keyword, this.page, zhida, perpage).then((response: any) => {
-        const suggestion: Array<Singer | Song> = []
-        if (response.code === 0) {
-          response = response.data
-          if (response.zhida && response.zhida.singerid && this.page === 1) {
-            suggestion.push(new Singer(response.zhida.singermid, response.zhida.singername))
-          }
+      return new Promise((resolve, reject) => {
+        getSearch(this.keyword, this.page, zhida!, perpage!).then((response: any) => {
+          const singer: Array<Singer> = []
+          const songs: Array<Song> = []
 
-          if (response.song && response.song.list && response.song.list.length) {
-            response.song.list.forEach((item: any) => {
-              if (isValidSong(item)) {
-                suggestion.push(createSong(item as SongConfig))
-              }
+          if (response.code === 0) {
+            response = response.data
+            this.hasMore = this.checkMore(response.song)
+
+            if (
+              response.zhida &&
+              response.zhida.singerid &&
+              this.page === 1
+            ) {
+              const {singermid, singername} = response.zhida
+              singer.push(new Singer(singermid, singername))
+            }
+
+            if (
+              response.song &&
+              response.song.list &&
+              response.song.list.length
+            ) {
+              response.song.list.forEach((item: any) => {
+                if (isValidSong(item)) {
+                  songs.push(createSong(item as SongConfig))
+                }
+              })
+            }
+
+            Song.getUrls(songs).then((songs: Array<Song>) => {
+              const suggestion: Array<Singer | Song> = Array.prototype.concat(singer, songs)
+              resolve(this.suggestion = this.page === 1
+                  ? suggestion
+                  : this.suggestion.concat(suggestion))
             })
+          } else {
+            reject(new Error(`can not get search results by keyword ${this.keyword}`))
           }
-
-          this.hasMore = this.checkMore(response.song)
-
-          return this.suggestion = this.page === 1
-            ? suggestion
-            : this.suggestion.concat(suggestion)
-        } else {
-          throw new Error(`can not get search results by keyword ${this.keyword}`)
-        }
+        })
       })
     }
 
