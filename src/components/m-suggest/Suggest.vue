@@ -7,6 +7,10 @@
           @scrollToEnd="searchMore"
           @scrollToTop="refreshSearch">
     <ul class="suggest-list">
+      <loading :show="keyword"
+               :text="'刷新...'"
+               class="refreshing"
+               ref="refreshing"></loading>
       <li v-for="(item, idx) in suggestion"
           :key="idx"
           class="suggest-item">
@@ -45,32 +49,26 @@
     @Prop({default: ''}) keyword!: string
 
     @Watch('keyword')
-    startNewSearch(newVal: string) {
-      this.page = 1
-
-      this.search(newVal, this.page);
-
-      (this.$refs.suggestScroll as any).scrollTo(0, 0)
+    whenKeywordChange() {
+      this.startNewSearch()
     }
 
     suggestion: Array<any> = []
     page = 1
     hasMore = true
 
-    search(keyword: string, page?: number, zhida?: boolean, perpage?: number) {
-      page = page || 1
-
+    search(zhida?: boolean, perpage?: number) {
       zhida = (typeof zhida !== 'undefined')
         ? zhida
         : true
 
       perpage = perpage || PER_PAGE
 
-      getSearch(keyword, page, zhida, perpage).then((response: any) => {
+      getSearch(this.keyword, this.page, zhida, perpage).then((response: any) => {
         const suggestion: Array<Singer | Song> = []
         if (response.code === 0) {
           response = response.data
-          if (response.zhida && response.zhida.singerid && page === 1) {
+          if (response.zhida && response.zhida.singerid && this.page === 1) {
             suggestion.push({...response.zhida, ...{type: TYPE_SINGER}} as Singer)
           }
 
@@ -86,7 +84,7 @@
 
           this.hasMore = this.checkMore(response.song)
 
-          this.suggestion = page === 1
+          this.suggestion = this.page === 1
             ? suggestion
             : this.suggestion.concat(suggestion)
         } else {
@@ -98,16 +96,22 @@
     searchMore() {
       if (this.hasMore) {
         this.page++
-        this.search(this.keyword, this.page)
+        this.search()
       }
+    }
+
+    refreshSearch() {
+      this.startNewSearch()
     }
 
     checkMore(config: any) {
       return (config.curpage + 1) * config.curnum < config.totalnum
     }
 
-    refreshSearch() {
-      //
+    startNewSearch() {
+      this.page = 1
+      this.search();
+      (this.$refs.suggestScroll as any).scrollTo(0, 0)
     }
 
     getIconCls(item: Singer | Song) {
@@ -134,23 +138,30 @@
 
     .suggest-list
       padding 0 30px
+      position relative
 
-    .suggest-item
-      display flex
-      padding-bottom 20px
+      .refreshing
+        position absolute
+        top 0
+        left 50%
+        transform translate3d(-50%, -100%, 0)
 
-      .icon-wrapper
-        flex 0 0 30px
-        width 30px
+      .suggest-item
+        display flex
+        padding-bottom 20px
 
-        [class^="icon-"]
-          font-size 14px
+        .icon-wrapper
+          flex 0 0 30px
+          width 30px
+
+          [class^="icon-"]
+            font-size 14px
+            color $color-text-d
+
+        .content
+          flex 1
+          font-size $font-size-median
           color $color-text-d
-
-      .content
-        flex 1
-        font-size $font-size-median
-        color $color-text-d
-        no-wrap()
+          no-wrap()
 
 </style>
