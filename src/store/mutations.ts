@@ -1,9 +1,9 @@
 import * as types from './mutation-types'
-import { SingerInstance } from 'src/assets/ts/Singer'
+import { Singer } from 'src/assets/ts/Singer'
 import {Song} from 'src/assets/ts/Song'
 
 const mutations = {
-  [types.SET_SINGER] (state: any, singer: SingerInstance) {
+  [types.SET_SINGER] (state: any, singer: Singer) {
     state.singer = singer
   },
 

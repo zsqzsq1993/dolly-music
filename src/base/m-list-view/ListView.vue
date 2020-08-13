@@ -53,7 +53,7 @@
 
 <script lang="ts">
   import {Prop, Component, Vue, Watch} from 'vue-property-decorator'
-  import {SingerInstance} from 'src/assets/ts/Singer'
+  import {Singer} from 'src/assets/ts/Singer'
   import Scroll from 'base/m-scroll/Scroll.vue'
   import Loading from 'base/m-loading/Loading.vue'
   import {getData} from 'src/assets/ts/dom'
@@ -63,7 +63,7 @@
 
   interface Data {
     title: string;
-    items: Array<SingerInstance>;
+    items: Array<Singer>;
   }
 
   @Component({
@@ -143,7 +143,7 @@
       }
     }
 
-    selectItem(singer: SingerInstance) {
+    selectItem(singer: Singer) {
       this.$emit('select', singer)
     }
 

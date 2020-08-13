@@ -1,10 +1,4 @@
-export interface SingerInstance {
-  id: string;
-  name: string;
-  avatar: string;
-}
-
-export class Singer implements SingerInstance {
+export class Singer {
   id: string
   name: string
   avatar: string

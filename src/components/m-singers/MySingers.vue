@@ -8,7 +8,7 @@
 <script lang="ts">
   import {getSingerList} from 'src/api/getSingers'
   import {Component, Mixins} from 'vue-property-decorator'
-  import {Singer, SingerInstance} from 'src/assets/ts/Singer'
+  import {Singer} from 'src/assets/ts/Singer'
   import ListView from 'base/m-list-view/ListView.vue'
   import {Mutation, Getter} from 'vuex-class'
   import * as types from 'src/store/mutation-types'
@@ -56,7 +56,7 @@
       scroll.refresh()
     }
 
-    selectSinger(singer: SingerInstance) {
+    selectSinger(singer: Singer) {
       this.setSinger(singer)
       this.$router.push({
         path: `/singers/${singer.id}`

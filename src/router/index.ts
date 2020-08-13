@@ -33,7 +33,11 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: '/search',
-    component: () => import('components/m-search/MySearch.vue')
+    component: () => import('components/m-search/MySearch.vue'),
+    children: [{
+      path: ':id',
+      component: () => import('components/m-singer-detail/SingerDetail.vue')
+    }]
   },
   {
     path: '/singers',

@@ -15,6 +15,7 @@
     <div class="suggest-wrapper" v-show="query">
       <suggest ref="suggest" :keyword="query"></suggest>
     </div>
+    <router-view></router-view>
   </div>
 </template>
 

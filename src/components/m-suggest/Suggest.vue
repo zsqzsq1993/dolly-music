@@ -8,7 +8,8 @@
     <ul class="suggest-list">
       <li v-for="(item, idx) in suggestion"
           :key="idx"
-          class="suggest-item">
+          class="suggest-item"
+          @click="selectSuggestion(item)">
         <div class="icon-wrapper">
           <i :class="getIconCls(item)"></i>
         </div>
@@ -22,18 +23,15 @@
 
 <script lang="ts">
   import {Component, Prop, Vue, Watch} from 'vue-property-decorator'
+  import {Mutation} from 'vuex-class'
+  import * as types from 'src/store/mutation-types'
   import {getSearch} from 'src/api/getSearch'
   import {createSong, isValidSong, Song, SongConfig} from 'src/assets/ts/Song'
   import Scroll from 'src/base/m-scroll/Scroll.vue'
   import Loading from 'base/m-loading/Loading.vue'
+  import {Singer} from 'src/assets/ts/Singer'
 
-  const TYPE_SINGER = 'singer'
   const PER_PAGE = 20
-
-  interface Singer {
-    type: string;
-    singername: string;
-  }
 
   @Component({
     components: {
@@ -44,17 +42,28 @@
   export default class extends Vue {
     @Prop({default: ''}) keyword!: string
 
+    @Mutation(types.SET_SINGER) setSinger: any
+
     @Watch('keyword')
     whenKeywordChange() {
       this.startNewSearch()
     }
 
-    suggestion: Array<any> = []
+    suggestion: Array<Singer | Song> = []
     page = 1
     hasMore = true
     loading = false
 
-    search(zhida?: boolean, perpage?: number) {
+    selectSuggestion(item: Singer | Song): void {
+      if (item instanceof Singer) {
+        this.setSinger(item)
+        this.$router.push(`/search/${item.id}`)
+      } else {
+        //
+      }
+    }
+
+    search(zhida?: boolean, perpage?: number): Promise<Array<Song | Singer>> {
       zhida = (typeof zhida !== 'undefined')
         ? zhida
         : true
@@ -66,7 +75,7 @@
         if (response.code === 0) {
           response = response.data
           if (response.zhida && response.zhida.singerid && this.page === 1) {
-            suggestion.push({...response.zhida, ...{type: TYPE_SINGER}} as Singer)
+            suggestion.push(new Singer(response.zhida.singermid, response.zhida.singername))
           }
 
           if (response.song && response.song.list && response.song.list.length) {
@@ -77,11 +86,9 @@
             })
           }
 
-          console.log(response)
-
           this.hasMore = this.checkMore(response.song)
 
-          this.suggestion = this.page === 1
+          return this.suggestion = this.page === 1
             ? suggestion
             : this.suggestion.concat(suggestion)
         } else {
@@ -106,20 +113,20 @@
 
     startNewSearch() {
       this.page = 1
-      this.search();
+      this.search().then(() => { console.log(this.suggestion) });
       (this.$refs.suggestScroll as any).scrollTo(0, 0)
     }
 
     getIconCls(item: Singer | Song) {
-      return (item as Singer).type === TYPE_SINGER
+      return item instanceof Singer
         ? 'icon-mine'
         : 'icon-music'
     }
 
     getText(item: Singer | Song) {
-      return (item as Singer).type === TYPE_SINGER
-        ? (item as Singer).singername
-        : (item as Song).songname + '-' + (item as Song).singer
+      return item instanceof Singer
+        ? item.name
+        : item.songname + '-' + item.singer
     }
   }
 </script>

@@ -15,7 +15,7 @@
   import {Song, createSong, SongConfig, isValidSong} from 'src/assets/ts/Song'
   import {getSongUrl} from 'src/api/getSongs'
   import MusicList from 'components/m-music-list/MusicList.vue'
-  import {SingerInstance} from 'src/assets/ts/Singer'
+  import {Singer} from 'src/assets/ts/Singer'
   import SlideTransition from 'base/m-transition/SlideTransition.vue'
 
   @Component({
@@ -25,7 +25,7 @@
     }
   })
   export default class extends Vue {
-    @Getter('singer') singer!: SingerInstance
+    @Getter('singer') singer!: Singer
 
     songs: Array<Song | undefined> = []
 
