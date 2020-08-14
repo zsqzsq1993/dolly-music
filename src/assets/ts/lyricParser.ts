@@ -110,7 +110,7 @@ const lyricParser: any = function () {
 
   function goLoop() {
     cancelAnimationFrame(id)
-    requestAnimationFrame(step)
+    id = requestAnimationFrame(step)
   }
 
   function hanleSkipTime(currentTime: number) {
