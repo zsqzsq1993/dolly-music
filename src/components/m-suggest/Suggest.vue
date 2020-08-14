@@ -18,6 +18,12 @@
       <loading :show="showLoading"
                :text="''"></loading>
     </ul>
+    <div class="no-results-wrapper" v-show="showNoResult">
+      <div class="image-wrapper">
+        <img src="./pizza.png" alt="暂未搜索到结果">
+      </div>
+      <div class="text-wrapper" v-text="'暂未搜索到结果'"></div>
+    </div>
   </scroll>
 </template>
 
@@ -58,6 +64,13 @@
 
     get showLoading() {
       return this.keyword && this.loading
+    }
+
+    get showNoResult() {
+      return this.searcher &&
+        !this.searcher.hasMore &&
+        !this.searcher.results.length &&
+        !this.searcher.singer.length
     }
 
     selectSuggestion(item: Singer | Song): void {
@@ -129,5 +142,20 @@
           font-size $font-size-median
           color $color-text-d
           no-wrap()
+
+    .no-results-wrapper
+      display flex
+      flex-direction column
+      justify-content center
+      align-items center
+      width 100%
+      height 100%
+      .image-wrapper
+        img
+          width 86px
+          height 90px
+      .text-wrapper
+        font-size: $font-size-medium
+        color: $color-text-d
 
 </style>
