@@ -16,6 +16,7 @@
       <suggest ref="suggest" :keyword="query"></suggest>
     </div>
     <router-view></router-view>
+    <my-player></my-player>
   </div>
 </template>
 
@@ -24,6 +25,7 @@
   import {getHotSearch} from 'src/api/getSearch'
   import SearchBox from 'base/m-search-box/SearchBox.vue'
   import Suggest from 'components/m-suggest/Suggest.vue'
+  import MyPlayer from 'components/m-player/MyPlayer.vue'
 
   interface HotKey {
     k: string;
@@ -33,7 +35,8 @@
   @Component({
     components: {
       SearchBox,
-      Suggest
+      Suggest,
+      MyPlayer
     }
   })
   export default class extends Vue {

@@ -10,7 +10,7 @@ const state = {
   playMode: playmode.sequence,
   playing: false,
   fullScreen: false,
-  currentIndex: -1,
+  currentIndex: 0,
   diss: {},
   toplist: {}
 }

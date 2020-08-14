@@ -32,7 +32,7 @@ export class Song {
     this.interval = config.interval
     this.url = '' // placeholder
     this.image =
-      `https://y.gtimg.cn/music/photo_new/T002R300x300M000${config.albummid}_${config.belongCD}.jpg`
+      `https://y.gtimg.cn/music/photo_new/T002R300x300M000${config.albummid}.jpg?max_age=2592000`
     this.lyric = ''
   }
 

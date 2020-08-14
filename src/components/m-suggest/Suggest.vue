@@ -23,7 +23,7 @@
 
 <script lang="ts">
   import {Component, Prop, Vue, Watch} from 'vue-property-decorator'
-  import {Mutation} from 'vuex-class'
+  import {Mutation, Action} from 'vuex-class'
   import * as types from 'src/store/mutation-types'
   import Scroll from 'src/base/m-scroll/Scroll.vue'
   import Loading from 'base/m-loading/Loading.vue'
@@ -41,6 +41,8 @@
     @Prop({default: ''}) keyword!: string
 
     @Mutation(types.SET_SINGER) setSinger: any
+
+    @Action('insertSong') insertSong: any
 
     @Watch('keyword')
     whenKeywordChange(newVal: string) {
@@ -63,7 +65,7 @@
         this.setSinger(item)
         this.$router.push(`/search/${item.id}`)
       } else {
-        //
+        this.insertSong({newSong: item})
       }
     }
 
