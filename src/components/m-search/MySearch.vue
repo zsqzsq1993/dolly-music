@@ -1,7 +1,7 @@
 <template>
   <div class="m-search">
     <div class="search-box-wrapper">
-      <search-box @query="handleQuery"></search-box>
+      <search-box @query="handleQuery" ref="searchBox"></search-box>
     </div>
     <div class="hots-wrapper" v-show="!query">
       <h1 class="hots-title">热门搜索</h1>
@@ -9,7 +9,8 @@
         <li v-for="hot in hots"
             :key="hot.n"
             v-text="hot.k"
-            class="hot-itme"></li>
+            class="hot-itme"
+            @click="fillSearchBox(hot.k)"></li>
       </ul>
     </div>
     <div class="suggest-wrapper" v-show="query">
@@ -49,7 +50,6 @@
     getHots(): Promise<Array<HotKey>> {
       return getHotSearch().then((response: any) => {
         if (response.code === 0) {
-          console.log(response)
           return response.data.hotkey
         } else {
           throw new Error('can not get hot search data.')
@@ -59,6 +59,10 @@
 
     handleQuery(query: string) {
       this.query = query
+    }
+
+    fillSearchBox(query: string) {
+      (this.$refs.searchBox as any).fillContent(query)
     }
   }
 </script>

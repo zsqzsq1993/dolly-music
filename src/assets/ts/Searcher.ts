@@ -1,6 +1,7 @@
 import {Singer} from 'src/assets/ts/Singer'
 import {createSong, isValidSong, Song, SongConfig} from 'src/assets/ts/Song'
 import {getSearch} from 'src/api/getSearch'
+import {throttle} from 'src/assets/ts/util'
 
 const DEFAULT_CURNUM = 20
 
@@ -24,7 +25,7 @@ export default class Searcher {
   totalnum: number;
 
   // 歌手信息
-  singer: Singer | null;
+  singer: Array<Singer>;
 
   // 总搜索结果
   results: Array<Song>;
@@ -48,19 +49,20 @@ export default class Searcher {
     this.curpage = 1
     this.totalnum = 0
 
-    this.singer = null
+    this.singer = []
     this.results = []
     this.currentResult = []
   }
 
   search(): Promise<any> {
-    return getSearch(this.keyword, this.curpage, this.singerInfo, this.curnum).then((response: any) => {
+    const throttleGetSearch = throttle(getSearch, 300)
+    return throttleGetSearch(this.keyword, this.curpage, this.singerInfo, this.curnum).then((response: any) => {
       if (response.code === 0) {
         response = response.data
         if (this.curpage === 1) {
-          this.singer = this.singerInfo
-            ? new Singer(response.zhida.singermid, response.zhida.singername)
-            : null
+          this.singer = this.singerInfo && response.zhida.singermid && response.zhida.singername
+            ? [new Singer(response.zhida.singermid, response.zhida.singername)]
+            : []
           this.totalnum = response.song.totalnum
         }
 

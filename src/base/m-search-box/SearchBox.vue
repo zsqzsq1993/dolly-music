@@ -26,6 +26,10 @@
     clearContent() {
       this.content = ''
     }
+
+    fillContent(content: string) {
+      this.content = content
+    }
   }
 </script>
 
