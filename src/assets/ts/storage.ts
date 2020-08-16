@@ -58,14 +58,18 @@ const api: StorageApi = {
   },
 
   deserialize(val: string): any {
-    return JSON.parse(val) || undefined
+    try {
+      return JSON.parse(val)
+    } catch (e) {
+      return val || undefined
+    }
   },
 
   remove(this: Storage, key: string) {
     if (this.disable) {
       return
     }
-    this.storage.remove(key)
+    this.storage.removeItem(key)
   },
 
   clear(this: Storage) {
@@ -75,7 +79,7 @@ const api: StorageApi = {
     this.storage.clear()
   },
 
-  disable: false,
+  disable: false
 }
 
 const storage = Object.assign({} as Storage, $storage, api)
@@ -97,7 +101,3 @@ storage.disable = (function () {
 })()
 
 export default storage
-
-
-
-

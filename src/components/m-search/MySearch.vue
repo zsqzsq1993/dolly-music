@@ -14,7 +14,14 @@
       </ul>
     </div>
     <div class="suggest-wrapper" v-show="query">
-      <suggest ref="suggest" :keyword="query"></suggest>
+      <suggest ref="suggest" :keyword="query" @select-item="addOneHistory"></suggest>
+    </div>
+    <div class="search-list-wrapper">
+      <search-list :list="searchHistory"
+                   v-show="showSearchHistory"
+                   @clear-all="clearHistory"
+                   @select-one="fillSearchBox"
+                   @remove-one="removeOneHistory"></search-list>
     </div>
     <router-view></router-view>
   </div>
@@ -22,9 +29,11 @@
 
 <script lang="ts">
   import {Vue, Component} from 'vue-property-decorator'
+  import {Action, Getter} from 'vuex-class'
   import {getHotSearch} from 'src/api/getSearch'
   import SearchBox from 'base/m-search-box/SearchBox.vue'
   import Suggest from 'components/m-suggest/Suggest.vue'
+  import SearchList from 'src/base/m-search-list/SearchList.vue'
 
   interface HotKey {
     k: string;
@@ -34,12 +43,23 @@
   @Component({
     components: {
       SearchBox,
-      Suggest
+      Suggest,
+      SearchList
     }
   })
   export default class extends Vue {
+    @Action('addOneHistory') addOneHistory: any
+    @Action('removeOneHistory') removeOneHistory: any
+    @Action('clearHistory') clearHistory: any
+
+    @Getter('searchHistory') readonly searchHistory!: Array<string>
+
     hots: Array<HotKey> = []
     query = ''
+
+    get showSearchHistory() {
+      return this.searchHistory.length && !this.query
+    }
 
     created() {
       this.getHots().then((response: Array<HotKey>) => {

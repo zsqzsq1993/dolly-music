@@ -68,7 +68,6 @@ const actions: ActionTree<any, any> = {
     insertSongHelper(sequenceList, CurrentSequenceIndex, existSequenceIndex, newSong)
 
     // Commit
-    console.log(playList)
     if (currentIndex > -1) {
       commit(types.SET_PLAY_LIST, playList)
       commit(types.SET_SEQUENCE_LIST, sequenceList)
@@ -78,19 +77,19 @@ const actions: ActionTree<any, any> = {
     commit(types.SET_FULL_SCREEN, true)
   },
 
-  addOneHistory({commit, state}, {oneHistory}) {
-    let historylist = state.historyList.slice()
+  addOneHistory({commit, state}, oneHistory) {
+    let historylist = state.searchHistory.slice()
     historylist = addOne(historylist, oneHistory)
     commit(types.SET_SEARCH_HISTORY, historylist)
   },
 
-  removeOneHistory({commit, state}, {oneHistory}) {
-    let historylist = state.historyList.slice()
+  removeOneHistory({commit, state}, oneHistory) {
+    let historylist = state.searchHistory.slice()
     historylist = removeOne(historylist, oneHistory)
     commit(types.SET_SEARCH_HISTORY, historylist)
   },
 
-  clearHistory({commit, state}) {
+  clearHistory({commit}) {
     clearAll()
     commit(types.SET_SEARCH_HISTORY, [])
   }

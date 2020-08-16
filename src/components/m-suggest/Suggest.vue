@@ -80,6 +80,7 @@
       } else {
         this.insertSong({newSong: item})
       }
+      this.$emit('select-item', this.keyword)
     }
 
     startNewSearch() {
