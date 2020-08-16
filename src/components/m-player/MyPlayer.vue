@@ -230,6 +230,7 @@
       }).catch(() => {
         this.lyricParser = null
         this.lyrics = []
+        this._setCurrentLyric(this.currentIndex)
       })
     }
 
@@ -631,7 +632,11 @@
     }
 
     _setCurrentLyric(index: number) {
-      this.currentLyric = this.lyrics && (this.lyrics as any)[index].text
+      try {
+        this.currentLyric = (this.lyrics as any)[index].text
+      } catch (e) {
+        this.currentLyric = '抱歉，未检索到歌词'
+      }
     }
 
     _playCallback(index: number) {
