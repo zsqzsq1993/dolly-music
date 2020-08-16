@@ -29,14 +29,15 @@
 </template>
 
 <script lang="ts">
-  import {Component, Prop, Vue, Watch} from 'vue-property-decorator'
-  import {Mutation, Action} from 'vuex-class'
+  import {Component, Prop, Mixins, Watch} from 'vue-property-decorator'
+  import {Mutation, Action, Getter} from 'vuex-class'
   import * as types from 'src/store/mutation-types'
   import Scroll from 'src/base/m-scroll/Scroll.vue'
   import Loading from 'base/m-loading/Loading.vue'
   import {Singer} from 'src/assets/ts/Singer'
   import Searcher from 'src/assets/ts/Searcher'
   import {Song} from 'src/assets/ts/Song'
+  import {playListMixin} from 'src/assets/ts/mixins'
 
   @Component({
     components: {
@@ -44,12 +45,14 @@
       Loading
     }
   })
-  export default class extends Vue {
+  export default class extends Mixins(playListMixin) {
     @Prop({default: ''}) keyword!: string
 
     @Mutation(types.SET_SINGER) setSinger: any
 
     @Action('insertSong') insertSong: any
+
+    @Getter('playList') readonly playList!: Array<Song>
 
     @Watch('keyword')
     whenKeywordChange(newVal: string) {
@@ -94,7 +97,7 @@
       (this.$refs.suggestScroll as any).scrollTo(0, 0)
     }
 
-    async searchMore() {
+    searchMore() {
       this.loading = true
       this.searcher && this.searcher.searchMore().then(() => {
         this.loading = false
@@ -116,6 +119,12 @@
           : item.songname + '-' + item.singer
       }
     }
+
+    handlePlayList() {
+      const bottom = this.playList.length ? 60 : 0;
+      (this.$refs.suggestScroll as any).$el.style.bottom = bottom + 'px';
+      (this.$refs.suggestScroll as any).refresh()
+    }
   }
 </script>
 
@@ -124,9 +133,11 @@
   @import '~assets/stylus/mixin.styl'
 
   .m-suggest
+    position fixed
+    top 178px
+    bottom 0
     width 100%
-    height 100%
-    position relative
+    overflow hidden
 
     .first-loading
       position absolute

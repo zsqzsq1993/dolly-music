@@ -3,26 +3,31 @@
     <div class="search-box-wrapper">
       <search-box @query="handleQuery" ref="searchBox"></search-box>
     </div>
-    <div class="hots-wrapper" v-show="!query">
-      <h1 class="hots-title">热门搜索</h1>
-      <ul class="hots-content">
-        <li v-for="hot in hots"
-            :key="hot.n"
-            v-text="hot.k"
-            class="hot-itme"
-            @click="fillSearchBox(hot.k)"></li>
-      </ul>
-    </div>
-    <div class="suggest-wrapper" v-show="query">
-      <suggest ref="suggest" :keyword="query" @select-item="addOneHistory"></suggest>
-    </div>
-    <div class="search-list-wrapper">
-      <search-list :list="searchHistory"
-                   v-show="showSearchHistory"
-                   @clear-all="showConfirm"
-                   @select-one="fillSearchBox"
-                   @remove-one="removeOneHistory"></search-list>
-    </div>
+    <scroll :data="scrollData" class="search-scroll" ref="scroll">
+      <div>
+        <div class="hots-wrapper" v-show="!query">
+          <h1 class="hots-title">热门搜索</h1>
+          <ul class="hots-content">
+            <li v-for="hot in hots"
+                :key="hot.n"
+                v-text="hot.k"
+                class="hot-itme"
+                @click="fillSearchBox(hot.k)"></li>
+          </ul>
+        </div>
+        <div class="search-list-wrapper">
+          <search-list :list="searchHistory"
+                       v-show="showSearchHistory"
+                       @clear-all="showConfirm"
+                       @select-one="fillSearchBox"
+                       @remove-one="removeOneHistory"></search-list>
+        </div>
+      </div>
+    </scroll>
+    <suggest v-show="query"
+             ref="suggest"
+             :keyword="query"
+             @select-item="addOneHistory"></suggest>
     <div class="confirm-wrapper">
       <confirm @click-left="cancel"
                @click-right="confirm"
@@ -33,13 +38,16 @@
 </template>
 
 <script lang="ts">
-  import {Vue, Component} from 'vue-property-decorator'
+  import {Component, Mixins} from 'vue-property-decorator'
   import {Action, Getter} from 'vuex-class'
   import {getHotSearch} from 'src/api/getSearch'
   import SearchBox from 'base/m-search-box/SearchBox.vue'
   import Suggest from 'components/m-suggest/Suggest.vue'
   import SearchList from 'base/m-search-list/SearchList.vue'
   import Confirm from 'base/m-confirm/Confirm.vue'
+  import Scroll from 'base/m-scroll/Scroll.vue'
+  import {playListMixin} from 'src/assets/ts/mixins'
+  import {Song} from 'src/assets/ts/Song'
 
   interface HotKey {
     k: string;
@@ -51,15 +59,17 @@
       SearchBox,
       Suggest,
       SearchList,
-      Confirm
+      Confirm,
+      Scroll
     }
   })
-  export default class extends Vue {
+  export default class extends Mixins(playListMixin) {
     @Action('addOneHistory') addOneHistory: any
     @Action('removeOneHistory') removeOneHistory: any
     @Action('clearHistory') clearHistory: any
 
     @Getter('searchHistory') readonly searchHistory!: Array<string>
+    @Getter('playList') readonly playList!: Array<Song>
 
     hots: Array<HotKey> = []
     query = ''
@@ -68,10 +78,20 @@
       return this.searchHistory.length && !this.query
     }
 
+    get scrollData() {
+      return Array.prototype.concat(this.searchHistory, this.hots)
+    }
+
     created() {
       this.getHots().then((response: Array<HotKey>) => {
         this.hots = response.slice(0, 30)
       })
+    }
+
+    handlePlayList() {
+      const bottom = this.playList.length ? 60 : 0;
+     (this.$refs.scroll as any).$el.style.bottom = bottom + 'px';
+      (this.$refs.scroll as any).refresh()
     }
 
     getHots(): Promise<Array<HotKey>> {
@@ -86,6 +106,12 @@
 
     handleQuery(query: string) {
       this.query = query
+
+      if (!query) {
+        setTimeout(() => {
+          (this.$refs.scroll as any).refresh()
+        }, 20)
+      }
     }
 
     fillSearchBox(query: string) {
@@ -113,25 +139,26 @@
   .m-search
     .search-box-wrapper
       margin 20px
-    .hots-wrapper
-      margin 0 20px 20px
-      .hots-title
-        margin-bottom 20px
-        color $color-text-l
-        font-size $font-size-median
-      .hots-content
-        .hot-itme
-          display inline-block
-          padding 5px 10px
-          margin 0 20px 10px 0
-          border-radius 6px
-          background-color $color-highlight-background
-          color $color-text-d
-          font-size $font-size-median
-    .suggest-wrapper
+    .search-scroll
       position fixed
       top 178px
+      right 0
       bottom 0
-      width 100%
+      left 0
       overflow hidden
+      .hots-wrapper
+        margin 0 20px 20px
+        .hots-title
+          margin-bottom 20px
+          color $color-text-l
+          font-size $font-size-median
+        .hots-content
+          .hot-itme
+            display inline-block
+            padding 5px 10px
+            margin 0 20px 10px 0
+            border-radius 6px
+            background-color $color-highlight-background
+            color $color-text-d
+            font-size $font-size-median
 </style>

@@ -650,6 +650,7 @@
 <style lang="stylus">
   @import '~assets/stylus/variable.styl'
   @import '~assets/stylus/mixin.styl'
+
   @keyframes rotate
     0%
       transform rotate(0)
@@ -896,6 +897,7 @@
         flex-direction column
         justify-content center
         line-height 20px
+        overflow hidden
 
         .song-name
           margin-bottom 2px
