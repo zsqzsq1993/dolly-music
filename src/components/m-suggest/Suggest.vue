@@ -5,6 +5,7 @@
           :pull-up="true"
           :pull-down="true"
           @scrollToEnd="searchMore">
+    <loading class="first-loading" :show="showFirstLoading"></loading>
     <ul class="suggest-list">
       <li v-for="(item, idx) in suggestion"
           :key="idx"
@@ -60,6 +61,10 @@
 
     get suggestion(): Array<Singer | Song> {
       return Array.prototype.concat(this.searcher.singer, this.searcher.results)
+    }
+
+    get showFirstLoading() {
+      return this.keyword && this.searcher && !this.searcher.results.length
     }
 
     get showLoading() {
@@ -121,6 +126,13 @@
   .m-suggest
     width 100%
     height 100%
+    position relative
+
+    .first-loading
+      position absolute
+      top 50%
+      left 50%
+      transform translate3d(-50%, -50%, 0)
 
     .suggest-list
       padding 0 30px

@@ -19,9 +19,14 @@
     <div class="search-list-wrapper">
       <search-list :list="searchHistory"
                    v-show="showSearchHistory"
-                   @clear-all="clearHistory"
+                   @clear-all="showConfirm"
                    @select-one="fillSearchBox"
                    @remove-one="removeOneHistory"></search-list>
+    </div>
+    <div class="confirm-wrapper">
+      <confirm @click-left="cancel"
+               @click-right="confirm"
+               ref="confirm"></confirm>
     </div>
     <router-view></router-view>
   </div>
@@ -33,7 +38,8 @@
   import {getHotSearch} from 'src/api/getSearch'
   import SearchBox from 'base/m-search-box/SearchBox.vue'
   import Suggest from 'components/m-suggest/Suggest.vue'
-  import SearchList from 'src/base/m-search-list/SearchList.vue'
+  import SearchList from 'base/m-search-list/SearchList.vue'
+  import Confirm from 'base/m-confirm/Confirm.vue'
 
   interface HotKey {
     k: string;
@@ -44,7 +50,8 @@
     components: {
       SearchBox,
       Suggest,
-      SearchList
+      SearchList,
+      Confirm
     }
   })
   export default class extends Vue {
@@ -83,6 +90,19 @@
 
     fillSearchBox(query: string) {
       (this.$refs.searchBox as any).fillContent(query)
+    }
+
+    showConfirm() {
+      (this.$refs.confirm as any).show()
+    }
+
+    cancel() {
+      (this.$refs.confirm as any).hide()
+    }
+
+    confirm() {
+      this.clearHistory();
+      (this.$refs.confirm as any).hide()
     }
   }
 </script>
