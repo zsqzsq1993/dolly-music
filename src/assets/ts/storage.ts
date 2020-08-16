@@ -5,7 +5,7 @@ interface StorageApi {
 
   deserialize: (val: string) => any;
 
-  get: (key: string, def: any) => any;
+  get: (key: string, def?: any) => any;
 
   set: (key: string, val: any) => void;
 
@@ -33,7 +33,8 @@ const $storage = {
 }
 
 const api: StorageApi = {
-  get(this: Storage, key: string, def: any) {
+  get(this: Storage, key: string, def?: any) {
+    def = def || null
     if (this.disable) {
       return def
     }
