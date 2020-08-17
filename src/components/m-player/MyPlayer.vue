@@ -105,11 +105,12 @@
             <i class="icon icon-play" :class="playIconMini"></i>
           </progress-circle>
         </div>
-        <div class="expansion-button-wrapper icon-wrapper">
+        <div class="expansion-button-wrapper icon-wrapper" @click.stop="showPlayList">
           <i class="icon-playlist icon"></i>
         </div>
       </div>
     </transition>
+    <play-list ref="playList"></play-list>
     <audio :src="song.url"
            ref="audio"
            @error="onerror"
@@ -132,6 +133,7 @@
   import {shuffle} from 'src/assets/ts/util'
   import Scroll from 'base/m-scroll/Scroll.vue'
   import lyricParser, {LyricParser} from 'src/assets/ts/lyricParser'
+  import PlayList from 'components/m-playlist/PlayList.vue'
 
   const transform = prefixStyle('transform') || 'transform'
   const PAGE_CD = 0
@@ -174,7 +176,8 @@
     components: {
       ProgressBar,
       ProgressCircle,
-      Scroll
+      Scroll,
+      PlayList
     }
   })
   export default class extends Vue {
@@ -393,6 +396,10 @@
           ? this.lyricParser.restart()
           : this.lyricParser.pause()
       }
+    }
+
+    showPlayList() {
+      (this.$refs.playList as any).show()
     }
 
     minimize() {
