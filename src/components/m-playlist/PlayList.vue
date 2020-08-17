@@ -4,7 +4,7 @@
       <div class="m-play-list" @click.stop>
         <div class="play-list-main">
           <div class="play-list-header">
-            <div class="play-mode-button">
+            <div class="play-mode-button" @click="changePlayMode">
               <i :class="playModeIcon"></i>
             </div>
             <div class="play-mode-text" v-text="playModeText"></div>
@@ -16,12 +16,12 @@
             <li class="song-wrapper"
                 v-for="(song, idx) in sequenceList"
                 :key="song.songid">
-              <div class="current-song-flag" v-show="showCurrent(idx)">
-                <i class="icon-play-mini"></i>
+              <div class="current-song-flag">
+                <i class="icon-play" v-show="showCurrent(idx)"></i>
               </div>
               <div class="song-name" v-text="song.songname"></div>
               <div class="favorite-button">
-                <i class="icon-favorite"></i>
+                <i class="icon-not-favorite"></i>
               </div>
               <div class="delete-button">
                 <i class="icon-delete"></i>
@@ -42,9 +42,10 @@
 
 <script lang="ts">
     import {Component, Vue} from 'vue-property-decorator'
-    import {Getter} from 'vuex-class'
+    import {Getter, Mutation} from 'vuex-class'
     import {playmode} from 'src/assets/ts/config'
     import {Song} from 'src/assets/ts/Song'
+    import * as types from 'src/store/mutation-types'
 
     @Component
     export default class extends Vue {
@@ -52,12 +53,26 @@
       @Getter('sequenceList') readonly sequenceList!: Array<Song>
       @Getter('currentSong') readonly currentSong!: Song
 
+      @Mutation(types.SET_PLAY_MODE) setPlayMode: any
+
       showFlag = false
 
       get playModeIcon() {
-        return this.forEach((key: string) => {
-          return 'icon-' + key
-        })
+        let icon = 'icon-'
+        switch (this.playMode) {
+          case playmode.loop:
+            icon += 'loop'
+            break
+          case playmode.sequence:
+            icon += 'sequence'
+            break
+          case playmode.random:
+            icon += 'random'
+            break
+          default:
+            break
+        }
+        return icon
       }
 
       get playModeText() {
@@ -66,9 +81,21 @@
           loop: '单曲循环',
           sequence: '顺序播放'
         }
-        return this.forEach((key: string) => {
-          return strategy[key]
-        })
+        let key: string
+        switch (this.playMode) {
+          case playmode.loop:
+            key = 'loop'
+            break
+          case playmode.sequence:
+            key = 'sequence'
+            break
+          case playmode.random:
+            key = 'random'
+            break
+          default:
+            break
+        }
+        return strategy[key]
       }
 
       show() {
@@ -87,12 +114,9 @@
         return index === seqIndex
       }
 
-      forEach(callback: any) {
-        Object.keys(playmode).forEach((key: string) => {
-          if (this.playMode === playmode[key]) {
-            callback(key)
-          }
-        })
+      changePlayMode() {
+        const playMode = (this.playMode + 1) % 3
+        this.setPlayMode(playMode)
       }
     }
 </script>
@@ -102,15 +126,13 @@
   @import '~assets/stylus/mixin.styl'
 
   .playlist-enter-active, .playlist-leave-active
-    transition all linear .4s
+    transition opacity .3s
+    .m-play-list
+      transition all .3s
   .playlist-enter, .playlist-leave-to
     opacity 0
     .m-play-list
       transform translate3d(0, 100%, 0)
-  .playlist-enter-to, .playlist-leave
-    opacity 1
-    .m-play-list
-      transform translate3d(0, 0, 0)
   .filter
     position fixed
     z-index 300
@@ -130,16 +152,19 @@
       .play-list-header
         display flex
         align-items center
+        padding 20px 30px 10px 20px
 
         .play-mode-button
           margin-right 10px
           font-size 30px
           color $color-theme-d
+
         .play-mode-text
           flex 1
           color $color-text-l
           font-size $font-size-median
-          overflow hidden
+          no-wrap()
+
         .clear-button
           extend-click()
           color $color-text-d
@@ -181,6 +206,7 @@
 
       .add-song-wrapper
         margin: 20px auto 30px
+        width 140px
         .add-song-button
           display flex
           align-items center
@@ -188,6 +214,7 @@
           padding 8px 16px
           border 1px solid $color-text-l
           border-radius 100px
+          color $color-text-l
           i
             font-size $font-size-small-s
           .text
