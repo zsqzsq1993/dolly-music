@@ -25,6 +25,27 @@ const insertSongHelper = (list: Array<Song>, currentIndex: number, existIndex: n
   return currentIndex
 }
 
+const deleteSongHelper = (list: Array<Song>, currentIndex: number, deleteIndex: number) => {
+  if (deleteIndex < currentIndex) {
+    currentIndex--
+  }
+
+  list.splice(deleteIndex, 1)
+  if (currentIndex === list.length) {
+    currentIndex--
+  }
+
+  return currentIndex
+}
+
+const   deactivatePlayer = (commit: any) => {
+  commit(types.SET_PLAYING_STATE, false)
+  commit(types.SET_FULL_SCREEN, false)
+  commit(types.SET_PLAY_LIST, [])
+  commit(types.SET_SEQUENCE_LIST, [])
+  commit(types.SET_CURRENT_INDEX, 0)
+}
+
 const actions: ActionTree<any, any> = {
   activatePlayer({commit, state}, {list, index}) {
     let playList, newIndex
@@ -76,6 +97,36 @@ const actions: ActionTree<any, any> = {
     }
     commit(types.SET_PLAYING_STATE, true)
     commit(types.SET_FULL_SCREEN, true)
+  },
+
+  switchSong({commit, state}, song) {
+    const playList = state.playList.slice()
+    const index = findIndex(playList, song)
+    commit(types.SET_CURRENT_INDEX, index)
+  },
+
+  deleteSong({commit, state}, song) {
+    const playList = state.playList.slice()
+    const sequenceList = state.sequenceList.slice()
+    const currentIndex = state.currentIndex
+
+    const delIndexInPlayList = findIndex(playList, song)
+    const delIndexInSeqList = findIndex(sequenceList, song)
+
+    const newIndex = deleteSongHelper(playList, currentIndex, delIndexInPlayList)
+    sequenceList.splice(delIndexInSeqList, 1)
+
+    if (!sequenceList.length && !playList.length && !currentIndex) {
+      deactivatePlayer(commit)
+    } else {
+      commit(types.SET_SEQUENCE_LIST, sequenceList)
+      commit(types.SET_PLAY_LIST, playList)
+      commit(types.SET_CURRENT_INDEX, newIndex)
+    }
+  },
+
+  clearPlayList({commit}) {
+    deactivatePlayer(commit)
   },
 
   addOneHistory({commit, state}, oneHistory) {

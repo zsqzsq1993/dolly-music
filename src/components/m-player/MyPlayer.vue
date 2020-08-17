@@ -209,7 +209,7 @@
 
     @Watch('song')
     startToPlay(newSong: Song, oldSong: Song) {
-      if (newSong.songid === oldSong.songid) {
+      if (newSong.songid === oldSong.songid || !Object.keys(newSong).length) {
         return
       }
       if (!this.playing) {
@@ -223,7 +223,7 @@
 
     @Watch('song')
     getLyric(newSong: Song, oldSong: Song) {
-      if (newSong.songid === oldSong.songid) {
+      if (newSong.songid === oldSong.songid || !Object.keys(newSong).length) {
         return
       }
       newSong.getLyric().then((lyric: string) => {

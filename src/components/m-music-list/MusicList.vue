@@ -244,6 +244,7 @@
 
       .random-play
         position absolute
+        z-index 10
         left 50%
         transform translateX(-50%)
         bottom 20px
@@ -267,6 +268,7 @@
 
       .filter
         position absolute
+        z-index 5
         top 0
         left 0
         width 100%

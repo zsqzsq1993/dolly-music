@@ -8,26 +8,28 @@
               <i :class="playModeIcon"></i>
             </div>
             <div class="play-mode-text" v-text="playModeText"></div>
-            <div class="clear-button">
+            <div class="clear-button" @click.stop="clearPlayList">
               <i class="icon-clear"></i>
             </div>
           </div>
-          <ul class="play-list-songs">
-            <li class="song-wrapper"
-                v-for="(song, idx) in sequenceList"
-                :key="song.songid">
-              <div class="current-song-flag">
-                <i class="icon-play" v-show="showCurrent(idx)"></i>
-              </div>
-              <div class="song-name" v-text="song.songname"></div>
-              <div class="favorite-button">
-                <i class="icon-not-favorite"></i>
-              </div>
-              <div class="delete-button">
-                <i class="icon-delete"></i>
-              </div>
-            </li>
-          </ul>
+          <scroll class="play-list-songs" :data="sequenceList" ref="shortcutScroll">
+            <ul>
+              <li class="song-wrapper"
+                  v-for="(song, idx) in sequenceList"
+                  :key="song.songid">
+                <div class="current-song-flag">
+                  <i class="icon-play" v-show="showCurrent(idx)"></i>
+                </div>
+                <div class="song-name" v-text="song.songname" @click.stop="switchSong(song)"></div>
+                <div class="favorite-button">
+                  <i class="icon-not-favorite"></i>
+                </div>
+                <div class="delete-button" @click.stop="deleteSong(song)">
+                  <i class="icon-delete"></i>
+                </div>
+              </li>
+            </ul>
+          </scroll>
           <div class="add-song-wrapper">
             <div class="add-song-button">
               <i class="icon-add"></i><span class="text">添加歌曲到队列</span>
@@ -41,19 +43,45 @@
 </template>
 
 <script lang="ts">
-    import {Component, Vue} from 'vue-property-decorator'
-    import {Getter, Mutation} from 'vuex-class'
+    import {Component, Vue, Watch} from 'vue-property-decorator'
+    import {Getter, Mutation, Action} from 'vuex-class'
     import {playmode} from 'src/assets/ts/config'
     import {Song} from 'src/assets/ts/Song'
     import * as types from 'src/store/mutation-types'
+    import Scroll from 'base/m-scroll/Scroll.vue'
 
-    @Component
+    @Component({
+      components: {
+        Scroll
+      }
+    })
     export default class extends Vue {
       @Getter('playMode') readonly playMode!: string
       @Getter('sequenceList') readonly sequenceList!: Array<Song>
       @Getter('currentSong') readonly currentSong!: Song
+      @Getter('playList') readonly playList!: Array<Song>
 
       @Mutation(types.SET_PLAY_MODE) setPlayMode: any
+
+      @Action('switchSong') switchSong: any
+      @Action('deleteSong') deleteSong: any
+      @Action('clearPlayList') clearPlayList: any
+
+      @Watch('showFlag')
+      refreshScroll(newVal: boolean) {
+        if (newVal) {
+          setTimeout(() => {
+            (this.$refs.shortcutScroll as any).refresh()
+          }, 20)
+        }
+      }
+
+      @Watch('playList.length')
+      whenClearPlayList(newVal: Array<Song>) {
+        if (!newVal.length) {
+          this.hide()
+        }
+      }
 
       showFlag = false
 
@@ -135,7 +163,7 @@
       transform translate3d(0, 100%, 0)
   .filter
     position fixed
-    z-index 300
+    z-index 200
     top 0
     right 0
     bottom 0
@@ -144,7 +172,6 @@
 
     .m-play-list
       position absolute
-      z-index 350
       bottom 0
       width 100%
       background-color $color-highlight-background
