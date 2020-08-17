@@ -58,14 +58,15 @@ const actions: ActionTree<any, any> = {
 
     let currentIndex = state.currentIndex
     const currentSong = playList[currentIndex]
-    const CurrentSequenceIndex = findIndex(sequenceList, currentSong)
+    let currentSequenceIndex = findIndex(sequenceList, currentSong)
+    currentSequenceIndex = currentSequenceIndex > -1 ? currentSequenceIndex : 0
 
     const existIndex = findIndex(playList, newSong)
     const existSequenceIndex = findIndex(sequenceList, newSong)
 
     // refreshing
     currentIndex = insertSongHelper(playList, currentIndex, existIndex, newSong)
-    insertSongHelper(sequenceList, CurrentSequenceIndex, existSequenceIndex, newSong)
+    insertSongHelper(sequenceList, currentSequenceIndex, existSequenceIndex, newSong)
 
     // Commit
     if (currentIndex > -1) {
