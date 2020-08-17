@@ -40,7 +40,7 @@
                     class="lyric-content"
                     :class="{'highlight': highLightIndex === idx}"
                     v-for="(line, idx) in lyrics"
-                    :key="line.time">
+                    :key="line.time + idx">
                   {{line.text}}
                 </li>
               </div>

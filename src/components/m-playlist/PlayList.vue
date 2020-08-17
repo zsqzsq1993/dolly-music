@@ -13,22 +13,26 @@
             </div>
           </div>
           <scroll class="play-list-songs" :data="sequenceList" ref="shortcutScroll">
-            <ul>
+            <transition-group tag="ul" name="songlist">
               <li class="song-wrapper"
                   v-for="(song, idx) in sequenceList"
-                  :key="song.songid">
+                  :key="song.songid + song.songmid"
+                  ref="list">
                 <div class="current-song-flag">
                   <i class="icon-play" v-show="showCurrent(idx)"></i>
                 </div>
-                <div class="song-name" v-text="song.songname" @click.stop="switchSong(song)"></div>
+                <div class="song-name"
+                     v-text="song.songname"
+                     @click.stop="switchSong(song) && scrollToCurrent()"></div>
                 <div class="favorite-button">
                   <i class="icon-not-favorite"></i>
                 </div>
-                <div class="delete-button" @click.stop="deleteSong(song)">
+                <div class="delete-button"
+                     @click.stop="deleteSong(song) && scrollToCurrent()">
                   <i class="icon-delete"></i>
                 </div>
               </li>
-            </ul>
+            </transition-group>
           </scroll>
           <div class="add-song-wrapper">
             <div class="add-song-button">
@@ -67,18 +71,9 @@
       @Action('deleteSong') deleteSong: any
       @Action('clearPlayList') clearPlayList: any
 
-      @Watch('showFlag')
-      refreshScroll(newVal: boolean) {
-        if (newVal) {
-          setTimeout(() => {
-            (this.$refs.shortcutScroll as any).refresh()
-          }, 20)
-        }
-      }
-
       @Watch('playList.length')
       whenClearPlayList(newVal: Array<Song>) {
-        if (!newVal.length) {
+        if (!newVal) {
           this.hide()
         }
       }
@@ -128,6 +123,11 @@
 
       show() {
         this.showFlag = true
+
+        setTimeout(() => {
+          this.refreshScroll()
+          this.scrollToCurrent()
+        }, 20)
       }
 
       hide() {
@@ -145,6 +145,17 @@
       changePlayMode() {
         const playMode = (this.playMode + 1) % 3
         this.setPlayMode(playMode)
+      }
+
+      refreshScroll() {
+        (this.$refs.shortcutScroll as any).refresh()
+      }
+
+      scrollToCurrent() {
+        const sequenceIndex = this.sequenceList.findIndex(item => {
+          return item.songid === this.currentSong.songid
+        });
+        (this.$refs.shortcutScroll as any).scrollToElement(this.$refs.list[sequenceIndex], 80)
       }
     }
 </script>
@@ -207,7 +218,12 @@
           height 40px
           padding 0 30px 0 20px
           overflow hidden
-
+          &.songlist-enter-active, &.songlist-leave-active
+            transition all .1s
+          &.songlist-enter, &.songlist-leave-to
+            height 0
+          &.songlist-enter-to, &.songlist-leave
+            height 40px
           .current-song-flag
             flex 0 0 20px
             width 20px
