@@ -8,7 +8,7 @@
               <i :class="playModeIcon"></i>
             </div>
             <div class="play-mode-text" v-text="playModeText"></div>
-            <div class="clear-button" @click.stop="clearPlayList">
+            <div class="clear-button" @click.stop="showConfirm">
               <i class="icon-clear"></i>
             </div>
           </div>
@@ -42,24 +42,31 @@
         </div>
         <div class="play-list-footer" @click="hide">关闭</div>
       </div>
+      <confirm :remind-text="'是否清空所有歌曲列表'"
+               @click-left="cancel"
+               @click-right="confirm"
+               ref="confirm"></confirm>
     </div>
   </transition>
 </template>
 
 <script lang="ts">
-    import {Component, Vue, Watch} from 'vue-property-decorator'
+    import {Component, Mixins, Watch} from 'vue-property-decorator'
     import {Getter, Mutation, Action} from 'vuex-class'
     import {playmode} from 'src/assets/ts/config'
     import {Song} from 'src/assets/ts/Song'
     import * as types from 'src/store/mutation-types'
     import Scroll from 'base/m-scroll/Scroll.vue'
+    import Confirm from 'src/base/m-confirm/Confirm.vue'
+    import {playerMixin} from 'src/assets/ts/mixins'
 
     @Component({
       components: {
-        Scroll
+        Scroll,
+        Confirm
       }
     })
-    export default class extends Vue {
+    export default class extends Mixins(playerMixin) {
       @Getter('playMode') readonly playMode!: string
       @Getter('sequenceList') readonly sequenceList!: Array<Song>
       @Getter('currentSong') readonly currentSong!: Song
@@ -79,24 +86,6 @@
       }
 
       showFlag = false
-
-      get playModeIcon() {
-        let icon = 'icon-'
-        switch (this.playMode) {
-          case playmode.loop:
-            icon += 'loop'
-            break
-          case playmode.sequence:
-            icon += 'sequence'
-            break
-          case playmode.random:
-            icon += 'random'
-            break
-          default:
-            break
-        }
-        return icon
-      }
 
       get playModeText() {
         const strategy = {
@@ -156,6 +145,19 @@
           return item.songid === this.currentSong.songid
         });
         (this.$refs.shortcutScroll as any).scrollToElement(this.$refs.list[sequenceIndex], 80)
+      }
+
+      showConfirm() {
+        (this.$refs.confirm as any).show()
+      }
+
+      cancel() {
+        (this.$refs.confirm as any).hide()
+      }
+
+      confirm() {
+        this.clearPlayList();
+        (this.$refs.confirm as any).hide()
       }
     }
 </script>

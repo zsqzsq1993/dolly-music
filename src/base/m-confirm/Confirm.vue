@@ -4,8 +4,8 @@
       <div class="confirm-inner-wrapper">
         <div class="confirm-content" v-text="remindText"></div>
         <div class="confirm-controllers">
-          <div class="button-wrapper left" v-text="leftButtonText" @click="clickLeft"></div>
-          <div class="button-wrapper right" v-text="rightButtonText" @click="clickRight"></div>
+          <div class="button-wrapper left" v-text="leftButtonText" @click.stop="clickLeft"></div>
+          <div class="button-wrapper right" v-text="rightButtonText" @click.stop="clickRight"></div>
         </div>
       </div>
     </div>

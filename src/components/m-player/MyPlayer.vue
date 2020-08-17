@@ -67,7 +67,7 @@
           </div>
           <div class="controls-wrapper">
             <div class="play-mode-button icon-wrapper i-left" @click="changePlayMode">
-              <i :class="modeIcon"></i>
+              <i :class="playModeIcon"></i>
             </div>
             <div class="prev-song-button icon-wrapper i-left"
                  @click="prev">
@@ -122,7 +122,7 @@
 </template>
 
 <script lang="ts">
-  import {Component, Vue, Watch} from 'vue-property-decorator'
+  import {Component, Mixins, Watch} from 'vue-property-decorator'
   import {Getter, Mutation} from 'vuex-class'
   import {Song} from 'src/assets/ts/Song'
   import * as types from 'src/store/mutation-types'
@@ -134,6 +134,7 @@
   import Scroll from 'base/m-scroll/Scroll.vue'
   import lyricParser, {LyricParser} from 'src/assets/ts/lyricParser'
   import PlayList from 'components/m-playlist/PlayList.vue'
+  import {playerMixin} from 'src/assets/ts/mixins'
 
   const transform = prefixStyle('transform') || 'transform'
   const PAGE_CD = 0
@@ -180,7 +181,7 @@
       PlayList
     }
   })
-  export default class extends Vue {
+  export default class extends Mixins(playerMixin) {
     @Getter('playList') playList!: Array<Song>
     @Getter('sequenceList') sequenceList!: Array<Song>
     @Getter('fullScreen') fullScreen!: boolean
@@ -276,24 +277,6 @@
         ? 'icon-pause-mini'
         : 'icon-play-mini'
       return icon + ' ' + disable
-    }
-
-    get modeIcon() {
-      let className = 'icon-'
-      switch (this.playMode) {
-        case playmode.loop:
-          className += 'loop'
-          break
-        case playmode.sequence:
-          className += 'sequence'
-          break
-        case playmode.random:
-          className += 'random'
-          break
-        default:
-          break
-      }
-      return className
     }
 
     get animateClass() {
