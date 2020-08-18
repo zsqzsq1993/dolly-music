@@ -130,6 +130,8 @@
       bottom 0
       left 0
       overflow hidden
+      .m-search-list
+        margin 0 20px 20px
       .hots-wrapper
         margin 0 20px 20px
         .hots-title

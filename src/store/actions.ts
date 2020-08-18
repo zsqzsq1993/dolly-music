@@ -72,7 +72,7 @@ const actions: ActionTree<any, any> = {
     commit(types.SET_CURRENT_INDEX, 0)
   },
 
-  insertSong({commit, state}, {newSong}) {
+  insertSong({commit, state}, newSong) {
     // obtain variables
     const playList = state.playList.slice()
     const sequenceList = state.sequenceList.slice()

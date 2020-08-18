@@ -12,17 +12,22 @@
                     @query="handleQuery"
                     ref="searchBox"></search-box>
       </div>
-      <div class="suggest-wrapper">
-        <suggest v-show="query"
-                 :keyword="query"
+      <div class="suggest-wrapper" v-show="query">
+        <suggest :keyword="query"
                  :singerInfo="false"
                  @select-item="selectItem"></suggest>
       </div>
-      <div class="switches-wrapper">
-        <switches @select-item="switchComponent"></switches>
-        <scroll>
-          <div>
-            <songs-list v-show="!currentIndex"></songs-list>
+      <div class="switches-wrapper" v-show="!query">
+        <switches @select-item="switchComponent"
+                  :tablist="tablist"
+                  class="switches"></switches>
+        <scroll ref="scroll"
+                class="scroll-wrapper"
+                :data="scrollData">
+          <div class="scroll-inner-wrapper">
+            <songs-list v-show="!currentIndex"
+                        :songs="playHistory"
+                        @select="insertInPlayList"></songs-list>
             <search-list v-show="currentIndex"
                          :withTitle="false"
                          :list="searchHistory"
@@ -46,8 +51,8 @@
 </template>
 
 <script lang="ts">
-    import {Component, Mixins} from 'vue-property-decorator'
-    import {Getter} from 'vuex-class'
+    import {Component, Mixins, Watch} from 'vue-property-decorator'
+    import {Action, Getter} from 'vuex-class'
     import SearchBox from 'base/m-search-box/SearchBox.vue'
     import Suggest from 'components/m-suggest/Suggest.vue'
     import Switches from 'base/m-switches/Switches.vue'
@@ -56,6 +61,7 @@
     import SongsList from 'base/m-songs-list/SongsList.vue'
     import SearchList from 'base/m-search-list/SearchList.vue'
     import Scroll from 'base/m-scroll/Scroll.vue'
+    import {Song} from 'src/assets/ts/Song'
 
     @Component({
       components: {
@@ -70,9 +76,32 @@
     })
     export default class extends Mixins(SearchMixin) {
       @Getter('searchHistory') readonly searchHistory!: Array<string>
+      @Getter('playHistory') readonly playHistory!: Array<Song>
+
+      @Action('insertSong') insertSong: any
+
+      @Watch('query')
+      whenQueryChange(val: string) {
+        val && this.refreshScroll()
+      }
+
+      @Watch('showFlag')
+      whenFlagChange(val: string) {
+        val && this.refreshScroll()
+      }
+
+      @Watch('currentIndex')
+      whenIndexChange() {
+        this.refreshScroll()
+      }
 
       showFlag = false
       currentIndex = 0
+      tablist = ['最近播放', '搜索历史']
+
+      get scrollData() {
+        return Array.prototype.concat(this.playHistory, this.searchHistory)
+      }
 
       show() {
         this.showFlag = true
@@ -89,6 +118,17 @@
 
       switchComponent(index: number) {
         this.currentIndex = index
+      }
+
+      insertInPlayList(song: Song) {
+        this.insertSong(song);
+        (this.$refs.toptip as any).show()
+      }
+
+      refreshScroll() {
+        setTimeout(() => {
+          (this.$refs.scroll as any).refresh()
+        }, 20)
       }
     }
 </script>
@@ -132,10 +172,22 @@
     .suggest-wrapper
       position absolute
       z-index 5
-      top 160px
+      top 165px
       right 0
       bottom 0
       left 0
+    .switches-wrapper
+      .switches
+        width 240px
+        margin 0 auto
+      .scroll-wrapper
+        position: absolute
+        top: 165px
+        bottom: 0
+        width: 100%
+        overflow hidden
+        .scroll-inner-wrapper
+          padding 20px 30px
     .top-tip-wrapper
       position absolute
       z-index 10

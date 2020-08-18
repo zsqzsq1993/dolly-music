@@ -50,7 +50,6 @@
   @import '~assets/stylus/variable.styl'
 
   .m-search-list
-    margin 0 20px 20px
     .search-title
       display flex
       align-items center

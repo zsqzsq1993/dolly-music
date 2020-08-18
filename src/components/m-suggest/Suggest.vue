@@ -87,7 +87,7 @@
         this.setSinger(item)
         this.$router.push(`/search/${item.id}`)
       } else {
-        this.insertSong({newSong: item})
+        this.insertSong(item)
       }
       this.$emit('select-item', this.keyword)
     }
