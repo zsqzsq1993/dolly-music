@@ -48,7 +48,7 @@
   import Slider from 'base/m-slider/Slider.vue'
   import Scroll from 'base/m-scroll/Scroll.vue'
   import Loading from 'base/m-loading/Loading.vue'
-  import {playListMixin} from 'src/assets/ts/mixins'
+  import {PlayListMixin} from 'src/assets/ts/mixins'
   import {Song} from 'src/assets/ts/Song'
   import * as types from 'src/store/mutation-types'
 
@@ -59,7 +59,7 @@
       Loading
     }
   })
-  export default class extends Mixins(playListMixin) {
+  export default class extends Mixins(PlayListMixin) {
     @Getter('playList') readonly playList!: Array<Song>
 
     @Mutation(types.SET_DISS) setDiss: any

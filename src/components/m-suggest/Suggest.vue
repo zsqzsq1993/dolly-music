@@ -37,7 +37,7 @@
   import {Singer} from 'src/assets/ts/Singer'
   import Searcher from 'src/assets/ts/Searcher'
   import {Song} from 'src/assets/ts/Song'
-  import {playListMixin} from 'src/assets/ts/mixins'
+  import {PlayListMixin} from 'src/assets/ts/mixins'
 
   @Component({
     components: {
@@ -45,8 +45,9 @@
       Loading
     }
   })
-  export default class extends Mixins(playListMixin) {
+  export default class extends Mixins(PlayListMixin) {
     @Prop({default: ''}) keyword!: string
+    @Prop({default: true}) singerInfo!: boolean
 
     @Mutation(types.SET_SINGER) setSinger: any
 
@@ -92,7 +93,11 @@
     }
 
     startNewSearch() {
-      this.searcher = new Searcher({keyword: this.keyword})
+      console.log(this.singerInfo)
+      this.searcher = new Searcher({
+        keyword: this.keyword,
+        singerInfo: this.singerInfo
+      })
       this.searcher.search();
       (this.$refs.suggestScroll as any).scrollTo(0, 0)
     }
@@ -133,10 +138,8 @@
   @import '~assets/stylus/mixin.styl'
 
   .m-suggest
-    position fixed
-    top 178px
-    bottom 0
     width 100%
+    height 100%
     overflow hidden
 
     .first-loading

@@ -133,7 +133,7 @@
   import Scroll from 'base/m-scroll/Scroll.vue'
   import lyricParser, {LyricParser} from 'src/assets/ts/lyricParser'
   import PlayList from 'components/m-playlist/PlayList.vue'
-  import {playerMixin} from 'src/assets/ts/mixins'
+  import {PlayerMixin} from 'src/assets/ts/mixins'
 
   const transform = prefixStyle('transform') || 'transform'
   const PAGE_CD = 0
@@ -180,7 +180,7 @@
       PlayList
     }
   })
-  export default class extends Mixins(playerMixin) {
+  export default class extends Mixins(PlayerMixin) {
     @Getter('playList') playList!: Array<Song>
     @Getter('fullScreen') fullScreen!: boolean
     @Getter('currentSong') song!: Song

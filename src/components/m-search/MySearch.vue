@@ -24,10 +24,10 @@
         </div>
       </div>
     </scroll>
-    <suggest v-show="query"
-             ref="suggest"
-             :keyword="query"
-             @select-item="addOneHistory"></suggest>
+    <div class="suggest-wrapper" v-show="query">
+      <suggest :keyword="query"
+               @select-item="addOneHistory"></suggest>
+    </div>
     <div class="confirm-wrapper">
       <confirm @click-left="cancel"
                @click-right="confirm"
@@ -46,7 +46,7 @@
   import SearchList from 'base/m-search-list/SearchList.vue'
   import Confirm from 'base/m-confirm/Confirm.vue'
   import Scroll from 'base/m-scroll/Scroll.vue'
-  import {playListMixin} from 'src/assets/ts/mixins'
+  import {PlayListMixin, SearchMixin} from 'src/assets/ts/mixins'
   import {Song} from 'src/assets/ts/Song'
 
   interface HotKey {
@@ -63,8 +63,8 @@
       Scroll
     }
   })
-  export default class extends Mixins(playListMixin) {
-    @Action('addOneHistory') addOneHistory: any
+
+  export default class extends Mixins(SearchMixin, PlayListMixin) {
     @Action('removeOneHistory') removeOneHistory: any
     @Action('clearHistory') clearHistory: any
 
@@ -72,7 +72,6 @@
     @Getter('playList') readonly playList!: Array<Song>
 
     hots: Array<HotKey> = []
-    query = ''
 
     get showSearchHistory() {
       return this.searchHistory.length && !this.query
@@ -102,16 +101,6 @@
           throw new Error('can not get hot search data.')
         }
       })
-    }
-
-    handleQuery(query: string) {
-      this.query = query
-
-      if (!query) {
-        setTimeout(() => {
-          (this.$refs.scroll as any).refresh()
-        }, 20)
-      }
     }
 
     fillSearchBox(query: string) {
@@ -161,4 +150,10 @@
             background-color $color-highlight-background
             color $color-text-d
             font-size $font-size-median
+    .suggest-wrapper
+      position fixed
+      top 178px
+      right 0
+      bottom 0
+      left 0
 </style>

@@ -35,7 +35,7 @@ export default class Searcher {
   currentResult: Array<Song>;
 
   // 是否请求歌手信息
-  singerInfo: boolean;
+  singerInfo: boolean | undefined;
 
   // 标志位，是否还能请求更多信息
   hasMore: boolean;
@@ -44,7 +44,7 @@ export default class Searcher {
     config = config || {}
     this.keyword = config.keyword || ''
     this.curnum = config.curnum || DEFAULT_CURNUM
-    this.singerInfo = config.singerInfo || true
+    this.singerInfo = config.singerInfo
     this.hasMore = true
     this.curpage = 1
     this.totalnum = 0

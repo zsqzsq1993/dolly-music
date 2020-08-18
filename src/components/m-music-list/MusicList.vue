@@ -42,7 +42,7 @@
   import Loading from 'base/m-loading/Loading.vue'
   import {Song} from 'src/assets/ts/Song'
   import {prefixStyle} from 'src/assets/ts/dom'
-  import {playListMixin} from 'src/assets/ts/mixins'
+  import {PlayListMixin} from 'src/assets/ts/mixins'
 
   const RESERVED_HEIGHT = 40
   const ZINDEX = '10'
@@ -56,7 +56,7 @@
       Loading
     }
   })
-  export default class extends Mixins(playListMixin) {
+  export default class extends Mixins(PlayListMixin) {
     @Prop({default: false}) readonly rank!: boolean
     @Prop({default: ''}) readonly title!: string
     @Prop({default: ''}) readonly avatar!: string

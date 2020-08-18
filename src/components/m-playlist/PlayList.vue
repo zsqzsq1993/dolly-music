@@ -35,9 +35,12 @@
             </transition-group>
           </scroll>
           <div class="add-song-wrapper">
-            <div class="add-song-button">
+            <div class="add-song-button" @click.stop="toAddSongPage">
               <i class="icon-add"></i><span class="text">添加歌曲到队列</span>
             </div>
+          </div>
+          <div class="add-song-page">
+            <add-song ref="addSong"></add-song>
           </div>
         </div>
         <div class="play-list-footer" @click="hide">关闭</div>
@@ -56,15 +59,17 @@
     import {Song} from 'src/assets/ts/Song'
     import Scroll from 'base/m-scroll/Scroll.vue'
     import Confirm from 'src/base/m-confirm/Confirm.vue'
-    import {playerMixin} from 'src/assets/ts/mixins'
+    import {PlayerMixin} from 'src/assets/ts/mixins'
+    import AddSong from 'components/m-add-song/AddSong.vue'
 
     @Component({
       components: {
         Scroll,
-        Confirm
+        Confirm,
+        AddSong
       }
     })
-    export default class extends Mixins(playerMixin) {
+    export default class extends Mixins(PlayerMixin) {
       @Getter('sequenceList') readonly sequenceList!: Array<Song>
       @Getter('currentSong') readonly currentSong!: Song
 
@@ -124,6 +129,10 @@
       confirm() {
         this.clearPlayList();
         (this.$refs.confirm as any).hide()
+      }
+
+      toAddSongPage() {
+        (this.$refs.addSong as any).show()
       }
     }
 </script>

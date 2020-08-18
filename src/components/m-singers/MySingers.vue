@@ -12,7 +12,7 @@
   import ListView from 'base/m-list-view/ListView.vue'
   import {Mutation, Getter} from 'vuex-class'
   import * as types from 'src/store/mutation-types'
-  import {playListMixin} from 'src/assets/ts/mixins'
+  import {PlayListMixin} from 'src/assets/ts/mixins'
   import {Song} from 'src/assets/ts/Song'
 
   const HOT_LEN = 10
@@ -29,7 +29,7 @@
       ListView
     }
   })
-  export default class extends Mixins(playListMixin) {
+  export default class extends Mixins(PlayListMixin) {
     singers: any[] = []
 
     @Mutation(types.SET_SINGER) setSinger: any

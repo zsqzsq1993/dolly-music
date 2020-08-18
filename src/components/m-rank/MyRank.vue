@@ -33,14 +33,14 @@
   import {getTopList} from 'src/api/getRank'
   import Scroll from 'base/m-scroll/Scroll.vue'
   import * as types from 'src/store/mutation-types'
-  import {playListMixin} from 'src/assets/ts/mixins'
+  import {PlayListMixin} from 'src/assets/ts/mixins'
 
   @Component({
     components: {
       Scroll
     }
   })
-  export default class extends Mixins(playListMixin) {
+  export default class extends Mixins(PlayListMixin) {
     topListGroups: Array<any> = []
 
     @Getter('playList') readonly playList!: any
