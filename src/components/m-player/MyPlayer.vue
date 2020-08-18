@@ -130,7 +130,6 @@
   import ProgressBar from 'base/m-progress-bar/ProgressBar.vue'
   import ProgressCircle from 'src/base/m-progress-circle/ProgressCircle.vue'
   import {playmode} from 'src/assets/ts/config'
-  import {shuffle} from 'src/assets/ts/util'
   import Scroll from 'base/m-scroll/Scroll.vue'
   import lyricParser, {LyricParser} from 'src/assets/ts/lyricParser'
   import PlayList from 'components/m-playlist/PlayList.vue'
@@ -183,7 +182,6 @@
   })
   export default class extends Mixins(playerMixin) {
     @Getter('playList') playList!: Array<Song>
-    @Getter('sequenceList') sequenceList!: Array<Song>
     @Getter('fullScreen') fullScreen!: boolean
     @Getter('currentSong') song!: Song
     @Getter('playing') playing!: boolean
@@ -193,8 +191,6 @@
     @Mutation(types.SET_FULL_SCREEN) setfullScreen: any
     @Mutation(types.SET_PLAYING_STATE) setPlayingState: any
     @Mutation(types.SET_CURRENT_INDEX) setCurrentIndex: any
-    @Mutation(types.SET_PLAY_MODE) setPlayMode: any
-    @Mutation(types.SET_PLAY_LIST) setPlayList: any
 
     cd: HTMLElement | undefined = undefined
     posAndScale: any = undefined
@@ -353,16 +349,6 @@
       } else {
         this.next()
       }
-    }
-
-    changePlayMode() {
-      const newMode = (this.playMode + 1) % 3
-      this.setPlayMode(newMode)
-      const newPlayList = this._refreshPlayList()
-      const newIndex = this._refreshIndex(newPlayList)
-
-      this.setPlayList(newPlayList)
-      this.setCurrentIndex(newIndex)
     }
 
     togglePlaying(bool?: boolean | Event) {
@@ -549,22 +535,6 @@
         const scale = smalRadius / bigRadius
         return this.posAndScale = {x, y, scale}
       }
-    }
-
-    _refreshPlayList() {
-      let list: Array<Song>
-      if (this.playMode === playmode.random) {
-        list = shuffle(this.sequenceList)
-      } else {
-        list = this.sequenceList
-      }
-      return list
-    }
-
-    _refreshIndex(list: Array<Song>) {
-      return list.findIndex(item => {
-        return this.song.songid === item.songid
-      })
     }
 
     _setTransform(delta: string) {

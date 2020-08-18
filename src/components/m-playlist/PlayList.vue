@@ -52,10 +52,8 @@
 
 <script lang="ts">
     import {Component, Mixins, Watch} from 'vue-property-decorator'
-    import {Getter, Mutation, Action} from 'vuex-class'
-    import {playmode} from 'src/assets/ts/config'
+    import {Getter, Action} from 'vuex-class'
     import {Song} from 'src/assets/ts/Song'
-    import * as types from 'src/store/mutation-types'
     import Scroll from 'base/m-scroll/Scroll.vue'
     import Confirm from 'src/base/m-confirm/Confirm.vue'
     import {playerMixin} from 'src/assets/ts/mixins'
@@ -67,12 +65,8 @@
       }
     })
     export default class extends Mixins(playerMixin) {
-      @Getter('playMode') readonly playMode!: string
       @Getter('sequenceList') readonly sequenceList!: Array<Song>
       @Getter('currentSong') readonly currentSong!: Song
-      @Getter('playList') readonly playList!: Array<Song>
-
-      @Mutation(types.SET_PLAY_MODE) setPlayMode: any
 
       @Action('switchSong') switchSong: any
       @Action('deleteSong') deleteSong: any
@@ -86,29 +80,6 @@
       }
 
       showFlag = false
-
-      get playModeText() {
-        const strategy = {
-          random: '随机播放',
-          loop: '单曲循环',
-          sequence: '顺序播放'
-        }
-        let key: string
-        switch (this.playMode) {
-          case playmode.loop:
-            key = 'loop'
-            break
-          case playmode.sequence:
-            key = 'sequence'
-            break
-          case playmode.random:
-            key = 'random'
-            break
-          default:
-            break
-        }
-        return strategy[key]
-      }
 
       show() {
         this.showFlag = true
@@ -131,11 +102,6 @@
         return index === seqIndex
       }
 
-      changePlayMode() {
-        const playMode = (this.playMode + 1) % 3
-        this.setPlayMode(playMode)
-      }
-
       refreshScroll() {
         (this.$refs.shortcutScroll as any).refresh()
       }
@@ -144,7 +110,7 @@
         const sequenceIndex = this.sequenceList.findIndex(item => {
           return item.songid === this.currentSong.songid
         });
-        (this.$refs.shortcutScroll as any).scrollToElement(this.$refs.list[sequenceIndex], 80)
+        (this.$refs.shortcutScroll as any).scrollToElement((this.$refs.list as any)[sequenceIndex], 80)
       }
 
       showConfirm() {

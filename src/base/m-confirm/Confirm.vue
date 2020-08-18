@@ -17,9 +17,9 @@
 
     @Component
     export default class extends Vue {
-      @Prop({default: '是否清空所有搜索历史'}) remindText: string;
-      @Prop({default: '取消'}) leftButtonText: string;
-      @Prop({default: '清空'}) rightButtonText: string;
+      @Prop({default: '是否清空所有搜索历史'}) remindText!: string;
+      @Prop({default: '取消'}) leftButtonText!: string;
+      @Prop({default: '清空'}) rightButtonText!: string;
 
       showFlag = false
 
