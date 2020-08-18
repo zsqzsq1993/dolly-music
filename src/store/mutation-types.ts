@@ -17,3 +17,5 @@ export const SET_DISS = 'set_diss'
 export const SET_TOP_LIST = 'set_toplist'
 
 export const SET_SEARCH_HISTORY = 'set_search_history'
+
+export const SET_PLAY_HISTORY = 'set_play_history'

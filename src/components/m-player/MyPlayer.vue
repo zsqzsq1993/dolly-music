@@ -123,7 +123,7 @@
 
 <script lang="ts">
   import {Component, Mixins, Watch} from 'vue-property-decorator'
-  import {Getter, Mutation} from 'vuex-class'
+  import {Getter, Mutation, Action} from 'vuex-class'
   import {Song} from 'src/assets/ts/Song'
   import * as types from 'src/store/mutation-types'
   import {prefixStyle} from 'src/assets/ts/dom'
@@ -192,6 +192,8 @@
     @Mutation(types.SET_PLAYING_STATE) setPlayingState: any
     @Mutation(types.SET_CURRENT_INDEX) setCurrentIndex: any
 
+    @Action('addOneSongHistory') addOneSongHistory: any
+
     cd: HTMLElement | undefined = undefined
     posAndScale: any = undefined
     audio: HTMLAudioElement | undefined = undefined
@@ -216,6 +218,14 @@
           this.play()
         })
       }
+    }
+
+    @Watch('song')
+    addHistory(newSong: Song, oldSong: Song) {
+      if (newSong.songid === oldSong.songid || !Object.keys(newSong).length) {
+        return
+      }
+      this.addOneSongHistory(newSong)
     }
 
     @Watch('song')

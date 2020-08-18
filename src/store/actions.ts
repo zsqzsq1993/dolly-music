@@ -3,7 +3,7 @@ import * as types from './mutation-types'
 import {playmode} from 'src/assets/ts/config'
 import {shuffle} from 'src/assets/ts/util'
 import {Song} from 'src/assets/ts/Song'
-import {addOne, removeOne, clearAll} from 'src/assets/ts/cache'
+import {addOne, removeOne, clearAll, addOneSong} from 'src/assets/ts/cache'
 
 const findIndex = (list: Array<Song>, song: Song) => {
   return list.findIndex(item => {
@@ -144,6 +144,12 @@ const actions: ActionTree<any, any> = {
   clearHistory({commit}) {
     clearAll()
     commit(types.SET_SEARCH_HISTORY, [])
+  },
+
+  addOneSongHistory({commit, state}, song) {
+    let historylist = state.playHistory.slice()
+    historylist = addOneSong(historylist, song)
+    commit(types.SET_PLAY_HISTORY, historylist)
   }
 }
 

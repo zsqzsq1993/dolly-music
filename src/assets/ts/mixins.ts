@@ -112,6 +112,7 @@ export class PlayerMixin extends Vue {
 @Component
 export class SearchMixin extends Vue {
   @Action('addOneHistory') addOneHistory: any
+  @Action('removeOneHistory') removeOneHistory: any
 
   query = ''
 
@@ -123,5 +124,9 @@ export class SearchMixin extends Vue {
         this.$refs.scroll && (this.$refs.scroll as any).refresh()
       }, 20)
     }
+  }
+
+  fillSearchBox(query: string) {
+    (this.$refs.searchBox as any).fillContent(query)
   }
 }

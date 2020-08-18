@@ -93,7 +93,6 @@
     }
 
     startNewSearch() {
-      console.log(this.singerInfo)
       this.searcher = new Searcher({
         keyword: this.keyword,
         singerInfo: this.singerInfo

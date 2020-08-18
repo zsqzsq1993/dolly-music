@@ -65,7 +65,6 @@
   })
 
   export default class extends Mixins(SearchMixin, PlayListMixin) {
-    @Action('removeOneHistory') removeOneHistory: any
     @Action('clearHistory') clearHistory: any
 
     @Getter('searchHistory') readonly searchHistory!: Array<string>
@@ -101,10 +100,6 @@
           throw new Error('can not get hot search data.')
         }
       })
-    }
-
-    fillSearchBox(query: string) {
-      (this.$refs.searchBox as any).fillContent(query)
     }
 
     showConfirm() {

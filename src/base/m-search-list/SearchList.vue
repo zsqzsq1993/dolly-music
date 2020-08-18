@@ -1,6 +1,6 @@
 <template>
     <div class="m-search-list">
-      <div class="search-title">
+      <div class="search-title" v-if="withTitle">
         <h1 class="title-text" v-text="title"></h1>
         <span class="icon-wrapper" @click="clearAll">
           <i class="icon-clear"></i>
@@ -28,6 +28,8 @@
       @Prop({default: []}) list!: Array<string>
 
       @Prop({default: '搜索历史'}) title!: string
+
+      @Prop({default: true}) withTitle!: boolean
 
       selectOne(item: string) {
         this.$emit('select-one', item)

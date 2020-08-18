@@ -9,7 +9,8 @@
       </div>
       <div class="search-box-wrapper">
         <search-box :placeholder="'搜索歌曲'"
-                    @query="handleQuery"></search-box>
+                    @query="handleQuery"
+                    ref="searchBox"></search-box>
       </div>
       <div class="suggest-wrapper">
         <suggest v-show="query"
@@ -18,7 +19,17 @@
                  @select-item="selectItem"></suggest>
       </div>
       <div class="switches-wrapper">
-        <switches></switches>
+        <switches @select-item="switchComponent"></switches>
+        <scroll>
+          <div>
+            <songs-list v-show="!currentIndex"></songs-list>
+            <search-list v-show="currentIndex"
+                         :withTitle="false"
+                         :list="searchHistory"
+                         @select-one="fillSearchBox"
+                         @remove-one="removeOneHistory"></search-list>
+          </div>
+        </scroll>
       </div>
       <div class="top-tip-wrapper">
         <top-tip ref="toptip">
@@ -36,22 +47,32 @@
 
 <script lang="ts">
     import {Component, Mixins} from 'vue-property-decorator'
+    import {Getter} from 'vuex-class'
     import SearchBox from 'base/m-search-box/SearchBox.vue'
     import Suggest from 'components/m-suggest/Suggest.vue'
     import Switches from 'base/m-switches/Switches.vue'
     import TopTip from 'src/base/m-top-tip/TopTip.vue'
     import {SearchMixin} from 'src/assets/ts/mixins'
+    import SongsList from 'base/m-songs-list/SongsList.vue'
+    import SearchList from 'base/m-search-list/SearchList.vue'
+    import Scroll from 'base/m-scroll/Scroll.vue'
 
     @Component({
       components: {
+        Scroll,
         SearchBox,
         Suggest,
         Switches,
-        TopTip
+        TopTip,
+        SongsList,
+        SearchList
       }
     })
     export default class extends Mixins(SearchMixin) {
+      @Getter('searchHistory') readonly searchHistory!: Array<string>
+
       showFlag = false
+      currentIndex = 0
 
       show() {
         this.showFlag = true
@@ -64,6 +85,10 @@
       selectItem(keyword: string) {
         this.addOneHistory(keyword);
         (this.$refs.toptip as any).show()
+      }
+
+      switchComponent(index: number) {
+        this.currentIndex = index
       }
     }
 </script>
