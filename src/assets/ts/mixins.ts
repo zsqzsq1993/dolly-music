@@ -26,10 +26,93 @@ export class PlayListMixin extends Vue {
 }
 
 @Component
-export class PlayerMixin extends Vue {
+export class HistoryMixin extends Vue {
+  @Action('addOneHistory') addOneHistory: any
+  @Action('removeOneHistory') removeOneHistory: any
+  @Action('clearHistory') clearHistory: any
+}
+
+@Component
+export class SearchMixin extends HistoryMixin {
+  query = ''
+
+  handleQuery(query: string) {
+    this.query = query
+
+    if (!query) {
+      setTimeout(() => {
+        this.$refs.scroll && (this.$refs.scroll as any).refresh()
+      }, 20)
+    }
+  }
+
+  fillSearchBox(query: string) {
+    (this.$refs.searchBox as any).fillContent(query)
+  }
+
+  addOneSearchHistory(val: string) {
+    this.addOneHistory({
+      history: val,
+      flag: 'search'
+    })
+  }
+
+  removeOneSearchHistory(val: string) {
+    this.removeOneHistory({
+      history: val,
+      flag: 'search'
+    })
+  }
+
+  clearSearchHistory() {
+    this.clearHistory('search')
+  }
+}
+
+@Component
+export class FavoriteMixin extends HistoryMixin {
+  @Getter('favoriteHistory') readonly favoriteHistory!: Array<Song>
+  @Getter('currentSong') readonly currentSong!: Song
+
+  getIcon(song: Song) {
+    return this.checkInHistory(song)
+      ? 'icon-favorite'
+      : 'icon-not-favorite'
+  }
+
+  addOneFavorite(song: Song) {
+    this.addOneHistory({
+      history: song,
+      flag: 'favorite'
+    })
+  }
+
+  removeOneFavorite(song: Song) {
+    this.removeOneHistory({
+      history: song,
+      flag: 'favorite'
+    })
+  }
+
+  checkInHistory(song: Song) {
+    return this.favoriteHistory.findIndex((item: Song) => {
+      return item.songmid === song.songmid
+    }) > -1
+  }
+
+  toggleFavorite(song: Song) {
+    if (this.checkInHistory(song)) {
+      this.removeOneFavorite(song)
+    } else {
+      this.addOneFavorite(song)
+    }
+  }
+}
+
+@Component
+export class PlayerMixin extends FavoriteMixin {
   @Getter('playMode') readonly playMode!: number
   @Getter('sequenceList') readonly sequenceList!: Array<Song>
-  @Getter('currentSong') readonly currentSong!: Song
 
   @Mutation(types.SET_PLAY_MODE) setPlayMode: any
   @Mutation(types.SET_PLAY_LIST) setPlayList: any
@@ -105,67 +188,6 @@ export class PlayerMixin extends Vue {
   _refreshIndex(list: Array<Song>) {
     return list.findIndex(item => {
       return this.currentSong.songid === item.songid
-    })
-  }
-}
-
-@Component
-export class HistoryMixin extends Vue {
-  @Action('addOneHistory') addOneHistory: any
-  @Action('removeOneHistory') removeOneHistory: any
-  @Action('clearHistory') clearHistory: any
-}
-
-@Component
-export class SearchMixin extends HistoryMixin {
-  query = ''
-
-  handleQuery(query: string) {
-    this.query = query
-
-    if (!query) {
-      setTimeout(() => {
-        this.$refs.scroll && (this.$refs.scroll as any).refresh()
-      }, 20)
-    }
-  }
-
-  fillSearchBox(query: string) {
-    (this.$refs.searchBox as any).fillContent(query)
-  }
-
-  addOneSearchHistory(val: string) {
-    this.addOneHistory({
-      history: val,
-      flag: 'search'
-    })
-  }
-
-  removeOneSearchHistory(val: string) {
-    this.removeOneHistory({
-      history: val,
-      flag: 'search'
-    })
-  }
-
-  clearSearchHistory() {
-    this.clearHistory('search')
-  }
-}
-
-@Component
-export class FavoriteMixin extends HistoryMixin {
-  addOneFavorite(song: Song) {
-    this.addOneHistory({
-      history: song,
-      flag: 'favorite'
-    })
-  }
-
-  removeOneFavorite(song: Song) {
-    this.removeOneHistory({
-      history: song,
-      flag: 'favorite'
     })
   }
 }

@@ -8,14 +8,14 @@
                 @after-leave="afterLeave">
       <div class="normal-player" v-show="fullScreen">
         <div class="bg-image">
-          <img :src="song.image" width="100%" height="100%">
+          <img :src="currentSong.image" width="100%" height="100%">
         </div>
         <div class="top-wrapper">
           <div class="icon-wrapper" @click="minimize">
             <i class="icon-back"></i>
           </div>
-          <h1 class="song-name" v-html="song.songname"></h1>
-          <h2 class="song-singer" v-html="song.singer"></h2>
+          <h1 class="song-name" v-html="currentSong.songname"></h1>
+          <h2 class="song-singer" v-html="currentSong.singer"></h2>
         </div>
         <div class="middle-wrapper"
              @touchstart.prevent="middleTouchStart"
@@ -25,7 +25,7 @@
             <div class="cd-wrapper" ref="cd">
               <img class="cd"
                    :class="animateClass"
-                   :src="song.image">
+                   :src="currentSong.image">
             </div>
             <div class="shortcut-lyric-wrapper">
               {{currentLyric}}
@@ -63,7 +63,7 @@
                 @percent-changing="handlePercentChanging">
               </progress-bar>
             </span>
-            <span class="total-time time">{{song.interval | timeFilter}}</span>
+            <span class="total-time time">{{currentSong.interval | timeFilter}}</span>
           </div>
           <div class="controls-wrapper">
             <div class="play-mode-button icon-wrapper i-left" @click="changePlayMode">
@@ -81,8 +81,8 @@
                  @click="next">
               <i class="icon-next" :class="{'disabled' : !audioReady}"></i>
             </div>
-            <div class="favourite-song-wrapper icon-wrapper i-right">
-              <i class="icon-not-favorite"></i>
+            <div class="favourite-song-wrapper icon-wrapper i-right" @click.stop="toggleFavorite(currentSong)">
+              <i :class="getIcon(currentSong)"></i>
             </div>
           </div>
         </div>
@@ -91,13 +91,13 @@
     <transition name="mini">
       <div class="mini-player" v-show="!fullScreen" @click="maximize">
         <div class="avatar-wrapper" ref="miniCd">
-          <img :src="song.image"
+          <img :src="currentSong.image"
                class="avatar"
                :class="animateClass">
         </div>
         <div class="content-wrapper">
-          <h1 class="song-name" v-html="song.songname"></h1>
-          <h2 class="song-singer" v-html="song.singer"></h2>
+          <h1 class="song-name" v-html="currentSong.songname"></h1>
+          <h2 class="song-singer" v-html="currentSong.singer"></h2>
         </div>
         <div class="play-button-wrapper icon-wrapper"
              @click.stop="togglePlaying">
@@ -111,7 +111,7 @@
       </div>
     </transition>
     <play-list ref="playList"></play-list>
-    <audio :src="song.url"
+    <audio :src="currentSong.url"
            ref="audio"
            @error="onerror"
            @canplay="onready"
@@ -183,7 +183,6 @@
   export default class extends Mixins(PlayerMixin) {
     @Getter('playList') playList!: Array<Song>
     @Getter('fullScreen') fullScreen!: boolean
-    @Getter('currentSong') song!: Song
     @Getter('playing') playing!: boolean
     @Getter('currentIndex') currentIndex!: number
     @Getter('playMode') playMode!: number
@@ -226,12 +225,12 @@
         return
       }
       newSong.getLyric().then((lyric: string) => {
-        const obj = this.lyricParser = lyricParser(lyric, this.song.interval)
+        const obj = this.lyricParser = lyricParser(lyric, this.currentSong.interval)
         this.lyrics = obj.lines
         obj.play(this._playCallback)
       }).then(() => {
         this.addOneHistory({
-          history: this.song,
+          history: this.currentSong,
           flag: 'play'
         })
       }).catch(() => {
@@ -289,7 +288,7 @@
     }
 
     get percentage() {
-      return this.currentTime / this.song.interval
+      return this.currentTime / this.currentSong.interval
     }
 
     onready() {
@@ -387,13 +386,13 @@
     }
 
     handlePercentChange(percentage: number) {
-      const currentTime = percentage * this.song.interval
+      const currentTime = percentage * this.currentSong.interval
       this.changeCurrentTime(currentTime)
       this.changeLyricTime(currentTime)
     }
 
     handlePercentChanging(percentage: number) {
-      const currentTime = percentage * this.song.interval
+      const currentTime = percentage * this.currentSong.interval
       this.changeLyricTime(currentTime)
     }
 

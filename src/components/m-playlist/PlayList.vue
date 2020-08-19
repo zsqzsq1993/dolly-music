@@ -24,8 +24,8 @@
                 <div class="song-name"
                      v-text="song.songname"
                      @click.stop="switchSong(song) && scrollToCurrent()"></div>
-                <div class="favorite-button">
-                  <i class="icon-not-favorite"></i>
+                <div class="favorite-button" @click.stop="toggleFavorite(song)">
+                  <i :class="getIcon(song)"></i>
                 </div>
                 <div class="delete-button"
                      @click.stop="deleteSong(song) && scrollToCurrent()">
@@ -71,7 +71,6 @@
     })
     export default class extends Mixins(PlayerMixin) {
       @Getter('sequenceList') readonly sequenceList!: Array<Song>
-      @Getter('currentSong') readonly currentSong!: Song
 
       @Action('switchSong') switchSong: any
       @Action('deleteSong') deleteSong: any

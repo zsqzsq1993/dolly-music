@@ -27,7 +27,7 @@
   export default class extends Vue {
     @Getter('singer') singer!: Singer
 
-    songs: Array<Song | undefined> = []
+    songs: Array<Song> = []
 
     created() {
       this._getSingerDetail(this.singer.id)
