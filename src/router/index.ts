@@ -48,6 +48,10 @@ const routes: Array<RouteConfig> = [
         component: () => import('components/m-singer-detail/SingerDetail.vue')
       }
     ]
+  },
+  {
+    path: '/usercenter',
+    component: () => import('components/m-user-center/UserCenter.vue')
   }
 ]
 
