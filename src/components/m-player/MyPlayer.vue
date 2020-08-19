@@ -192,7 +192,7 @@
     @Mutation(types.SET_PLAYING_STATE) setPlayingState: any
     @Mutation(types.SET_CURRENT_INDEX) setCurrentIndex: any
 
-    @Action('addOneSongHistory') addOneSongHistory: any
+    @Action('addOnePlayHistory') addOneSongHistory: any
 
     cd: HTMLElement | undefined = undefined
     posAndScale: any = undefined

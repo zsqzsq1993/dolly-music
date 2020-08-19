@@ -111,8 +111,8 @@ export class PlayerMixin extends Vue {
 
 @Component
 export class SearchMixin extends Vue {
-  @Action('addOneHistory') addOneHistory: any
-  @Action('removeOneHistory') removeOneHistory: any
+  @Action('addOneSearchHistory') addOneHistory: any
+  @Action('removeOneSearchHistory') removeOneHistory: any
 
   query = ''
 

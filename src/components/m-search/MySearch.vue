@@ -65,7 +65,7 @@
   })
 
   export default class extends Mixins(SearchMixin, PlayListMixin) {
-    @Action('clearHistory') clearHistory: any
+    @Action('clearSearchHistory') clearHistory: any
 
     @Getter('searchHistory') readonly searchHistory!: Array<string>
     @Getter('playList') readonly playList!: Array<Song>

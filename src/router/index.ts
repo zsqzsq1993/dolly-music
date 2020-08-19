@@ -50,7 +50,7 @@ const routes: Array<RouteConfig> = [
     ]
   },
   {
-    path: '/usercenter',
+    path: '/user',
     component: () => import('components/m-user-center/UserCenter.vue')
   }
 ]

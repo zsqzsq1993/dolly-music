@@ -3,7 +3,7 @@ import * as types from './mutation-types'
 import {playmode} from 'src/assets/ts/config'
 import {shuffle} from 'src/assets/ts/util'
 import {Song} from 'src/assets/ts/Song'
-import {addOne, removeOne, clearAll, addOneSong} from 'src/assets/ts/cache'
+import {addOne, removeOne, clearAll, SEARCH_KEY, PLAY_KEY} from 'src/assets/ts/cache'
 
 const findIndex = (list: Array<Song>, song: Song) => {
   return list.findIndex(item => {
@@ -129,26 +129,26 @@ const actions: ActionTree<any, any> = {
     deactivatePlayer(commit)
   },
 
-  addOneHistory({commit, state}, oneHistory) {
+  addOneSearchHistory({commit, state}, oneHistory) {
     let historylist = state.searchHistory.slice()
-    historylist = addOne(historylist, oneHistory)
+    historylist = addOne(historylist, oneHistory, SEARCH_KEY)
     commit(types.SET_SEARCH_HISTORY, historylist)
   },
 
-  removeOneHistory({commit, state}, oneHistory) {
+  removeOneSearchHistory({commit, state}, oneHistory) {
     let historylist = state.searchHistory.slice()
-    historylist = removeOne(historylist, oneHistory)
+    historylist = removeOne(historylist, oneHistory, SEARCH_KEY)
     commit(types.SET_SEARCH_HISTORY, historylist)
   },
 
-  clearHistory({commit}) {
-    clearAll()
+  clearSearchHistory({commit}) {
+    clearAll(SEARCH_KEY)
     commit(types.SET_SEARCH_HISTORY, [])
   },
 
-  addOneSongHistory({commit, state}, song) {
+  addOnePlayHistory({commit, state}, song) {
     let historylist = state.playHistory.slice()
-    historylist = addOneSong(historylist, song)
+    historylist = addOne(historylist, song, PLAY_KEY)
     commit(types.SET_PLAY_HISTORY, historylist)
   }
 }
