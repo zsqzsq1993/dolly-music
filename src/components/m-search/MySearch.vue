@@ -20,13 +20,13 @@
                        v-show="showSearchHistory"
                        @clear-all="showConfirm"
                        @select-one="fillSearchBox"
-                       @remove-one="removeOneHistory"></search-list>
+                       @remove-one="removeOneSearchHistory"></search-list>
         </div>
       </div>
     </scroll>
     <div class="suggest-wrapper" v-show="query">
       <suggest :keyword="query"
-               @select-item="addOneHistory"></suggest>
+               @select-item="addOneSearchHistoryx"></suggest>
     </div>
     <div class="confirm-wrapper">
       <confirm @click-left="cancel"
@@ -39,7 +39,7 @@
 
 <script lang="ts">
   import {Component, Mixins} from 'vue-property-decorator'
-  import {Action, Getter} from 'vuex-class'
+  import {Getter} from 'vuex-class'
   import {getHotSearch} from 'src/api/getSearch'
   import SearchBox from 'base/m-search-box/SearchBox.vue'
   import Suggest from 'components/m-suggest/Suggest.vue'
@@ -65,8 +65,6 @@
   })
 
   export default class extends Mixins(SearchMixin, PlayListMixin) {
-    @Action('clearSearchHistory') clearHistory: any
-
     @Getter('searchHistory') readonly searchHistory!: Array<string>
     @Getter('playList') readonly playList!: Array<Song>
 
@@ -111,7 +109,7 @@
     }
 
     confirm() {
-      this.clearHistory();
+      this.clearSearchHistory();
       (this.$refs.confirm as any).hide()
     }
   }

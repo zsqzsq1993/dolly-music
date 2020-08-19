@@ -32,7 +32,7 @@
                          :withTitle="false"
                          :list="searchHistory"
                          @select-one="fillSearchBox"
-                         @remove-one="removeOneHistory"></search-list>
+                         @remove-one="removeOneSearchHistory"></search-list>
           </div>
         </scroll>
       </div>
@@ -112,7 +112,7 @@
       }
 
       selectItem(keyword: string) {
-        this.addOneHistory(keyword);
+        this.addOneSearchHistory(keyword);
         (this.$refs.toptip as any).show()
       }
 

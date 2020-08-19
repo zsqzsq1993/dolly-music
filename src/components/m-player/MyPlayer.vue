@@ -192,7 +192,7 @@
     @Mutation(types.SET_PLAYING_STATE) setPlayingState: any
     @Mutation(types.SET_CURRENT_INDEX) setCurrentIndex: any
 
-    @Action('addOnePlayHistory') addOneSongHistory: any
+    @Action('addOneHistory') addOneHistory: any
 
     cd: HTMLElement | undefined = undefined
     posAndScale: any = undefined
@@ -230,7 +230,10 @@
         this.lyrics = obj.lines
         obj.play(this._playCallback)
       }).then(() => {
-        this.addOneSongHistory(newSong)
+        this.addOneHistory({
+          history: this.song,
+          flag: 'play'
+        })
       }).catch(() => {
         this.lyricParser = null
         this.lyrics = []

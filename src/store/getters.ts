@@ -20,6 +20,8 @@ export const searchHistory = (state: any) => state.searchHistory
 
 export const playHistory = (state: any) => state.playHistory
 
+export const favoriteHistory = (state: any) => state.favoriteHistory
+
 export const currentSong = (state: any) => {
   return state.playList[state.currentIndex] || {}
 }

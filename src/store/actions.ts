@@ -3,7 +3,7 @@ import * as types from './mutation-types'
 import {playmode} from 'src/assets/ts/config'
 import {shuffle} from 'src/assets/ts/util'
 import {Song} from 'src/assets/ts/Song'
-import {addOne, removeOne, clearAll, SEARCH_KEY, PLAY_KEY} from 'src/assets/ts/cache'
+import {addOne, removeOne, clearAll, SEARCH_KEY, PLAY_KEY, FAVORITE_KEY} from 'src/assets/ts/cache'
 
 const findIndex = (list: Array<Song>, song: Song) => {
   return list.findIndex(item => {
@@ -38,12 +38,30 @@ const deleteSongHelper = (list: Array<Song>, currentIndex: number, deleteIndex: 
   return currentIndex
 }
 
-const   deactivatePlayer = (commit: any) => {
+const deactivatePlayer = (commit: any) => {
   commit(types.SET_PLAYING_STATE, false)
   commit(types.SET_FULL_SCREEN, false)
   commit(types.SET_PLAY_LIST, [])
   commit(types.SET_SEQUENCE_LIST, [])
   commit(types.SET_CURRENT_INDEX, 0)
+}
+
+const map = {
+  'search': {
+    name: 'searchHistory',
+    key: SEARCH_KEY,
+    type: types.SET_SEARCH_HISTORY
+  },
+  'play': {
+    name: 'playHistory',
+    key: PLAY_KEY,
+    type: types.SET_PLAY_HISTORY
+  },
+  'favorite': {
+    name: 'favoriteHistory',
+    key: FAVORITE_KEY,
+    type: types.SET_FAVORITE_HISTORY
+  }
 }
 
 const actions: ActionTree<any, any> = {
@@ -129,27 +147,24 @@ const actions: ActionTree<any, any> = {
     deactivatePlayer(commit)
   },
 
-  addOneSearchHistory({commit, state}, oneHistory) {
-    let historylist = state.searchHistory.slice()
-    historylist = addOne(historylist, oneHistory, SEARCH_KEY)
-    commit(types.SET_SEARCH_HISTORY, historylist)
+  addOneHistory({commit, state}, {history, flag}) {
+    const target = (map as any)[flag] as any
+    let historylist = state[target.name].slice()
+    historylist = addOne(historylist, history, target.key)
+    commit(target.type, historylist)
   },
 
-  removeOneSearchHistory({commit, state}, oneHistory) {
-    let historylist = state.searchHistory.slice()
-    historylist = removeOne(historylist, oneHistory, SEARCH_KEY)
-    commit(types.SET_SEARCH_HISTORY, historylist)
+  removeOneHistory({commit, state}, {history, flag}) {
+    const target = (map as any)[flag] as any
+    let historylist = state[target.name].slice()
+    historylist = removeOne(historylist, history, target.key)
+    commit(target.type, historylist)
   },
 
-  clearSearchHistory({commit}) {
-    clearAll(SEARCH_KEY)
-    commit(types.SET_SEARCH_HISTORY, [])
-  },
-
-  addOnePlayHistory({commit, state}, song) {
-    let historylist = state.playHistory.slice()
-    historylist = addOne(historylist, song, PLAY_KEY)
-    commit(types.SET_PLAY_HISTORY, historylist)
+  clearHistory({commit}, flag) {
+    const target = (map as any)[flag] as any
+    clearAll(target.key)
+    commit(target.type, [])
   }
 }
 

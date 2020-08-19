@@ -45,6 +45,10 @@ const mutations = {
 
   [types.SET_PLAY_HISTORY] (state: any, list: Array<Song>) {
     state.playHistory = list
+  },
+
+  [types.SET_FAVORITE_HISTORY] (state: any, list: Array<Song>) {
+    state.favoriteHistory = list
   }
 }
 

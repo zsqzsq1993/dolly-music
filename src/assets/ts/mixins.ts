@@ -110,10 +110,14 @@ export class PlayerMixin extends Vue {
 }
 
 @Component
-export class SearchMixin extends Vue {
-  @Action('addOneSearchHistory') addOneHistory: any
-  @Action('removeOneSearchHistory') removeOneHistory: any
+export class HistoryMixin extends Vue {
+  @Action('addOneHistory') addOneHistory: any
+  @Action('removeOneHistory') removeOneHistory: any
+  @Action('clearHistory') clearHistory: any
+}
 
+@Component
+export class SearchMixin extends HistoryMixin {
   query = ''
 
   handleQuery(query: string) {
@@ -128,5 +132,40 @@ export class SearchMixin extends Vue {
 
   fillSearchBox(query: string) {
     (this.$refs.searchBox as any).fillContent(query)
+  }
+
+  addOneSearchHistory(val: string) {
+    this.addOneHistory({
+      history: val,
+      flag: 'search'
+    })
+  }
+
+  removeOneSearchHistory(val: string) {
+    this.removeOneHistory({
+      history: val,
+      flag: 'search'
+    })
+  }
+
+  clearSearchHistory() {
+    this.clearHistory('search')
+  }
+}
+
+@Component
+export class FavoriteMixin extends HistoryMixin {
+  addOneFavorite(song: Song) {
+    this.addOneHistory({
+      history: song,
+      flag: 'favorite'
+    })
+  }
+
+  removeOneFavorite(song: Song) {
+    this.removeOneHistory({
+      history: song,
+      flag: 'favorite'
+    })
   }
 }
