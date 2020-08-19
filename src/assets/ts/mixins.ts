@@ -112,6 +112,7 @@ export class FavoriteMixin extends HistoryMixin {
 @Component
 export class PlayerMixin extends FavoriteMixin {
   @Getter('playMode') readonly playMode!: number
+  @Getter('playList') readonly playList!: Array<Song>
   @Getter('sequenceList') readonly sequenceList!: Array<Song>
 
   @Mutation(types.SET_PLAY_MODE) setPlayMode: any

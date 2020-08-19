@@ -4,7 +4,7 @@
       <li v-for="(song, index) in songs"
           :key="song.songid"
           class="song-wrapper"
-          @click="selectItem(song, index)">
+          @click.stop="selectItem(song, index)">
         <div v-if="rank"
              class="rank">
           <span :class="getCls(index)"

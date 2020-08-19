@@ -26,7 +26,7 @@
     </scroll>
     <div class="suggest-wrapper" v-show="query">
       <suggest :keyword="query"
-               @select-item="addOneSearchHistoryx"></suggest>
+               @select-item="addOneSearchHistory"></suggest>
     </div>
     <div class="confirm-wrapper">
       <confirm @click-left="cancel"
