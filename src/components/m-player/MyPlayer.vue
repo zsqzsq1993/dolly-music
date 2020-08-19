@@ -221,14 +221,6 @@
     }
 
     @Watch('song')
-    addHistory(newSong: Song, oldSong: Song) {
-      if (newSong.songid === oldSong.songid || !Object.keys(newSong).length) {
-        return
-      }
-      this.addOneSongHistory(newSong)
-    }
-
-    @Watch('song')
     getLyric(newSong: Song, oldSong: Song) {
       if (newSong.songid === oldSong.songid || !Object.keys(newSong).length) {
         return
@@ -237,6 +229,8 @@
         const obj = this.lyricParser = lyricParser(lyric, this.song.interval)
         this.lyrics = obj.lines
         obj.play(this._playCallback)
+      }).then(() => {
+        this.addOneSongHistory(newSong)
       }).catch(() => {
         this.lyricParser = null
         this.lyrics = []
