@@ -68,7 +68,10 @@
     }
 
     get showFirstLoading() {
-      return this.keyword && this.searcher && !this.searcher.results.length
+      return this.keyword &&
+        this.searcher &&
+        !this.searcher.results.length &&
+        this.searcher.hasMore
     }
 
     get showLoading() {

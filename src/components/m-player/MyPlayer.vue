@@ -70,7 +70,7 @@
               <i :class="playModeIcon"></i>
             </div>
             <div class="prev-song-button icon-wrapper i-left"
-                 @click="prev">
+                 @click="prevOrLoop()">
               <i class="icon-prev" :class="{'disabled' : !audioReady}"></i>
             </div>
             <div class="playing-button icon-wrapper i-center"
@@ -78,7 +78,7 @@
               <i :class="playIcon"></i>
             </div>
             <div class="next-song-wrapper icon-wrapper i-right"
-                 @click="next">
+                 @click="nextOrLoop">
               <i class="icon-next" :class="{'disabled' : !audioReady}"></i>
             </div>
             <div class="favourite-song-wrapper icon-wrapper i-right" @click.stop="toggleFavorite(currentSong)">
@@ -116,7 +116,7 @@
            @error="onerror"
            @canplay="onready"
            @timeupdate="onTimeUpdate"
-           @ended="autoNextOrLoop">
+           @ended="nextOrLoop">
     </audio>
   </div>
 </template>
@@ -205,7 +205,7 @@
     lyricParser: LyricParser | null = null
     currentLyric = ''
 
-    @Watch('song')
+    @Watch('currentSong')
     startToPlay(newSong: Song, oldSong: Song) {
       if (newSong.songid === oldSong.songid || !Object.keys(newSong).length) {
         return
@@ -219,7 +219,7 @@
       }
     }
 
-    @Watch('song')
+    @Watch('currentSong')
     getLyric(newSong: Song, oldSong: Song) {
       if (newSong.songid === oldSong.songid || !Object.keys(newSong).length) {
         return
@@ -240,7 +240,7 @@
       })
     }
 
-    @Watch('song')
+    @Watch('currentSong')
     defaultPageCd() {
       this.currentPage = PAGE_CD
       this._setTransform('0')
@@ -322,6 +322,10 @@
         return
       }
 
+      if (this.playMode === playmode.loop) {
+
+      }
+
       let index = this.currentIndex - 1
       if (index === -1) {
         index = this.playList.length - 1
@@ -343,17 +347,29 @@
       this.audioReady = false
     }
 
-    autoNextOrLoop() {
+    loop() {
+      this.audio!.currentTime = 0
+      if (!this.playing) {
+        this.togglePlaying()
+      } else {
+        this.play()
+      }
+      this.lyricParser && this.lyricParser.repeat()
+    }
+
+    nextOrLoop() {
       if (this.playMode === playmode.loop) {
-        this.audio!.currentTime = 0
-        if (!this.playing) {
-          this.togglePlaying()
-        } else {
-          this.play()
-        }
-        this.lyricParser && this.lyricParser.repeat()
+        this.loop()
       } else {
         this.next()
+      }
+    }
+
+    prevOrLoop() {
+      if (this.playMode === playmode.loop) {
+        this.loop()
+      } else {
+        this.prev()
       }
     }
 
