@@ -73,8 +73,9 @@ const lyricParser: any = function () {
 
   function play(_callback: any) {
     if (!lines.length) {
-      console.warn('Initializing is not done yet.')
-      return
+      const message = 'Lyrics Array is Empty.'
+      console.warn(message)
+      throw new Error(message)
     }
 
     callback = _callback
