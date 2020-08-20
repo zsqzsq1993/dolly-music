@@ -217,6 +217,8 @@
             margin-right 15px
             color $color-theme
             font-size $font-size-small
+            .icon-favorite
+              color $color-sub-theme
 
           .delete-button
             extend-click()

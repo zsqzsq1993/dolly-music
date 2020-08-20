@@ -833,6 +833,9 @@
             color $color-theme
             font-size 30px
 
+            .icon-favorite
+              color $color-sub-theme
+
             &.i-left
               text-align right
 
