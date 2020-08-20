@@ -224,19 +224,26 @@
       if (newSong.songid === oldSong.songid || !Object.keys(newSong).length) {
         return
       }
-      newSong.getLyric().then((lyric: string) => {
+
+      return new Promise(resolve => {
+        if (newSong.lyric) {
+          resolve(newSong.lyric)
+        } else {
+          newSong.getLyric().then(lyric => { resolve(lyric) })
+        }
+      }).then((lyric: any) => {
         const obj = this.lyricParser = lyricParser(lyric, this.currentSong.interval)
         this.lyrics = obj.lines
         obj.play(this._playCallback)
-      }).then(() => {
-        this.addOneHistory({
-          history: this.currentSong,
-          flag: 'play'
-        })
       }).catch(() => {
         this.lyricParser = null
         this.lyrics = []
         this._setCurrentLyric(this.currentIndex)
+      }).then(() => {
+        this.addOneHistory({
+          history: newSong,
+          flag: 'play'
+        })
       })
     }
 

@@ -21,7 +21,7 @@ export class Song {
   url: string
   image: string
   interval: number
-  lyric: string
+  lyric?: string
 
   constructor(config: SongConfig) {
     this.albumname = config.albumname
@@ -33,7 +33,6 @@ export class Song {
     this.url = '' // placeholder
     this.image =
       `https://y.gtimg.cn/music/photo_new/T002R300x300M000${config.albummid}.jpg?max_age=2592000`
-    this.lyric = ''
   }
 
   static getUrls(songs: Array<Song>): Promise<Array<Song>> {
@@ -49,14 +48,11 @@ export class Song {
   }
 
   getLyric(): Promise<string> {
-    if (this.lyric) {
-      return Promise.resolve(this.lyric)
-    }
-
     return new Promise((resolve, reject) => {
       getLyric(this).then((response: any) => {
         if (response.code === 0) {
-          resolve(Base64.decode(response.lyric))
+          this.lyric = Base64.decode(response.lyric)
+          resolve(this.lyric.slice())
         } else {
           reject(new Error('obtain lyric error.'))
         }
