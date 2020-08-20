@@ -24,9 +24,11 @@
         </div>
       </div>
     </scroll>
-    <div class="suggest-wrapper" v-show="query">
+    <div class="suggest-wrapper" v-show="query"
+         ref="suggestWrapper">
       <suggest :keyword="query"
-               @select-item="addOneSearchHistory"></suggest>
+               @select-item="addOneSearchHistory"
+               ref="suggest"></suggest>
     </div>
     <div class="confirm-wrapper">
       <confirm @click-left="cancel"
@@ -87,7 +89,10 @@
     handlePlayList() {
       const bottom = this.playList.length ? 60 : 0;
      (this.$refs.scroll as any).$el.style.bottom = bottom + 'px';
-      (this.$refs.scroll as any).refresh()
+      (this.$refs.scroll as any).refresh();
+
+      (this.$refs.suggestWrapper as any).style.bottom = bottom + 'px';
+      (this.$refs.suggest as any).refreshScroll()
     }
 
     getHots(): Promise<Array<HotKey>> {

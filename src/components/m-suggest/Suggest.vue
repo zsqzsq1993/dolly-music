@@ -29,7 +29,7 @@
 </template>
 
 <script lang="ts">
-  import {Component, Prop, Mixins, Watch} from 'vue-property-decorator'
+  import {Component, Prop, Vue, Watch} from 'vue-property-decorator'
   import {Mutation, Action, Getter} from 'vuex-class'
   import * as types from 'src/store/mutation-types'
   import Scroll from 'src/base/m-scroll/Scroll.vue'
@@ -37,7 +37,6 @@
   import {Singer} from 'src/assets/ts/Singer'
   import Searcher from 'src/assets/ts/Searcher'
   import {Song} from 'src/assets/ts/Song'
-  import {PlayListMixin} from 'src/assets/ts/mixins'
 
   @Component({
     components: {
@@ -45,7 +44,7 @@
       Loading
     }
   })
-  export default class extends Mixins(PlayListMixin) {
+  export default class extends Vue {
     @Prop({default: ''}) keyword!: string
     @Prop({default: true}) singerInfo!: boolean
 
@@ -127,9 +126,7 @@
       }
     }
 
-    handlePlayList() {
-      const bottom = this.playList.length ? 60 : 0;
-      (this.$refs.suggestScroll as any).$el.style.bottom = bottom + 'px';
+    refreshScroll() {
       (this.$refs.suggestScroll as any).refresh()
     }
   }
