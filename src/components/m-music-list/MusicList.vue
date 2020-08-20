@@ -237,6 +237,7 @@
 
     .avatar
       position relative
+      z-index 5
       width 100%
       height 0
       padding-top 70%
@@ -275,23 +276,25 @@
         height 100%
         background rgba(7, 17, 27, 0.4)
 
-  .bg-layer
-    position: relative;
-    width 100%
-    height 100%
-    background $color-background
+    .bg-layer
+      position: relative;
+      z-index 6
+      width 100%
+      height 100%
+      background $color-background
 
-  .songs-scroll
-    position absolute
-    top 0
-    bottom 0
-    width 100%
-
-    .songs-list-wrapper
-      padding 20px 30px
-
-    .loading
+    .songs-scroll
       position absolute
-      top 50%
-      transform translateY(-50%)
+      z-index 7
+      top 0
+      bottom 0
+      width 100%
+
+      .songs-list-wrapper
+        padding 20px 30px
+
+      .loading
+        position absolute
+        top 50%
+        transform translateY(-50%)
 </style>
