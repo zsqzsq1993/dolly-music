@@ -30,6 +30,7 @@ module.exports = {
     'prefer-spread': 0,
     '@typescript-eslint/no-use-before-define': 0,
     'no-return-assign': 0,
-    '@typescript-eslint/no-non-null-assertion': 0
+    '@typescript-eslint/no-non-null-assertion': 0,
+    '@typescript-eslint/no-var-requires': 0
   }
 }

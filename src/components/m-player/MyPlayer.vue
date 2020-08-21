@@ -102,7 +102,7 @@
         <div class="play-button-wrapper icon-wrapper"
              @click.stop="togglePlaying">
           <progress-circle :percentage="percentage">
-            <i class="icon icon-play" :class="playIconMini"></i>
+            <i class="icon icon-control-play" :class="playIconMini"></i>
           </progress-circle>
         </div>
         <div class="expansion-button-wrapper icon-wrapper" @click.stop="showPlayList">
@@ -225,20 +225,26 @@
         return
       }
 
-      return new Promise(resolve => {
+      const errorCallback = () => {
+        this.lyricParser = null
+        this.lyrics = []
+        this._setCurrentLyric(this.currentIndex)
+      }
+
+      return new Promise((resolve, reject) => {
         if (newSong.lyric) {
           resolve(newSong.lyric)
         } else {
-          newSong.getLyric().then(lyric => { resolve(lyric) })
+          newSong.getLyric().then(lyric => { resolve(lyric) }).catch((e) => {
+            reject(e)
+          })
         }
       }).then((lyric: any) => {
         const obj = this.lyricParser = lyricParser(lyric, this.currentSong.interval)
         this.lyrics = obj.lines
         obj.play(this._playCallback)
       }).catch(() => {
-        this.lyricParser = null
-        this.lyrics = []
-        this._setCurrentLyric(this.currentIndex)
+        errorCallback()
       }).then(() => {
         this.addOneHistory({
           history: newSong,
@@ -912,7 +918,7 @@
           color $color-theme-d
           font-size 30px
 
-          &.icon-play
+          &.icon-control-play
             font-size 32px
             position absolute
             top 0

@@ -4,7 +4,8 @@ import {
   recommandListData,
   recommandDetailData,
   RetData,
-  devMode
+  devMode,
+  HOST
 } from 'src/api/config'
 import dollyAxios from 'dolly-axios'
 
@@ -22,9 +23,11 @@ export interface ListData {
 }
 
 export function getRecommandCarousel(): Promise<RetData<SliderData>> {
+  const basicUrl = '/api/getRecommandCarousel'
+
   const url = devMode
-    ? '/api/getRecommandCarousel'
-    : '' // 服务器接口
+    ? basicUrl
+    : HOST + basicUrl
 
   const data = Object.assign({}, commonData, recommandCarouselData)
 
@@ -35,9 +38,11 @@ export function getRecommandCarousel(): Promise<RetData<SliderData>> {
 }
 
 export function getRecommandList(): Promise<RetData<ListData>> {
+  const basicUrl = '/api/getRecommandList'
+
   const url = devMode
-    ? '/api/getRecommandList'
-    : '' // 服务器接口
+    ? basicUrl
+    : HOST + basicUrl
 
   const data = Object.assign({}, commonData, recommandListData)
 
@@ -49,9 +54,11 @@ export function getRecommandList(): Promise<RetData<ListData>> {
 }
 
 export function getRecommandDetail(disstid: number): Promise<Array<any>> {
+  const basicUrl = '/api/getRecommandDetail'
+
   const url = devMode
-    ? '/api/getRecommandDetail'
-    : ''
+    ? basicUrl
+    : HOST + basicUrl
 
   const data = Object.assign({}, commonData, recommandDetailData, {disstid})
 

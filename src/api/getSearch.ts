@@ -1,10 +1,12 @@
-import {devMode, commonData, hotSearchData, getSearchData} from 'src/api/config'
+import {devMode, commonData, hotSearchData, getSearchData, HOST} from 'src/api/config'
 import dollyAxios from 'dolly-axios'
 
 export function getHotSearch() {
+  const basicUrl = '/api/getHotSearch'
+
   const url = devMode
-    ? '/api/getHotSearch'
-    : ''
+    ? basicUrl
+    : HOST + basicUrl
 
   const data = Object.assign({}, commonData, hotSearchData)
 
@@ -16,9 +18,11 @@ export function getHotSearch() {
 }
 
 export function getSearch(keyword: string, page: number, zhida: boolean, perpage: number) {
+  const basicUrl = '/api/getSearch'
+
   const url = devMode
-    ? '/api/getSearch'
-    : ''
+    ? basicUrl
+    : HOST + basicUrl
 
   const data = Object.assign({}, getSearchData, {
     w: keyword,

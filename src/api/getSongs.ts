@@ -1,11 +1,13 @@
 import {Song} from 'src/assets/ts/Song'
-import {commonData, devMode, songUrlData, songLyricData} from 'src/api/config'
+import {commonData, devMode, songUrlData, songLyricData, HOST} from 'src/api/config'
 import dollyAxios from 'dolly-axios'
 
 export function getLyric(song: Song): Promise<any> {
+  const basicUrl = '/api/getLyric'
+
   const url = devMode
-    ? '/api/getLyric'
-    : ''
+    ? basicUrl
+    : HOST + basicUrl
 
   const data = Object.assign({}, commonData, songLyricData, {
     songmid: song.songmid
@@ -26,9 +28,11 @@ export function getSongUrl(songs: Array<Song>): Promise<any> {
     $resolve: any,
     $reject: any
 
+  const basicUrl = '/api/getSongUrl'
+
   const url = devMode
-    ? '/api/getSongUrl'
-    : ''
+    ? basicUrl
+    : HOST + basicUrl
 
   const data = Object.assign({}, commonData, songUrlData)
 

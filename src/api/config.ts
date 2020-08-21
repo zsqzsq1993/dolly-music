@@ -188,3 +188,5 @@ export const getSearchData = {
   aggr: 0,
   remoteplace: 'txt.mqq.all'
 }
+
+export const HOST = 'http://106.53.250.228:9000'

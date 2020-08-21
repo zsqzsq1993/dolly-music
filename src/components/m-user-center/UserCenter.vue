@@ -8,15 +8,19 @@
         <switches :tablist="tablist"
                   @select-item="setCurrentIndex"></switches>
       </div>
-      <div class="random-play-wrapper">
-        <div class="random-play-button">
+      <div class="random-play-wrapper" v-show="songlist.length">
+        <div class="random-play-button" @click="randomPlayAll">
           <i class="icon-play"></i>
           <span>随机播放全部</span>
         </div>
       </div>
-      <Scroll :data="scrollData" ref="scroll">
+      <Scroll :data="songlist" ref="scroll">
         <songs-list :songs="songlist"
+                    v-show="songlist.length"
                     @select="activatePlayer"></songs-list>
+        <div class="no-results-wrapper" v-show="!songlist.length">
+          <no-results :text="NoResultsText"></no-results>
+        </div>
       </Scroll>
     </div>
   </transition>
@@ -28,6 +32,7 @@
   import Switches from 'base/m-switches/Switches.vue'
   import Scroll from 'base/m-scroll/Scroll.vue'
   import SongsList from 'base/m-songs-list/SongsList.vue'
+  import NoResults from 'base/m-no-results/NoResults.vue'
   import {Song} from 'src/assets/ts/Song'
   import {PlayListMixin} from 'src/assets/ts/mixins'
 
@@ -35,7 +40,8 @@
     components: {
       Switches,
       Scroll,
-      SongsList
+      SongsList,
+      NoResults
     }
   })
   export default class extends Mixins(PlayListMixin) {
@@ -44,6 +50,7 @@
     @Getter('playList') readonly playList!: Array<Song>
 
     @Action('insertSong') insertSong: any
+    @Action('randomlyActivePlayer') randomlyActivePlayer: any
 
     @Watch('currentIndex')
     whenIndexChange(newVal: number, oldVal: number) {
@@ -61,8 +68,10 @@
         : this.playHistory
     }
 
-    get scrollData() {
-      return Array.prototype.concat(this.favoriteHistory, this.playHistory)
+    get NoResultsText() {
+      return this.currentIndex
+        ? '尚未听过歌曲'
+        : '尚未添加歌曲'
     }
 
     mounted() {
@@ -85,6 +94,12 @@
 
     refreshScroll() {
       (this.$refs.scroll as any).refresh()
+    }
+
+    randomPlayAll() {
+      this.randomlyActivePlayer({
+        list: this.songlist
+      })
     }
 
     handlePlayList() {
@@ -157,4 +172,7 @@
       overflow hidden
       .m-songs-list
         padding 20px 30px
+      .no-results-wrapper
+        width 100%
+        height 100%
 </style>
