@@ -171,6 +171,6 @@ app.listen(port, (error) => {
   if (error) {
     console.log(error)
   } else {
-    console.log('listen at http:localhost:' + port)
+    console.log('listen at http://localhost:' + port)
   }
 })

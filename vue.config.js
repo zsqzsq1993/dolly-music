@@ -196,5 +196,7 @@ module.exports = {
         })
       })
     }
-  }
+  },
+
+  publicPath: ''
 }
