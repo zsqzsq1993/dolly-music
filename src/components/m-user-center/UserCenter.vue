@@ -19,7 +19,7 @@
         <songs-list :songs="songlist"
                     v-show="songlist.length"
                     @select="activatePlayer"></songs-list>
-        <div class="no-results-wrapper" v-show="!songlist.length">
+        <div class="no-results-wrapper" v-show="!songlist.length"  @click.stop>
           <no-results :text="NoResultsText"></no-results>
         </div>
       </Scroll>
@@ -168,7 +168,7 @@
 
     .m-scroll
       position absolute
-      top 110px
+      top 200px
       right 0
       bottom 0
       left 0

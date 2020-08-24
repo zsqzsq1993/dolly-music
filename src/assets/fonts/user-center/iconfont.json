@@ -6,27 +6,6 @@
   "description": "",
   "glyphs": [
     {
-      "icon_id": "590935",
-      "name": "Friends_Add",
-      "font_class": "friendsadd",
-      "unicode": "e625",
-      "unicode_decimal": 58917
-    },
-    {
-      "icon_id": "730127",
-      "name": "music",
-      "font_class": "music",
-      "unicode": "e6e7",
-      "unicode_decimal": 59111
-    },
-    {
-      "icon_id": "2484546",
-      "name": "favorite",
-      "font_class": "favorite",
-      "unicode": "e502",
-      "unicode_decimal": 58626
-    },
-    {
       "icon_id": "8219634",
       "name": "user",
       "font_class": "user",
@@ -34,11 +13,32 @@
       "unicode_decimal": 58926
     },
     {
-      "icon_id": "9161803",
-      "name": "friend",
-      "font_class": "friend",
-      "unicode": "e610",
-      "unicode_decimal": 58896
+      "icon_id": "11372639",
+      "name": "爱心",
+      "font_class": "aixin",
+      "unicode": "e8ab",
+      "unicode_decimal": 59563
+    },
+    {
+      "icon_id": "11372718",
+      "name": "我的关注",
+      "font_class": "wodeguanzhu",
+      "unicode": "e8bc",
+      "unicode_decimal": 59580
+    },
+    {
+      "icon_id": "11372732",
+      "name": "演出",
+      "font_class": "yanchu",
+      "unicode": "e8bf",
+      "unicode_decimal": 59583
+    },
+    {
+      "icon_id": "11372735",
+      "name": "增加",
+      "font_class": "zengjia",
+      "unicode": "e8c0",
+      "unicode_decimal": 59584
     }
   ]
 }
