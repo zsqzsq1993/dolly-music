@@ -1,0 +1,44 @@
+{
+  "id": "",
+  "name": "",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "590935",
+      "name": "Friends_Add",
+      "font_class": "friendsadd",
+      "unicode": "e625",
+      "unicode_decimal": 58917
+    },
+    {
+      "icon_id": "730127",
+      "name": "music",
+      "font_class": "music",
+      "unicode": "e6e7",
+      "unicode_decimal": 59111
+    },
+    {
+      "icon_id": "2484546",
+      "name": "favorite",
+      "font_class": "favorite",
+      "unicode": "e502",
+      "unicode_decimal": 58626
+    },
+    {
+      "icon_id": "8219634",
+      "name": "user",
+      "font_class": "user",
+      "unicode": "e62e",
+      "unicode_decimal": 58926
+    },
+    {
+      "icon_id": "9161803",
+      "name": "friend",
+      "font_class": "friend",
+      "unicode": "e610",
+      "unicode_decimal": 58896
+    }
+  ]
+}

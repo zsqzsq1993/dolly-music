@@ -9,6 +9,7 @@ import store from './store'
 import 'src/assets/stylus/reset.styl'
 import 'src/assets/stylus/base.styl'
 import 'src/assets/stylus/icon.styl'
+import 'src/assets/stylus/userfont.styl'
 import lazyload from 'vue-lazyload'
 
 Vue.use(lazyload, {

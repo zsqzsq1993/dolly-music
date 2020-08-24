@@ -5,8 +5,9 @@
         <i class="icon-back"></i>
       </div>
       <div class="switches-wrapper">
-        <switches :tablist="tablist"
-                  @select-item="setCurrentIndex"></switches>
+        <user-center-controller></user-center-controller>
+<!--        <switches :tablist="tablist"-->
+<!--                  @select-item="setCurrentIndex"></switches>-->
       </div>
       <div class="random-play-wrapper" v-show="songlist.length">
         <div class="random-play-button" @click="randomPlayAll">
@@ -30,6 +31,7 @@
   import {Component, Watch, Mixins} from 'vue-property-decorator'
   import {Getter, Action} from 'vuex-class'
   import Switches from 'base/m-switches/Switches.vue'
+  import UserCenterController from 'components/m-user-center-controller/UserCenterController.vue'
   import Scroll from 'base/m-scroll/Scroll.vue'
   import SongsList from 'base/m-songs-list/SongsList.vue'
   import NoResults from 'base/m-no-results/NoResults.vue'
@@ -41,7 +43,8 @@
       Switches,
       Scroll,
       SongsList,
-      NoResults
+      NoResults,
+      UserCenterController
     }
   })
   export default class extends Mixins(PlayListMixin) {
