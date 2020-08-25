@@ -14,7 +14,7 @@
           <ul class="topList-topSongs">
             <li class="topList-song"
                 v-for="(song, idx) in topList.songList"
-                :key="song.songname">
+                :key="song.songname + idx">
               <div class="song-text">
                 {{idx}}{{song.songname}}-{{song.singername}}
               </div>
