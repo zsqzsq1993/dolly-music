@@ -5,7 +5,7 @@
         <i class="icon-back"></i>
       </div>
       <div class="switches-wrapper">
-        <user-center-controller></user-center-controller>
+        <user-center-controller @select-item="setCurrentIndex"></user-center-controller>
 <!--        <switches :tablist="tablist"-->
 <!--                  @select-item="setCurrentIndex"></switches>-->
       </div>
@@ -140,7 +140,7 @@
         font-size $font-size-large-x
 
     .switches-wrapper
-      margin 10px 0 30px
+      margin 10px 0 20px
       .m-switches
         margin 0 auto
         width 240px

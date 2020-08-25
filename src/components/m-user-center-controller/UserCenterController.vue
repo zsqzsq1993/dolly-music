@@ -1,6 +1,6 @@
 <template>
   <div class="m-user-center-controller">
-    <div class="login-wrapper">
+    <div class="login-wrapper" @click.stop="setLoginPageFlag(true)">
       <div class="avatar-wrapper">
         <i class="icon-user-photo"></i>
       </div>
@@ -31,6 +31,8 @@
 
 <script lang="ts">
   import {Component, Vue} from 'vue-property-decorator'
+  import {Mutation} from 'vuex-class'
+  import * as types from 'src/store/mutation-types'
 
   const map = {
     'favorite': 0,
@@ -40,6 +42,8 @@
 
   @Component
   export default class extends Vue {
+    @Mutation(types.SET_LOGIN_PAGE_FLAG) setLoginPageFlag: any
+
     currentIndex = 0
 
     selectItem(event: Event) {
@@ -66,7 +70,7 @@
 
     .login-wrapper
       width 80%
-      margin 50px auto 40px
+      margin 50px auto 20px
       display flex
       align-items center
       color $color-text-l

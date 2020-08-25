@@ -49,6 +49,10 @@ const mutations = {
 
   [types.SET_FAVORITE_HISTORY] (state: any, list: Array<Song>) {
     state.favoriteHistory = list
+  },
+
+  [types.SET_LOGIN_PAGE_FLAG] (state: any, flag: boolean) {
+    state.loginPageFlag = flag
   }
 }
 

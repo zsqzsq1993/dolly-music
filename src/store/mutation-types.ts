@@ -21,3 +21,5 @@ export const SET_SEARCH_HISTORY = 'set_search_history'
 export const SET_PLAY_HISTORY = 'set_play_history'
 
 export const SET_FAVORITE_HISTORY = 'set_favorite_history'
+
+export const SET_LOGIN_PAGE_FLAG = 'set_login_page_flag'

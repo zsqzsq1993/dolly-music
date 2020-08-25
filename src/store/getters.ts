@@ -25,3 +25,5 @@ export const favoriteHistory = (state: any) => state.favoriteHistory
 export const currentSong = (state: any) => {
   return state.playList[state.currentIndex] || {}
 }
+
+export const loginPageFlag = (state: any) => state.loginPageFlag

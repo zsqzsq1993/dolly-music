@@ -3,6 +3,7 @@
       <my-header></my-header>
       <my-tab></my-tab>
       <my-player></my-player>
+      <my-login></my-login>
       <keep-alive>
         <router-view></router-view>
       </keep-alive>
@@ -15,12 +16,14 @@
     import MyHeader from 'components/m-header/MyHeader.vue'
     import MyTab from 'components/m-tab/MyTab.vue'
     import MyPlayer from 'src/components/m-player/MyPlayer.vue'
+    import MyLogin from 'components/m-login/MyLogin.vue'
 
     @Component({
         components: {
           MyHeader,
           MyTab,
-          MyPlayer
+          MyPlayer,
+          MyLogin
         }
     })
 
