@@ -195,6 +195,10 @@ module.exports = {
           res.json(response.data)
         })
       })
+
+      app.post('/api/register', bodyParser.json(), (req, res) => {
+        //
+      })
     }
   },
 

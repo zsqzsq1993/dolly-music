@@ -1,18 +1,16 @@
 <template>
   <form class="m-login-page">
-    <ul>
-      <li class="login-item user-name">
-        <span class="text">用户名</span>
-        <input type="text" class="content">
-      </li>
-      <li class="login-item password">
-        <span class="text">密码</span>
-        <input type="password" class="content">
-      </li>
-      <li class="login-item submit-wrapper">
-        <input type="submit" value="login" class="submit">
-      </li>
-    </ul>
+    <div class="login-item user-name">
+      <span class="text">用户名</span>
+      <input type="text" class="content">
+    </div>
+    <div class="login-item password">
+      <span class="text">密码</span>
+      <input type="password" class="content">
+    </div>
+    <div class="login-item submit-wrapper">
+      <input type="submit" value="login" class="submit" @click.prevent.stop="login">
+    </div>
   </form>
 </template>
 
@@ -21,6 +19,9 @@
 
   @Component
   export default class extends Vue {
+    login() {
+      //
+    }
   }
 </script>
 
@@ -46,6 +47,7 @@
         color $color-text
         background-color $color-highlight-background
         outline 0
+
         &::placeholder
           color $color-text-d
 
@@ -59,4 +61,6 @@
         color $color-theme
         background-color $color-highlight-background
         font-size $font-size-median-x
+        outline 0
+
 </style>

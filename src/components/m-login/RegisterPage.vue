@@ -59,8 +59,8 @@
       <span class="error-reminder"
             v-show="passwordRepeat && !passwordRepeatFlag">两次输入密码不相同</span>
     </div>
-    <div class="register-item submit-wrapper" @click="submit">
-      <input type="submit" value="register" class="submit">
+    <div class="register-item submit-wrapper">
+      <input type="submit" value="register" class="submit" @click.prevent.stop="submit">
     </div>
   </form>
 </template>
@@ -110,7 +110,15 @@
     }
 
     submit() {
-      //
+      if (
+        this.username && this.usernameFlag &&
+        this.email && this.emailFlag &&
+        this.validateCode && this.validateCodeFlag &&
+        this.password && this.passwordFlag &&
+        this.passwordRepeat && this.passwordRepeatFlag
+      ) {
+        console.log('successfully submit')
+      }
     }
   }
 </script>
@@ -160,4 +168,6 @@
         color $color-theme
         background-color $color-highlight-background
         font-size $font-size-median-x
+        outline 0
+
 </style>
