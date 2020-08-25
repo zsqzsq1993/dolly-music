@@ -65,10 +65,12 @@
     right 0
     bottom 0
     left 0
-    background-color $color-sub-theme
+    background-color $color-background-d
+    backdrop-filter  blur(20px)
 
     .back-wrapper
       position absolute
+      z-index 15
       top 0
       left 6px
       i
@@ -78,6 +80,8 @@
         font-size $font-size-large-x
 
     .image-wrapper
+      position relative
+      z-index 10
       width 100%
       height 50%
       display flex
@@ -89,21 +93,25 @@
         height 180px
 
     .switches-wrapper
+      position relative
+      z-index 10
       width 80%
       margin 0 auto
       .m-switches
         border none
 
         .tab-button
-          color $color-text-ll
+          color $color-text-d
           &.active
-            color $color-sub-theme
-            background $color-text
+            color $color-text
+            background $color-highlight-background
             border-radius 20px
 
     .login-register-wrapper
+      position relative
+      z-index 10
       width 80%
       margin 30px auto
-      color $color-text
-      font-size $font-size-median-x
+      color $color-text-d
+      font-size $font-size-median
 </style>

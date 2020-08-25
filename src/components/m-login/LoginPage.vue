@@ -32,6 +32,7 @@
       margin-bottom 30px
       width 100%
       display flex
+      align-items center
 
       .text
         flex 1
@@ -39,14 +40,23 @@
 
       .content
         flex 2
-        border-radius 5px
+        padding 4px 6px
+        line-height 14px
+        border-radius 8px
+        color $color-text
+        background-color $color-highlight-background
+        outline 0
+        &::placeholder
+          color $color-text-d
 
     .submit-wrapper
       justify-content center
       align-items center
+
       .submit
-        padding 4px 10px
-        color $color-sub-theme
-        background-color $color-text
-        border-radius 10px
+        padding 6px 10px
+        border-radius 20px
+        color $color-theme
+        background-color $color-highlight-background
+        font-size $font-size-median-x
 </style>
