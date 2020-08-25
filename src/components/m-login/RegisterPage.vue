@@ -7,7 +7,10 @@
              id="user-name"
              v-model="username"
              placeholder="6-12位"
+             @focus="usernameFlag = true"
              @blur="checkUsername">
+      <span class="error-reminder"
+            v-show="username && !usernameFlag">用户名位数不正确</span>
     </div>
     <div class="register-item">
       <label class="text" for="e-mail">邮箱</label>
@@ -15,7 +18,11 @@
              class="content"
              id="e-mail"
              v-model="email"
-             placeholder="eg: zsqzsq@gmail.com">
+             placeholder="eg: zsqzsq@gmail.com"
+             @focus="emailFlag = true"
+             @blur="checkEmail">
+      <span class="error-reminder"
+            v-show="email && !emailFlag">邮箱格式不正确</span>
     </div>
     <div class="register-item">
       <label class="text" for="validating-code">验证码</label>
@@ -23,7 +30,11 @@
              class="content"
              id="validating-code"
              v-model="validateCode"
-             placeholder="6位且区分大小写">
+             placeholder="6位且区分大小写"
+             @focus="validateCodeFlag = true"
+             @blur="checkValidateCode">
+      <span class="error-reminder"
+            v-show="validateCode && !validateCodeFlag">验证码位数不正确</span>
     </div>
     <div class="register-item">
       <label class="text" for="password">密码</label>
@@ -31,14 +42,25 @@
              class="content"
              id="password"
              v-model="password"
-             placeholder="6-18位包含大小写及数字">
+             placeholder="6-18位包含大小写及数字"
+             @focus="passwordFlag = true"
+             @blur="checkPassword">
+      <span class="error-reminder"
+            v-show="password && !passwordFlag">密码格式不正确</span>
     </div>
     <div class="register-item">
       <label class="text" for="password-repeat">确认密码</label>
-      <input type="password" class="content" id="password-repeat" v-model="passwordRepeat">
+      <input type="password"
+             class="content"
+             id="password-repeat"
+             v-model="passwordRepeat"
+             @focus="passwordRepeatFlag = true"
+             @blur="checkPasswordRepeat">
+      <span class="error-reminder"
+            v-show="passwordRepeat && !passwordRepeatFlag">两次输入密码不相同</span>
     </div>
     <div class="register-item submit-wrapper" @click="submit">
-      <input type="submit" value="submit" class="submit">
+      <input type="submit" value="register" class="submit">
     </div>
   </form>
 </template>
@@ -52,32 +74,39 @@
     email = ''
     validateCode = ''
     password = ''
-    passwordRepeat: any = ''
+    passwordRepeat = ''
+
+    usernameFlag = true
+    emailFlag = true
+    validateCodeFlag = true
+    passwordFlag = true
+    passwordRepeatFlag = true
 
     checkUsername() {
-      return this.username &&
+      this.usernameFlag = (
         this.username.length &&
         this.username.length >= 6 &&
         this.username.length <= 12
+      ) as boolean
     }
 
     checkEmail() {
-      return /^(\w)+(\.\w+)*@(\w)+((\.\w{2,3}){1,3})$/.test(this.email)
+      this.emailFlag = /^(\w)+(\.\w+)*@(\w)+((\.\w{2,3}){1,3})$/.test(this.email)
     }
 
     checkValidateCode() {
-      return this.validateCode.length === 6
+      this.validateCodeFlag = this.validateCode.length === 6
     }
 
     checkPassword() {
-      return /[A-Z]/.test(this.password) &&
+      this.passwordFlag = /[A-Z]/.test(this.password) &&
         /[0-9]/.test(this.password) &&
         this.password.length >= 6 &&
         this.password.length <= 18
     }
 
     checkPasswordRepeat() {
-      return this.password === this.passwordRepeat
+      this.passwordRepeatFlag = this.password === this.passwordRepeat
     }
 
     submit() {
@@ -91,6 +120,7 @@
 
   .m-register-page
     .register-item
+      position relative
       margin-bottom 30px
       width 100%
       display flex
@@ -110,6 +140,15 @@
         outline 0
         &::placeholder
           color $color-text-d
+
+      .error-reminder
+        position absolute
+        left  0
+        bottom -100%
+        margin-left 33%
+        color $color-theme
+        font-size $font-size-small
+        line-height $font-size-small
 
     .submit-wrapper
       justify-content center
