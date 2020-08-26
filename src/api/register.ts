@@ -16,11 +16,7 @@ export function register(config: Config) {
     : HOST + basicUrl
 
   return dollyAxios.post(url, config).then(response => {
-    if (response.data.code === 0) {
-      return response.data.message
-    } else {
-      throw new Error(response.data.message)
-    }
+    return response.data
   })
 }
 

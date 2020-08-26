@@ -1,19 +1,29 @@
 <template>
   <transition name="slide-up">
-    <div class="m-login" v-show="loginPageFlag">
-      <div class="back-wrapper" @click.stop="setLoginPageFlag(false)">
-        <i class="icon-close"></i>
+    <div>
+      <div class="m-login" v-show="loginPageFlag">
+        <div class="back-wrapper" @click.stop="setLoginPageFlag(false)">
+          <i class="icon-close"></i>
+        </div>
+        <div class="image-wrapper">
+          <img src="../../assets/images/pizza.png"
+               alt="background-image">
+        </div>
+        <div class="switches-wrapper">
+          <switches :tablist="namelist" @select-item="changeComponentIndex"></switches>
+        </div>
+        <div class="login-register-wrapper">
+          <login-page v-show="!componentIndex"></login-page>
+          <register-page v-show="componentIndex" @remind="reminding"></register-page>
+        </div>
       </div>
-      <div class="image-wrapper">
-        <img src="../../assets/images/pizza.png"
-             alt="background-image">
-      </div>
-      <div class="switches-wrapper">
-        <switches :tablist="namelist" @select-item="changeComponentIndex"></switches>
-      </div>
-      <div class="login-register-wrapper">
-        <login-page v-show="!componentIndex"></login-page>
-        <register-page v-show="componentIndex"></register-page>
+      <div class="top-tip-wrapper">
+        <top-tip ref="toptip">
+          <div class="reminder">
+            <i :class="reminderCls"></i>
+            <span class="text-wrapper" v-text="reminderText"></span>
+          </div>
+        </top-tip>
       </div>
     </div>
   </transition>
@@ -26,12 +36,14 @@
   import Switches from 'base/m-switches/Switches.vue'
   import LoginPage from './LoginPage.vue'
   import RegisterPage from './RegisterPage.vue'
+  import TopTip from 'base/m-top-tip/TopTip.vue'
 
   @Component({
     components: {
       Switches,
       LoginPage,
-      RegisterPage
+      RegisterPage,
+      TopTip
     }
   })
   export default class extends Vue {
@@ -43,8 +55,19 @@
 
     componentIndex = 0
 
+    reminderCls = ''
+
+    reminderText = ''
+
     changeComponentIndex(index: number) {
       this.componentIndex = index
+    }
+
+    reminding(response: any) {
+      const {code, message} = response
+      this.reminderCls = code === 0 ? 'icon-ok' : 'icon-close'
+      this.reminderText = message;
+      (this.$refs.toptip as any).show()
     }
   }
 </script>
@@ -58,6 +81,23 @@
   .slide-up-enter, .slide-up-leave-to
     transform translate3d(0, 100%, 0)
 
+  .top-tip-wrapper
+    position fixed
+    z-index 310
+    top 0
+    left 0
+    width 100%
+    .reminder
+      padding 18px 0
+      text-align center
+      i
+        color $color-theme
+        font-size $font-size-median
+        margin-right 4px
+      span
+        color $color-text
+        font-size $font-size-median
+
   .m-login
     position fixed
     z-index 300
@@ -66,13 +106,14 @@
     bottom 0
     left 0
     background-color $color-background-d
-    backdrop-filter  blur(20px)
+    backdrop-filter blur(20px)
 
     .back-wrapper
       position absolute
       z-index 15
       top 0
       left 6px
+
       i
         display block
         padding 10px
@@ -87,6 +128,7 @@
       display flex
       justify-content center
       align-items center
+
       img
         flex 0 0
         width 180px
@@ -97,11 +139,13 @@
       z-index 10
       width 80%
       margin 0 auto
+
       .m-switches
         border none
 
         .tab-button
           color $color-text-d
+
           &.active
             color $color-text
             background $color-highlight-background

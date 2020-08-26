@@ -74,9 +74,15 @@
 <script lang="ts">
   import {Component, Vue} from 'vue-property-decorator'
   import {verify, register} from 'src/api/register'
+  import TopTip from 'base/m-top-tip/TopTip.vue'
+
   const md5 = require('blueimp-md5')
 
-  @Component
+  @Component({
+    components: {
+      TopTip
+    }
+  })
   export default class extends Vue {
     username = 'zsqzsq1993'
     email = 'zsqzsq1993@yeah.net'
@@ -107,10 +113,8 @@
           email: this.email,
           validateCode: this.validateCode,
           password: md5(this.password)
-        }).then(message => {
-          console.log(message)
-        }).catch(error => {
-          console.log(error)
+        }).then(response => {
+          this.$emit('remind', response)
         })
       }
     }
