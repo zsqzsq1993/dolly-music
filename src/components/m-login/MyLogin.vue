@@ -83,7 +83,7 @@
       position relative
       z-index 10
       width 100%
-      height 50%
+      height 30%
       display flex
       justify-content center
       align-items center
@@ -111,7 +111,7 @@
       position relative
       z-index 10
       width 80%
-      margin 30px auto
+      margin 25px auto
       color $color-text-d
       font-size $font-size-median
 </style>

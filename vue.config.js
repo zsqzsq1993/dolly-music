@@ -2,7 +2,14 @@
 const path = require('path')
 const axios = require('axios')
 const bodyParser = require('body-parser')
+const Redis = require('ioredis')
+const nodemailer = require('nodemailer')
+const dbsConfig = require('./src/dbs/config.ts')
+const mongoose = require('mongoose')
+const User = require('./src/dbs/models/user')
 /* eslint-enable */
+
+const redis = new Redis(dbsConfig.redis.port, dbsConfig.redis.host)
 
 const resolve = dir => {
   return path.resolve(__dirname, dir)
@@ -196,11 +203,120 @@ module.exports = {
         })
       })
 
-      app.post('/api/register', bodyParser.json(), (req, res) => {
-        //
-      })
-    }
-  },
+      app.post('/api/verify', bodyParser.json(), async (req, res) => {
+        const {email} = req.body
 
-  publicPath: ''
+        const savedExpire = await redis.hget(`nodemail:${email}`, 'expire')
+
+        if (savedExpire && (+new Date() - savedExpire) < 0) {
+          return
+        }
+
+        const code = dbsConfig.redis.code
+
+        const expire = dbsConfig.redis.expire
+
+        const deliver = nodemailer.createTransport({
+          host: dbsConfig.smtp.host,
+          port: dbsConfig.smtp.port,
+          secure: false,
+          auth: {
+            user: dbsConfig.smtp.user,
+            pass: dbsConfig.smtp.pass
+          }
+        })
+
+        const message = {
+          from: dbsConfig.smtp.user,
+          to: email,
+          subject: '来自Dolly Music的验证码',
+          html: `感谢您的注册，您的验证码是${code}`
+        }
+
+        await deliver.sendMail(message, err => {
+          if (err) {
+            res.json(err)
+          } else {
+            redis.hset(`nodemail:${email}`, 'code', code, 'expire', expire).then(() => {
+              res.json({
+                code: 0,
+                message: '验证码已发送'
+              })
+            })
+          }
+        })
+      })
+
+      app.post('/api/register', bodyParser.json(), async (req, res) => {
+        const {
+          username,
+          email,
+          password,
+          validateCode
+        } = req.body
+
+        const savedValidateCode = redis.hget(`nodemail:${email}`, 'code')
+        const savedValidateExpire = redis.hget(`nodemail:${email}`, 'expire')
+
+        if (!savedValidateCode || savedValidateCode !== validateCode) {
+          res.json({
+            code: -1,
+            message: '验证码不正确，注意大小写'
+          })
+        }
+
+        if (+new Date() - savedValidateExpire > 65 * 1000) {
+          res.json({
+            code: -1,
+            message: '验证已过期'
+          })
+        }
+
+        await mongoose.connect('mongodb://localhost/my_database', {
+          useNewUrlParser: true,
+          useUnifiedTopology: true,
+          useFindAndModify: false,
+          useCreateIndex: true
+        })
+
+        const usernameResult = await User.findOne({username})
+
+        if (usernameResult) {
+          res.json({
+            code: -1,
+            message: '用户名已存在'
+          })
+        }
+
+        const emailResult = await User.findOne({email})
+
+        if (emailResult) {
+          res.json({
+            code: -1,
+            message: '该邮箱已被注册'
+          })
+        }
+
+        const newUser = await User.create({
+          username,
+          email,
+          password
+        })
+
+        if (newUser) {
+          res.json({
+            code: 0,
+            message: '注册成功'
+          })
+        } else {
+          res.json({
+            code: -1,
+            message: '注册失败'
+          })
+        }
+      })
+    },
+
+    publicPath: ''
+  }
 }

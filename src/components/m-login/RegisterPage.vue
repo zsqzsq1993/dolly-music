@@ -19,10 +19,12 @@
              id="e-mail"
              v-model="email"
              placeholder="eg: zsqzsq@gmail.com"
-             @focus="emailFlag = true"
-             @blur="checkEmail">
-      <span class="error-reminder"
-            v-show="email && !emailFlag">邮箱格式不正确</span>
+             @focus="emailFlag = true">
+      <span class="error-reminder send-code"
+            v-show="emailFlag"
+            @click="sendCode"
+            v-text="sender"></span>
+      <span class="error-reminder" v-show="!emailFlag">邮箱格式不正确</span>
     </div>
     <div class="register-item">
       <label class="text" for="validating-code">验证码</label>
@@ -60,27 +62,57 @@
             v-show="passwordRepeat && !passwordRepeatFlag">两次输入密码不相同</span>
     </div>
     <div class="register-item submit-wrapper">
-      <input type="submit" value="register" class="submit" @click.prevent.stop="submit">
+      <input type="submit"
+             value="register"
+             class="submit"
+             @click.prevent.stop="submit"
+             v-show="canSubmit">
     </div>
   </form>
 </template>
 
 <script lang="ts">
   import {Component, Vue} from 'vue-property-decorator'
+  import {verify, register} from 'src/api/register'
 
   @Component
   export default class extends Vue {
     username = ''
-    email = ''
+    email = 'zsqzsq1993@yeah.net'
     validateCode = ''
     password = ''
     passwordRepeat = ''
+    sender = '发送验证码'
+    senderBusyFlag = false
 
     usernameFlag = true
     emailFlag = true
     validateCodeFlag = true
     passwordFlag = true
     passwordRepeatFlag = true
+
+    get canSubmit() {
+      return this.username && this.usernameFlag &&
+        this.email && this.emailFlag &&
+        this.validateCode && this.validateCodeFlag &&
+        this.password && this.passwordFlag &&
+        this.passwordRepeat && this.passwordRepeatFlag
+    }
+
+    submit() {
+      if (this.canSubmit) {
+        register({
+          username: this.username,
+          email: this.email,
+          validateCode: this.validateCode,
+          password: this.password
+        }).then(message => {
+          console.log(message)
+        }).catch(error => {
+          console.log(error)
+        })
+      }
+    }
 
     checkUsername() {
       this.usernameFlag = (
@@ -91,7 +123,7 @@
     }
 
     checkEmail() {
-      this.emailFlag = /^(\w)+(\.\w+)*@(\w)+((\.\w{2,3}){1,3})$/.test(this.email)
+      return this.emailFlag = /^(\w)+(\.\w+)*@(\w)+((\.\w{2,3}){1,3})$/.test(this.email)
     }
 
     checkValidateCode() {
@@ -109,15 +141,33 @@
       this.passwordRepeatFlag = this.password === this.passwordRepeat
     }
 
-    submit() {
-      if (
-        this.username && this.usernameFlag &&
-        this.email && this.emailFlag &&
-        this.validateCode && this.validateCodeFlag &&
-        this.password && this.passwordFlag &&
-        this.passwordRepeat && this.passwordRepeatFlag
-      ) {
-        console.log('successfully submit')
+    sendCode() {
+      if (this.senderBusyFlag) {
+        return
+      }
+
+      if (this.checkEmail()) {
+        this.senderBusyFlag = true
+
+        verify(this.email).then(message => {
+          let countdown = 60
+
+          const step = () => {
+            setTimeout(() => {
+              this.sender = `${message} ${countdown--}秒`
+              if (countdown === 0) {
+                this.sender = '发送验证码'
+                this.senderBusyFlag = false
+              } else {
+                step()
+              }
+            }, 1000)
+          }
+
+          step()
+        }).catch(error => {
+          console.log(error)
+        })
       }
     }
   }
@@ -154,9 +204,13 @@
         left  0
         bottom -100%
         margin-left 33%
+        padding 2px 4px
         color $color-theme
         font-size $font-size-small
         line-height $font-size-small
+        &.send-code
+          border 1px solid $color-theme
+          border-radius 5px
 
     .submit-wrapper
       justify-content center

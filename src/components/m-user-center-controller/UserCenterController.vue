@@ -49,15 +49,15 @@
     selectItem(event: Event) {
       const target = event.target as HTMLElement
 
-      const val = target.dataset.page || target.parentElement.dataset.page
+      const val = (target.dataset.page || target.parentElement!.dataset.page) as string
 
-      this.currentIndex = map[val]
+      this.currentIndex = (map as any)[val]
 
       this.$emit('select-item', this.currentIndex)
     }
 
     getCls(val: string) {
-      return map[val] === this.currentIndex ? 'current' : ''
+      return (map as any)[val] === this.currentIndex ? 'current' : ''
     }
   }
 </script>
