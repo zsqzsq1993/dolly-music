@@ -6,10 +6,12 @@ const Redis = require('ioredis')
 const nodemailer = require('nodemailer')
 const dbsConfig = require('./src/dbs/config.ts')
 const mongoose = require('mongoose')
-const User = require('./src/dbs/models/user')
+const User = require('./src/dbs/models/user.js')
 /* eslint-enable */
 
 const redis = new Redis(dbsConfig.redis.port, dbsConfig.redis.host)
+
+let dbs = null
 
 const resolve = dir => {
   return path.resolve(__dirname, dir)
@@ -255,43 +257,45 @@ module.exports = {
           validateCode
         } = req.body
 
-        const savedValidateCode = redis.hget(`nodemail:${email}`, 'code')
-        const savedValidateExpire = redis.hget(`nodemail:${email}`, 'expire')
+        const savedValidateCode = await redis.hget(`nodemail:${email}`, 'code')
+        const savedValidateExpire = await redis.hget(`nodemail:${email}`, 'expire')
 
         if (!savedValidateCode || savedValidateCode !== validateCode) {
-          res.json({
+          return res.json({
             code: -1,
             message: '验证码不正确，注意大小写'
           })
         }
 
         if (+new Date() - savedValidateExpire > 65 * 1000) {
-          res.json({
+          return res.json({
             code: -1,
             message: '验证已过期'
           })
         }
 
-        await mongoose.connect('mongodb://localhost/my_database', {
-          useNewUrlParser: true,
-          useUnifiedTopology: true,
-          useFindAndModify: false,
-          useCreateIndex: true
-        })
+        if (!dbs) {
+          dbs = await mongoose.connect(dbsConfig.mongodb, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            useFindAndModify: false,
+            useCreateIndex: true
+          })
+        }
 
-        const usernameResult = await User.findOne({username})
+        const usernameResult = await User.find({username})
 
-        if (usernameResult) {
-          res.json({
+        if (usernameResult.length) {
+          return res.json({
             code: -1,
             message: '用户名已存在'
           })
         }
 
-        const emailResult = await User.findOne({email})
+        const emailResult = await User.find({email})
 
-        if (emailResult) {
-          res.json({
+        if (emailResult.length) {
+          return res.json({
             code: -1,
             message: '该邮箱已被注册'
           })
@@ -304,12 +308,12 @@ module.exports = {
         })
 
         if (newUser) {
-          res.json({
+          return res.json({
             code: 0,
             message: '注册成功'
           })
         } else {
-          res.json({
+          return res.json({
             code: -1,
             message: '注册失败'
           })

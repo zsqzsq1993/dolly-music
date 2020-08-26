@@ -74,14 +74,15 @@
 <script lang="ts">
   import {Component, Vue} from 'vue-property-decorator'
   import {verify, register} from 'src/api/register'
+  const md5 = require('blueimp-md5')
 
   @Component
   export default class extends Vue {
-    username = ''
+    username = 'zsqzsq1993'
     email = 'zsqzsq1993@yeah.net'
     validateCode = ''
-    password = ''
-    passwordRepeat = ''
+    password = 'Findahouse153!'
+    passwordRepeat = 'Findahouse153!'
     sender = '发送验证码'
     senderBusyFlag = false
 
@@ -105,7 +106,7 @@
           username: this.username,
           email: this.email,
           validateCode: this.validateCode,
-          password: this.password
+          password: md5(this.password)
         }).then(message => {
           console.log(message)
         }).catch(error => {
@@ -127,7 +128,7 @@
     }
 
     checkValidateCode() {
-      this.validateCodeFlag = this.validateCode.length === 6
+      this.validateCodeFlag = this.validateCode.length === 4
     }
 
     checkPassword() {
@@ -151,6 +152,8 @@
 
         verify(this.email).then(message => {
           let countdown = 60
+
+          this.sender = `${message} ${countdown--}秒`
 
           const step = () => {
             setTimeout(() => {
