@@ -30,10 +30,7 @@ export function verify(email: string) {
   return dollyAxios.post(url, {
     email
   }).then(response => {
-    console.log(response)
-    if (response.data.code === 0) {
-      return response.data.message
-    }
+    return response.data
   }).catch(error => {
     return error
   })

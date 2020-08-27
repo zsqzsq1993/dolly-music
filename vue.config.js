@@ -13,6 +13,17 @@ const redis = new Redis(dbsConfig.redis.port, dbsConfig.redis.host)
 
 let dbs = null
 
+const connectMongoose = () => {
+  if (!dbs) {
+    dbs = mongoose.connect(dbsConfig.mongodb, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useFindAndModify: false,
+      useCreateIndex: true
+    })
+  }
+}
+
 const resolve = dir => {
   return path.resolve(__dirname, dir)
 }
@@ -208,6 +219,17 @@ module.exports = {
       app.post('/api/verify', bodyParser.json(), async (req, res) => {
         const {email} = req.body
 
+        await connectMongoose()
+
+        const emailResult = await User.find({email})
+
+        if (emailResult.length) {
+          return res.json({
+            code: -1,
+            message: '该邮箱已被注册'
+          })
+        }
+
         const savedExpire = await redis.hget(`nodemail:${email}`, 'expire')
 
         if (savedExpire && (+new Date() - savedExpire) < 0) {
@@ -274,14 +296,7 @@ module.exports = {
           })
         }
 
-        if (!dbs) {
-          dbs = await mongoose.connect(dbsConfig.mongodb, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-            useFindAndModify: false,
-            useCreateIndex: true
-          })
-        }
+        await connectMongoose()
 
         const usernameResult = await User.find({username})
 

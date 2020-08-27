@@ -32,7 +32,7 @@
              class="content"
              id="validating-code"
              v-model="validateCode"
-             placeholder="6位且区分大小写"
+             placeholder="4位且区分大小写"
              @focus="validateCodeFlag = true"
              @blur="checkValidateCode">
       <span class="error-reminder"
@@ -84,11 +84,11 @@
     }
   })
   export default class extends Vue {
-    username = 'zsqzsq1993'
-    email = 'zsqzsq1993@yeah.net'
+    username = ''
+    email = ''
     validateCode = ''
-    password = 'Findahouse153!'
-    passwordRepeat = 'Findahouse153!'
+    password = ''
+    passwordRepeat = ''
     sender = '发送验证码'
     senderBusyFlag = false
 
@@ -117,6 +117,20 @@
           this.$emit('remind', response)
         })
       }
+    }
+
+    clearAllInput() {
+      this.username = ''
+      this.email = ''
+      this.validateCode = ''
+      this.password = ''
+      this.passwordRepeat = ''
+    }
+
+    clearSomeInput() {
+      this.validateCode = ''
+      this.password = ''
+      this.passwordRepeat = ''
     }
 
     checkUsername() {
@@ -154,7 +168,15 @@
       if (this.checkEmail()) {
         this.senderBusyFlag = true
 
-        verify(this.email).then(message => {
+        verify(this.email).then(response => {
+          const {code, message} = response
+
+          if (code !== 0) {
+            this.$emit('remind', response)
+            this.senderBusyFlag = false
+            return
+          }
+
           let countdown = 60
 
           this.sender = `${message} ${countdown--}秒`

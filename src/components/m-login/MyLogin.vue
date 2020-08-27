@@ -14,7 +14,9 @@
         </div>
         <div class="login-register-wrapper">
           <login-page v-show="!componentIndex"></login-page>
-          <register-page v-show="componentIndex" @remind="reminding"></register-page>
+          <register-page v-show="componentIndex"
+                         @remind="reminding"
+                         ref="register"></register-page>
         </div>
       </div>
       <div class="top-tip-wrapper">
@@ -65,9 +67,17 @@
 
     reminding(response: any) {
       const {code, message} = response
-      this.reminderCls = code === 0 ? 'icon-ok' : 'icon-close'
+      this.reminderCls = code === 0
+        ? 'icon-ok'
+        : 'icon-close'
+      code === 0
+        ? (this.$refs.register as any).clearAllInput()
+        : (this.$refs.register as any).clearSomeInput()
       this.reminderText = message;
       (this.$refs.toptip as any).show()
+      setTimeout(() => {
+        this.componentIndex = 0
+      }, 800)
     }
   }
 </script>
