@@ -15,7 +15,8 @@
         </div>
         <div class="login-register-wrapper">
           <login-page v-show="!componentIndex"
-                      @remind="reminding"></login-page>
+                      @remind="reminding"
+                      ref="login"></login-page>
           <register-page v-show="componentIndex"
                          @remind="reminding"
                          ref="register"></register-page>
@@ -66,19 +67,31 @@
       this.componentIndex = index
     }
 
-    reminding(response: any) {
+    reminding(response: any, flag: string) {
       const {code, message} = response
+
       this.reminderCls = code === 0
         ? 'icon-ok'
         : 'icon-close'
-      code === 0
-        ? (this.$refs.register as any).clearAllInput()
-        : (this.$refs.register as any).clearSomeInput()
+
       this.reminderText = message;
+
       (this.$refs.toptip as any).show()
-      setTimeout(() => {
-        (this.$refs.switches as any).selectItem(0)
-      }, 800)
+
+      if (flag === 'register') {
+        code === 0
+          ? (this.$refs.register as any).clearAllInput()
+          : (this.$refs.register as any).clearSomeInput()
+        setTimeout(() => {
+          (this.$refs.switches as any).selectItem(0)
+        }, 800)
+      } else {
+        (this.$refs.login as any).clearAllInput()
+
+        setTimeout(() => {
+          this.setLoginPageFlag(false)
+        }, 1200)
+      }
     }
   }
 </script>
@@ -92,9 +105,19 @@
   .slide-up-enter, .slide-up-leave-to
     transform translate3d(0, 100%, 0)
 
-  .top-tip-wrapper
+  .m-login
     position fixed
-    z-index 310
+    z-index 300
+    top 0
+    right 0
+    bottom 0
+    left 0
+    background-color $color-background-d
+    backdrop-filter blur(20px)
+
+  .top-tip-wrapper
+    position absolute
+    z-index 20
     top 0
     left 0
     width 100%
@@ -109,17 +132,7 @@
         color $color-text
         font-size $font-size-median
 
-  .m-login
-    position fixed
-    z-index 300
-    top 0
-    right 0
-    bottom 0
-    left 0
-    background-color $color-background-d
-    backdrop-filter blur(20px)
-
-    .back-wrapper
+  .back-wrapper
       position absolute
       z-index 15
       top 0

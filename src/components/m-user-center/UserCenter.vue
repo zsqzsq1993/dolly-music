@@ -140,7 +140,8 @@
         font-size $font-size-large-x
 
     .switches-wrapper
-      margin 10px 0 20px
+      width 100%
+      margin 10px 0 20px 0
       .m-switches
         margin 0 auto
         width 240px

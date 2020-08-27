@@ -56,7 +56,7 @@
           this.username,
           md5(this.password)
         ).then(response => {
-          this.$emit('remind', response)
+          this.$emit('remind', response, 'login')
         }).catch(error => {
           console.log(error)
         })
@@ -76,6 +76,11 @@
         /[0-9]/.test(this.password) &&
         this.password.length >= 6 &&
         this.password.length <= 18
+    }
+
+    clearAllInput() {
+      this.username = ''
+      this.password = ''
     }
   }
 </script>

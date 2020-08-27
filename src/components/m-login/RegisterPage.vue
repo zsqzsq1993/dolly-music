@@ -172,7 +172,7 @@
           const {code, message} = response
 
           if (code !== 0) {
-            this.$emit('remind', response)
+            this.$emit('remind', response, 'register')
             this.senderBusyFlag = false
             return
           }

@@ -50,10 +50,10 @@ module.exports = {
       app.use(session({
         secret: 'zsqzsq1993',
         name: 'session_id',
-        resave: false,
+        resave: true,
         rolling: true,
         cookie: {
-          maxAge: 5000
+          maxAge: 30 * 1000 * 60
         }
       }))
 
@@ -371,6 +371,9 @@ module.exports = {
         }
 
         req.session.username = username
+
+        req.session.save()
+
         res.json({
           code: 0,
           message: `${username}，欢迎回来`
@@ -400,7 +403,7 @@ module.exports = {
 
         res.json({
           code: 0,
-          message: '验证通过'
+          username
         })
       })
 

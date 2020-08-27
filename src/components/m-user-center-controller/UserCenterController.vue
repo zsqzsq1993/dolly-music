@@ -4,7 +4,7 @@
       <div class="avatar-wrapper">
         <i class="icon-user-photo"></i>
       </div>
-      <div class="description">登陆立享云端同步</div>
+      <div class="description" v-text="username"></div>
     </div>
     <ul class="controllers-wrapper" @click.stop="selectItem($event)">
       <li class="controller-button-wrapper"
@@ -33,6 +33,7 @@
   import {Component, Vue} from 'vue-property-decorator'
   import {Mutation} from 'vuex-class'
   import * as types from 'src/store/mutation-types'
+  import {checkLogin} from 'src/api/register'
 
   const map = {
     'favorite': 0,
@@ -45,6 +46,18 @@
     @Mutation(types.SET_LOGIN_PAGE_FLAG) setLoginPageFlag: any
 
     currentIndex = 0
+
+    username = ''
+
+    created() {
+      checkLogin().then((response: any) => {
+        if (response.code === 0) {
+          this.username = response.username
+        } else {
+          this.username = '登陆立享云端同步'
+        }
+      })
+    }
 
     selectItem(event: Event) {
       const target = event.target as HTMLElement
