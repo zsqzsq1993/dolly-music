@@ -35,3 +35,42 @@ export function verify(email: string) {
     return error
   })
 }
+
+export function login(username: string, password: string) {
+  const basicUrl = '/api/login'
+
+  const url = devMode
+    ? basicUrl
+    : HOST + basicUrl
+
+  return dollyAxios.post(url, {
+    username,
+    password
+  }).then(response => {
+    return response.data
+  })
+}
+
+export function checkLogin() {
+  const basicUrl = '/api/checkLogin'
+
+  const url = devMode
+    ? basicUrl
+    : HOST + basicUrl
+
+  return dollyAxios.post(url).then(response => {
+    return response.data
+  })
+}
+
+export function logout() {
+  const basicUrl = '/api/logout'
+
+  const url = devMode
+    ? basicUrl
+    : HOST + basicUrl
+
+  return dollyAxios.post(url).then(response => {
+    return response.data
+  })
+}

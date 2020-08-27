@@ -47,6 +47,7 @@
     "eslint-plugin-standard": "^4.0.0",
     "eslint-plugin-vue": "^6.2.2",
     "express": "^4.17.1",
+    "express-session": "^1.17.1",
     "fastclick": "^1.0.6",
     "ioredis": "^4.17.3",
     "js-base64": "^3.4.4",

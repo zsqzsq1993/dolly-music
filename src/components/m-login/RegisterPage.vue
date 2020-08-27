@@ -6,7 +6,7 @@
              class="content"
              id="user-name"
              v-model="username"
-             placeholder="6-12位"
+             placeholder="用户名6-12位"
              @focus="usernameFlag = true"
              @blur="checkUsername">
       <span class="error-reminder"

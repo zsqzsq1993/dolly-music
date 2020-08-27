@@ -1,6 +1,5 @@
 <template>
   <transition name="slide-up">
-    <div>
       <div class="m-login" v-show="loginPageFlag">
         <div class="back-wrapper" @click.stop="setLoginPageFlag(false)">
           <i class="icon-close"></i>
@@ -10,24 +9,26 @@
                alt="background-image">
         </div>
         <div class="switches-wrapper">
-          <switches :tablist="namelist" @select-item="changeComponentIndex"></switches>
+          <switches :tablist="namelist"
+                    @select-item="changeComponentIndex"
+                    ref="switches"></switches>
         </div>
         <div class="login-register-wrapper">
-          <login-page v-show="!componentIndex"></login-page>
+          <login-page v-show="!componentIndex"
+                      @remind="reminding"></login-page>
           <register-page v-show="componentIndex"
                          @remind="reminding"
                          ref="register"></register-page>
         </div>
+        <div class="top-tip-wrapper">
+          <top-tip ref="toptip">
+            <div class="reminder">
+              <i :class="reminderCls"></i>
+              <span class="text-wrapper" v-text="reminderText"></span>
+            </div>
+          </top-tip>
+        </div>
       </div>
-      <div class="top-tip-wrapper">
-        <top-tip ref="toptip">
-          <div class="reminder">
-            <i :class="reminderCls"></i>
-            <span class="text-wrapper" v-text="reminderText"></span>
-          </div>
-        </top-tip>
-      </div>
-    </div>
   </transition>
 </template>
 
@@ -76,7 +77,7 @@
       this.reminderText = message;
       (this.$refs.toptip as any).show()
       setTimeout(() => {
-        this.componentIndex = 0
+        (this.$refs.switches as any).selectItem(0)
       }, 800)
     }
   }

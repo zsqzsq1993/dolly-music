@@ -2,15 +2,19 @@
 const path = require('path')
 const axios = require('axios')
 const bodyParser = require('body-parser')
+
 const Redis = require('ioredis')
 const nodemailer = require('nodemailer')
 const dbsConfig = require('./src/dbs/config.ts')
 const mongoose = require('mongoose')
 const User = require('./src/dbs/models/user.js')
+const session = require('express-session')
 /* eslint-enable */
 
+// connect redis
 const redis = new Redis(dbsConfig.redis.port, dbsConfig.redis.host)
 
+// connect mongoose
 let dbs = null
 
 const connectMongoose = () => {
@@ -43,6 +47,16 @@ module.exports = {
 
   devServer: {
     before(app) {
+      app.use(session({
+        secret: 'zsqzsq1993',
+        name: 'session_id',
+        resave: false,
+        rolling: true,
+        cookie: {
+          maxAge: 5000
+        }
+      }))
+
       app.get('/api/getRecommandCarousel', (req, res) => {
         const url = 'https://u.y.qq.com/cgi-bin/musicu.fcg'
         const data = req.query
@@ -333,6 +347,77 @@ module.exports = {
             message: '注册失败'
           })
         }
+      })
+
+      app.post('/api/login', bodyParser.json(), async (req, res) => {
+        const {username, password} = req.body
+
+        await connectMongoose()
+
+        const user = await User.findOne({username})
+
+        if (!user) {
+          return res.json({
+            code: -1,
+            message: '用户名不存在'
+          })
+        }
+
+        if (user.password !== password) {
+          return res.json({
+            code: -1,
+            message: '密码错误'
+          })
+        }
+
+        req.session.username = username
+        res.json({
+          code: 0,
+          message: `${username}，欢迎回来`
+        })
+      })
+
+      app.post('/api/checkLogin', bodyParser.json(), async (req, res) => {
+        const username = req.session.username
+
+        if (!username) {
+          return res.json({
+            code: -1,
+            message: '尚未登陆'
+          })
+        }
+
+        await connectMongoose()
+
+        const result = User.findOne({username})
+
+        if (!result) {
+          return res.json({
+            code: -1,
+            message: 'session中的username与数据库中不匹配'
+          })
+        }
+
+        res.json({
+          code: 0,
+          message: '验证通过'
+        })
+      })
+
+      app.post('/api/logout', bodyParser.json(), (req, res) => {
+        req.session.destroy(error => {
+          if (error) {
+            return res.json({
+              code: -1,
+              error
+            })
+          }
+        })
+
+        res.json({
+          code: 0,
+          message: '成功登出'
+        })
       })
     },
 
