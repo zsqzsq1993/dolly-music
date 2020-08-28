@@ -8,26 +8,31 @@
           <img src="../../assets/images/pizza.png"
                alt="background-image">
         </div>
-        <div class="switches-wrapper">
-          <switches :tablist="namelist"
-                    @select-item="changeComponentIndex"
-                    ref="switches"></switches>
-        </div>
-        <div class="login-register-wrapper">
-          <login-page v-show="!componentIndex"
-                      @remind="reminding"
-                      ref="login"></login-page>
-          <register-page v-show="componentIndex"
-                         @remind="reminding"
-                         ref="register"></register-page>
-        </div>
         <div class="top-tip-wrapper">
-          <top-tip ref="toptip">
+          <top-tip ref="toptip" :delay="1000">
             <div class="reminder">
               <i :class="reminderCls"></i>
               <span class="text-wrapper" v-text="reminderText"></span>
             </div>
           </top-tip>
+        </div>
+        <div class="no-login" v-show="!loginInfo.status">
+          <div class="switches-wrapper">
+            <switches :tablist="namelist"
+                      @select-item="changeComponentIndex"
+                      ref="switches"></switches>
+          </div>
+          <div class="login-register-wrapper">
+            <login-page v-show="!componentIndex"
+                        @remind="reminding"
+                        ref="login"></login-page>
+            <register-page v-show="componentIndex"
+                           @remind="reminding"
+                           ref="register"></register-page>
+          </div>
+        </div>
+        <div class="already-login" v-show="loginInfo.status">
+          <div class="logout-wrapper" v-text="'logout'" @click="logoutUser"></div>
         </div>
       </div>
   </transition>
@@ -41,6 +46,7 @@
   import LoginPage from './LoginPage.vue'
   import RegisterPage from './RegisterPage.vue'
   import TopTip from 'base/m-top-tip/TopTip.vue'
+  import {logout} from 'src/api/register'
 
   @Component({
     components: {
@@ -52,6 +58,7 @@
   })
   export default class extends Vue {
     @Getter('loginPageFlag') readonly loginPageFlag!: boolean
+    @Getter('loginInfo') readonly loginInfo!: any
 
     @Mutation(types.SET_LOGIN_PAGE_FLAG) setLoginPageFlag: any
 
@@ -64,6 +71,8 @@
     reminderCls = ''
 
     reminderText = ''
+
+    logoutBusyFlag = false
 
     changeComponentIndex(index: number) {
       this.componentIndex = index
@@ -90,12 +99,29 @@
       } else {
         (this.$refs.login as any).clearAllInput()
 
-        this.refreshLoginInfo()
-
         setTimeout(() => {
           this.setLoginPageFlag(false)
-        }, 1200)
+          this.refreshLoginInfo()
+          this.logoutBusyFlag = false
+        }, 1500)
       }
+    }
+
+    logoutUser() {
+      if (this.logoutBusyFlag) {
+        return
+      }
+
+      logout().then((response: any) => {
+        this.logoutBusyFlag = true
+        if (response.code === 0) {
+          this.reminding(response, '')
+        } else {
+          throw response.error
+        }
+      }).catch(error => {
+        console.log(error)
+      })
     }
   }
 </script>
@@ -119,34 +145,34 @@
     background-color $color-background-d
     backdrop-filter blur(20px)
 
-  .top-tip-wrapper
-    position absolute
-    z-index 20
-    top 0
-    left 0
-    width 100%
-    .reminder
-      padding 18px 0
-      text-align center
-      i
-        color $color-theme
-        font-size $font-size-median
-        margin-right 4px
-      span
-        color $color-text
-        font-size $font-size-median
-
-  .back-wrapper
+    .top-tip-wrapper
       position absolute
-      z-index 15
+      z-index 30
       top 0
-      left 6px
+      left 0
+      width 100%
+      .reminder
+        padding 18px 0
+        text-align center
+        i
+          color $color-theme
+          font-size $font-size-median
+          margin-right 4px
+        span
+          color $color-text
+          font-size $font-size-median
 
-      i
-        display block
-        padding 10px
-        color $color-theme
-        font-size $font-size-large-x
+    .back-wrapper
+        position absolute
+        z-index 15
+        top 0
+        left 6px
+
+        i
+          display block
+          padding 10px
+          color $color-theme
+          font-size $font-size-large-x
 
     .image-wrapper
       position relative
@@ -162,28 +188,44 @@
         width 180px
         height 180px
 
-    .switches-wrapper
-      position relative
+    .no-login
       z-index 10
-      width 80%
-      margin 0 auto
+      .switches-wrapper
+        position relative
+        width 80%
+        margin 0 auto
 
-      .m-switches
-        border none
+        .m-switches
+          border none
 
-        .tab-button
-          color $color-text-d
+          .tab-button
+            color $color-text-d
 
-          &.active
-            color $color-text
-            background $color-highlight-background
-            border-radius 20px
+            &.active
+              color $color-text
+              background $color-highlight-background
+              border-radius 20px
 
-    .login-register-wrapper
-      position relative
+      .login-register-wrapper
+        position relative
+        width 80%
+        margin 25px auto
+        color $color-text-d
+        font-size $font-size-median
+
+    .already-login
+      position absolute
       z-index 10
-      width 80%
-      margin 25px auto
-      color $color-text-d
-      font-size $font-size-median
+      display flex
+      justify-content center
+      align-items center
+      top 0
+      right 0
+      bottom 0
+      left 0
+      .logout-wrapper
+        padding 10px 20px
+        color $color-theme
+        border 1px solid $color-theme
+        border-radius 10px
 </style>

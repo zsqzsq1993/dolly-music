@@ -6,16 +6,14 @@
       </div>
       <div class="switches-wrapper">
         <user-center-controller @select-item="setCurrentIndex"></user-center-controller>
-<!--        <switches :tablist="tablist"-->
-<!--                  @select-item="setCurrentIndex"></switches>-->
       </div>
-      <div class="random-play-wrapper" v-show="songlist.length">
+      <div class="random-play-wrapper" v-show="showRandomPlay">
         <div class="random-play-button" @click="randomPlayAll">
           <i class="icon-play"></i>
           <span>随机播放全部</span>
         </div>
       </div>
-      <Scroll :data="songlist" ref="scroll">
+      <Scroll :data="songlist" ref="scroll" v-show="currentIndex !== 2">
         <songs-list :songs="songlist"
                     v-show="songlist.length"
                     @select="activatePlayer"></songs-list>
@@ -23,6 +21,9 @@
           <no-results :text="NoResultsText"></no-results>
         </div>
       </Scroll>
+      <div class="friends-wrapper" v-show="currentIndex === 2">
+        <friends></friends>
+      </div>
     </div>
   </transition>
 </template>
@@ -35,6 +36,7 @@
   import Scroll from 'base/m-scroll/Scroll.vue'
   import SongsList from 'base/m-songs-list/SongsList.vue'
   import NoResults from 'base/m-no-results/NoResults.vue'
+  import Friends from 'components/m-friends/Friends.vue'
   import {Song} from 'src/assets/ts/Song'
   import {PlayListMixin} from 'src/assets/ts/mixins'
 
@@ -44,7 +46,8 @@
       Scroll,
       SongsList,
       NoResults,
-      UserCenterController
+      UserCenterController,
+      Friends
     }
   })
   export default class extends Mixins(PlayListMixin) {
@@ -63,6 +66,7 @@
     }
 
     tablist = ['我喜欢的', '最近听的']
+
     currentIndex = 0
 
     get songlist() {
@@ -75,6 +79,10 @@
       return this.currentIndex
         ? '尚未听过歌曲'
         : '尚未添加歌曲'
+    }
+
+    get showRandomPlay() {
+      return this.songlist.length && this.currentIndex !== 2
     }
 
     mounted() {
@@ -169,7 +177,7 @@
 
     .m-scroll
       position absolute
-      top 200px
+      top 235px
       right 0
       bottom 0
       left 0
@@ -179,4 +187,11 @@
       .no-results-wrapper
         width 100%
         height 100%
+
+    .friends-wrapper
+      position absolute
+      top 180px
+      right 0
+      bottom 0
+      left 0
 </style>
