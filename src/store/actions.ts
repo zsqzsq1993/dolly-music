@@ -4,6 +4,7 @@ import {playmode} from 'src/assets/ts/config'
 import {shuffle} from 'src/assets/ts/util'
 import {Song} from 'src/assets/ts/Song'
 import {addOne, removeOne, clearAll, SEARCH_KEY, PLAY_KEY, FAVORITE_KEY} from 'src/assets/ts/cache'
+import {checkLogin} from 'src/api/register'
 
 const findIndex = (list: Array<Song>, song: Song) => {
   return list.findIndex(item => {
@@ -165,6 +166,22 @@ const actions: ActionTree<any, any> = {
     const target = (map as any)[flag] as any
     clearAll(target.key)
     commit(target.type, [])
+  },
+
+  refreshLoginInfo({commit}) {
+    checkLogin().then(response => {
+      const object = Object.create(null)
+
+      if (response.code === 0) {
+        object.status = true
+        object.username = response.username
+      } else {
+        object.status = false
+        object.message = response.message
+      }
+
+      commit(types.SET_LOGIN_INFO, object)
+    })
   }
 }
 

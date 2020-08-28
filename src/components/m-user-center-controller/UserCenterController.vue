@@ -31,9 +31,8 @@
 
 <script lang="ts">
   import {Component, Vue} from 'vue-property-decorator'
-  import {Mutation} from 'vuex-class'
+  import {Mutation, Getter} from 'vuex-class'
   import * as types from 'src/store/mutation-types'
-  import {checkLogin} from 'src/api/register'
 
   const map = {
     'favorite': 0,
@@ -45,18 +44,16 @@
   export default class extends Vue {
     @Mutation(types.SET_LOGIN_PAGE_FLAG) setLoginPageFlag: any
 
+    @Getter('loginInfo') loginInfo: any
+
     currentIndex = 0
 
-    username = ''
-
-    created() {
-      checkLogin().then((response: any) => {
-        if (response.code === 0) {
-          this.username = response.username
-        } else {
-          this.username = '登陆立享云端同步'
-        }
-      })
+    get username() {
+      if (this.loginInfo.status) {
+        return this.loginInfo.username
+      } else {
+        return '登陆立享云端同步'
+      }
     }
 
     selectItem(event: Event) {

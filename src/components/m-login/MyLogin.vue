@@ -35,7 +35,7 @@
 
 <script lang="ts">
   import {Component, Vue} from 'vue-property-decorator'
-  import {Mutation, Getter} from 'vuex-class'
+  import {Mutation, Getter, Action} from 'vuex-class'
   import * as types from 'src/store/mutation-types'
   import Switches from 'base/m-switches/Switches.vue'
   import LoginPage from './LoginPage.vue'
@@ -54,6 +54,8 @@
     @Getter('loginPageFlag') readonly loginPageFlag!: boolean
 
     @Mutation(types.SET_LOGIN_PAGE_FLAG) setLoginPageFlag: any
+
+    @Action('refreshLoginInfo') refreshLoginInfo: any
 
     namelist = ['登陆', '注册']
 
@@ -87,6 +89,8 @@
         }, 800)
       } else {
         (this.$refs.login as any).clearAllInput()
+
+        this.refreshLoginInfo()
 
         setTimeout(() => {
           this.setLoginPageFlag(false)

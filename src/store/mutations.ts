@@ -53,6 +53,10 @@ const mutations = {
 
   [types.SET_LOGIN_PAGE_FLAG] (state: any, flag: boolean) {
     state.loginPageFlag = flag
+  },
+
+  [types.SET_LOGIN_INFO] (state: any, object: any) {
+    state.loginInfo = object
   }
 }
 

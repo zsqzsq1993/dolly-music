@@ -18,7 +18,8 @@ const state = {
   searchHistory: storage.get(SEARCH_KEY) || [],
   playHistory: storage.get(PLAY_KEY) || [],
   favoriteHistory: storage.get(FAVORITE_KEY) || [],
-  loginPageFlag: false
+  loginPageFlag: false,
+  loginInfo: {}
 }
 
 export default state
