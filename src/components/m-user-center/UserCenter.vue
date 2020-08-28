@@ -1,7 +1,7 @@
 <template>
   <transition name="slide" appear>
-    <div class="m-user-center" @click="back">
-      <div class="back-wrapper">
+    <div class="m-user-center">
+      <div class="back-wrapper" @click="back">
         <i class="icon-back"></i>
       </div>
       <div class="switches-wrapper">
@@ -61,11 +61,11 @@
     @Watch('currentIndex')
     whenIndexChange(newVal: number, oldVal: number) {
       if (newVal !== oldVal) {
-        this.refreshScroll()
+        this.$nextTick(() => {
+          this.refreshScroll()
+        })
       }
     }
-
-    tablist = ['我喜欢的', '最近听的']
 
     currentIndex = 0
 

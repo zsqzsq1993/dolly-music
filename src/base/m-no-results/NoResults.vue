@@ -3,7 +3,9 @@
       <div class="image-wrapper">
         <img src="./pizza.png" :alt="text">
       </div>
-      <div class="text-wrapper" v-text="text"></div>
+      <div class="text-wrapper" v-text="text" @click.stop="select">
+      </div>
+      <slot></slot>
     </div>
 </template>
 
@@ -13,6 +15,10 @@
     @Component
     export default class extends Vue {
       @Prop({default: '暂未搜索到结果'}) text!: string
+
+      select() {
+        this.$emit('select')
+      }
     }
 </script>
 
