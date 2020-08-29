@@ -7,8 +7,9 @@ const Redis = require('ioredis')
 const nodemailer = require('nodemailer')
 const dbsConfig = require('./src/dbs/config.ts')
 const mongoose = require('mongoose')
-const User = require('./src/dbs/models/user.js')
 const session = require('express-session')
+const User = require('./src/dbs/models/user.js')
+const Songs = require('./src/dbs/models/songs.js')
 /* eslint-enable */
 
 // connect redis
@@ -420,6 +421,83 @@ module.exports = {
         res.json({
           code: 0,
           message: '成功登出'
+        })
+      })
+
+      app.post('/api/uploadFavorite', bodyParser.json(), async (req, res) => {
+        if (!req.session.username) {
+          return res.json({
+            code: -1,
+            message: '未登陆'
+          })
+        }
+
+        const songs = req.body.songs
+        const username = req.session.username
+
+        await connectMongoose()
+        const result = await Songs.findOne({username})
+
+        if (result) {
+          result.songs = songs
+        } else {
+          await Songs.create({
+            username,
+            songs
+          })
+        }
+
+        res.json({
+          code: 0,
+          message: '歌曲更新成功'
+        })
+      })
+
+      app.post('/api/downloadFavorite', bodyParser.json(), async (req, res) => {
+        if (!req.session.username) {
+          return res.json({
+            code: -1,
+            message: '未登陆'
+          })
+        }
+
+        const username = req.body.username
+        await connectMongoose()
+        const result = await Songs.findOne({username})
+
+        if (!result) {
+          res.json({
+            code: -1,
+            message: '查无此人'
+          })
+        } else {
+          res.json({
+            code: 0,
+            data: result
+          })
+        }
+      })
+
+      app.post('/api/searchUser', bodyParser.json(), async (req, res) => {
+        if (!req.session.username) {
+          return res.json({
+            code: -1,
+            message: '未登陆'
+          })
+        }
+
+        const {username} = req.body
+        await connectMongoose()
+
+        const result = await User.find({})
+        const filteredResult = result.filter(item => {
+          return item.username.indexOf(username) !== -1 &&
+            item.username !== req.session.username
+        })
+
+        res.json({
+          code: 0,
+          data: filteredResult
         })
       })
     },

@@ -114,7 +114,7 @@
           validateCode: this.validateCode,
           password: md5(this.password)
         }).then(response => {
-          this.$emit('remind', response)
+          this.$emit('remind', response, 'register')
         })
       }
     }

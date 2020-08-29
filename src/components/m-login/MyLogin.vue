@@ -89,6 +89,8 @@
 
       (this.$refs.toptip as any).show()
 
+      console.log(flag)
+
       if (flag === 'register') {
         code === 0
           ? (this.$refs.register as any).clearAllInput()
