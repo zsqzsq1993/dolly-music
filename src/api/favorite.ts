@@ -43,3 +43,31 @@ export function searchUser(username: string): Promise<any> {
     return response.data
   })
 }
+
+export function addFriend(username: string): Promise<any> {
+  const basicUrl = '/api/addFriend'
+
+  const url = devMode
+    ? basicUrl
+    : HOST + basicUrl
+
+  return dollyAxios.post(url, {
+    username
+  }).then(response => {
+    return response.data
+  })
+}
+
+export function removeFriend(username: string): Promise<any> {
+  const basicUrl = '/api/removeFriend'
+
+  const url = devMode
+    ? basicUrl
+    : HOST + basicUrl
+
+  return dollyAxios.post(url, {
+    username
+  }).then(response => {
+    return response.data
+  })
+}

@@ -15,11 +15,13 @@
       </div>
       <scroll class="name-list-scroll" v-show="keyword && this.namelist.length">
         <div class="name-list-wrapper">
-          <div class="name-wrapper" v-for="name in namelist" :key="name.username">
-            <div class="name">{{name.username}}</div>
+          <div class="name-wrapper" v-for="person in namelist" :key="person.username">
+            <div class="name">{{person.username}}</div>
+            <div class="songs-count-wrapper">{{person.songs.length}}首收藏</div>
             <div class="add-icon-wrapper">
-              <i class="icon-user-add"></i>
+              <i class="icon-add"></i>
             </div>
+            <div class="friend-flag-wrapper">已关注</div>
           </div>
         </div>
       </scroll>
@@ -131,6 +133,7 @@
 
           .name-wrapper
             display flex
+            align-items center
             padding 0 8px
             margin-bottom 15px
             color $color-text-d
@@ -139,10 +142,20 @@
             .name
               flex 1
               text-align left
+              height $font-size-median-x
+
+            .songs-count-wrapper
+              flex 1
+              text-align left
+              height $font-size-small
+              font-size $font-size-small
 
             .add-icon-wrapper
               flex 1
               text-align right
+              height $font-size-small
+              font-size $font-size-small
+
       .no-search-result-wrapper
         position absolute
         z-index -1

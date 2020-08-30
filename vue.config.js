@@ -9,7 +9,6 @@ const dbsConfig = require('./src/dbs/config.ts')
 const mongoose = require('mongoose')
 const session = require('express-session')
 const User = require('./src/dbs/models/user.js')
-const Songs = require('./src/dbs/models/songs.js')
 /* eslint-enable */
 
 // connect redis
@@ -393,7 +392,7 @@ module.exports = {
 
         await connectMongoose()
 
-        const result = User.findOne({username})
+        const result = await User.findOne({username})
 
         if (!result) {
           return res.json({
@@ -404,7 +403,11 @@ module.exports = {
 
         res.json({
           code: 0,
-          username
+          userInfo: {
+            username: result.username,
+            songs: result.songs,
+            firends: result.friends
+          }
         })
       })
 
@@ -436,21 +439,21 @@ module.exports = {
         const username = req.session.username
 
         await connectMongoose()
-        const result = await Songs.findOne({username})
+        const result = await User.findOne({username})
 
         if (result) {
           result.songs = songs
+
+          res.json({
+            code: 0,
+            message: '歌曲更新成功'
+          })
         } else {
-          await Songs.create({
-            username,
-            songs
+          res.json({
+            code: -1,
+            message: '该用户不存在'
           })
         }
-
-        res.json({
-          code: 0,
-          message: '歌曲更新成功'
-        })
       })
 
       app.post('/api/downloadFavorite', bodyParser.json(), async (req, res) => {
@@ -463,17 +466,17 @@ module.exports = {
 
         const username = req.body.username
         await connectMongoose()
-        const result = await Songs.findOne({username})
+        const result = await User.findOne({username})
 
         if (!result) {
           res.json({
             code: -1,
-            message: '查无此人'
+            message: '该用户不存在'
           })
         } else {
           res.json({
             code: 0,
-            data: result
+            data: result.songs
           })
         }
       })
@@ -499,6 +502,68 @@ module.exports = {
           code: 0,
           data: filteredResult
         })
+      })
+
+      app.post('/api/addFriend', bodyParser.json(), async (req, res) => {
+        if (!req.session.username) {
+          return res.json({
+            code: -1,
+            message: '未登陆'
+          })
+        }
+
+        const friend = req.body.username
+        const mine = req.session.username
+        await connectMongoose()
+
+        const result = await User.find({username: mine})
+        if (!result) {
+          res.json({
+            code: -1,
+            message: `${mine}不存在`
+          })
+        } else {
+          result.friends.push(friend)
+          res.json({
+            code: 0,
+            message: `成功关注${friend}`
+          })
+        }
+      })
+
+      app.post('/api/removeFriend', bodyParser.json(), async (req, res) => {
+        if (!req.session.username) {
+          return res.json({
+            code: -1,
+            message: '未登陆'
+          })
+        }
+
+        const friend = req.body.username
+        const mine = req.session.username
+        await connectMongoose()
+
+        const result = await User.find({username: mine})
+        if (!result) {
+          res.json({
+            code: -1,
+            message: `${mine}不存在`
+          })
+        } else {
+          const index = result.friends.indexOf(friend)
+          if (index === -1) {
+            res.json({
+              code: -1,
+              message: `${friend}不在我的关注`
+            })
+          } else {
+            result.friends.splice(index, 1)
+            res.json({
+              code: 0,
+              message: `成功取关${friend}`
+            })
+          }
+        }
       })
     },
 

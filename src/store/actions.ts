@@ -170,11 +170,11 @@ const actions: ActionTree<any, any> = {
 
   refreshLoginInfo({commit}) {
     checkLogin().then(response => {
-      const object = Object.create(null)
+      let object = Object.create(null)
 
       if (response.code === 0) {
+        object = response.userInfo
         object.status = true
-        object.username = response.username
       } else {
         object.status = false
         object.message = response.message
