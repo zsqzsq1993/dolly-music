@@ -68,15 +68,13 @@ const user = new Schema({
   },
 
   songs: {
-    requried: false,
-    type: [song],
-    default: []
+    requried: true,
+    type: [song]
   },
 
   friends: {
-    required: false,
-    type: [String],
-    default: []
+    required: true,
+    type: [String]
   }
 })
 

@@ -406,7 +406,7 @@ module.exports = {
           userInfo: {
             username: result.username,
             songs: result.songs,
-            firends: result.friends
+            friends: result.friends
           }
         })
       })
@@ -439,11 +439,9 @@ module.exports = {
         const username = req.session.username
 
         await connectMongoose()
-        const result = await User.findOne({username})
+        const result = await User.updateOne({username}, {songs})
 
         if (result) {
-          result.songs = songs
-
           res.json({
             code: 0,
             message: '歌曲更新成功'
@@ -465,7 +463,9 @@ module.exports = {
         }
 
         const username = req.body.username
+
         await connectMongoose()
+
         const result = await User.findOne({username})
 
         if (!result) {
@@ -497,10 +497,17 @@ module.exports = {
           return item.username.indexOf(username) !== -1 &&
             item.username !== req.session.username
         })
+        const retResult = []
+        filteredResult.forEach(item => {
+          retResult.push({
+            username: item.username,
+            songs: item.songs
+          })
+        })
 
         res.json({
           code: 0,
-          data: filteredResult
+          data: retResult
         })
       })
 
@@ -516,17 +523,18 @@ module.exports = {
         const mine = req.session.username
         await connectMongoose()
 
-        const result = await User.find({username: mine})
-        if (!result) {
-          res.json({
-            code: -1,
-            message: `${mine}不存在`
-          })
-        } else {
-          result.friends.push(friend)
+        const friends = (await User.findOne({username: mine})).friends
+        friends.push(friend)
+        const result = await User.updateOne({username: mine}, {friends})
+        if (result) {
           res.json({
             code: 0,
-            message: `成功关注${friend}`
+            message: '关注成功'
+          })
+        } else {
+          res.json({
+            code: -1,
+            message: '关注失败'
           })
         }
       })
@@ -543,26 +551,26 @@ module.exports = {
         const mine = req.session.username
         await connectMongoose()
 
-        const result = await User.find({username: mine})
-        if (!result) {
-          res.json({
+        const friends = (await User.findOne({username: mine})).friends
+        const index = friends.indexOf(friend)
+        if (index === -1) {
+          return res.json({
             code: -1,
-            message: `${mine}不存在`
+            message: `${friend}不在关注列表`
+          })
+        }
+        friends.splice(index, 1)
+        const result = await User.updateOne({username: mine}, {friends})
+        if (result) {
+          res.json({
+            code: 0,
+            message: '取关成功'
           })
         } else {
-          const index = result.friends.indexOf(friend)
-          if (index === -1) {
-            res.json({
-              code: -1,
-              message: `${friend}不在我的关注`
-            })
-          } else {
-            result.friends.splice(index, 1)
-            res.json({
-              code: 0,
-              message: `成功取关${friend}`
-            })
-          }
+          res.json({
+            code: -1,
+            message: '取关失败'
+          })
         }
       })
     },

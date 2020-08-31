@@ -18,10 +18,17 @@
           <div class="name-wrapper" v-for="person in namelist" :key="person.username">
             <div class="name">{{person.username}}</div>
             <div class="songs-count-wrapper">{{person.songs.length}}首收藏</div>
-            <div class="add-icon-wrapper">
+            <div class="icon-wrapper"
+                 v-show="!followed(person.username)"
+                 @click="followPerson(person.username)">
               <i class="icon-add"></i>
             </div>
-            <div class="friend-flag-wrapper">已关注</div>
+            <div class="friend-flag-wrapper" v-show="followed(person.username)">已关注</div>
+            <div class="icon-wrapper"
+                 v-show="followed(person.username)"
+                 @click="unfollowPerson(person.username)">
+              <i class="icon-delete"></i>
+            </div>
           </div>
         </div>
       </scroll>
@@ -38,7 +45,7 @@
   import * as types from 'src/store/mutation-types'
   import NoResults from 'base/m-no-results/NoResults.vue'
   import SearchBox from 'base/m-search-box/SearchBox.vue'
-  import {searchUser} from 'src/api/favorite'
+  import {searchUser, addFriend, removeFriend} from 'src/api/favorite'
   import Scroll from 'base/m-scroll/Scroll.vue'
 
   @Component({
@@ -52,6 +59,7 @@
     @Getter('loginInfo') loginInfo: any
 
     @Mutation(types.SET_LOGIN_PAGE_FLAG) setLoginPageFlag: any
+    @Mutation(types.SET_LOGIN_INFO) setLoginInfo: any
 
     @Watch('keyword')
     searchUser(newVal: string, oldVal: string) {
@@ -95,6 +103,34 @@
 
     handleQuery(val: string) {
       this.keyword = val
+    }
+
+    followed(username: string) {
+      return this.loginInfo.friends.indexOf(username) !== -1
+    }
+
+    followPerson(username: string) {
+      const copy = this._copy()
+      copy.friends.push(username)
+      this.setLoginInfo(copy)
+      addFriend(username)
+    }
+
+    unfollowPerson(username: string) {
+      const index = this.loginInfo.friends.indexOf(username)
+      const copy = this._copy()
+      copy.friends.splice(index, 1)
+      this.setLoginInfo(copy)
+      removeFriend(username)
+    }
+
+    _copy() {
+      return {
+        status: true,
+        username: this.loginInfo.username,
+        songs: this.loginInfo.songs.slice(),
+        friends: this.loginInfo.friends.slice()
+      }
     }
   }
 </script>
@@ -150,7 +186,7 @@
               height $font-size-small
               font-size $font-size-small
 
-            .add-icon-wrapper
+            .icon-wrapper
               flex 1
               text-align right
               height $font-size-small
