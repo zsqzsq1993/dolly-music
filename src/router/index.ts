@@ -51,7 +51,13 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: '/user',
-    component: () => import('components/m-user-center/UserCenter.vue')
+    component: () => import('components/m-user-center/UserCenter.vue'),
+    children: [
+      {
+        path: ':id',
+        component: () => import('components/m-friends/Friend.vue')
+      }
+    ]
   }
 ]
 

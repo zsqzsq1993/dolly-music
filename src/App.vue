@@ -17,6 +17,7 @@
   import MyTab from 'components/m-tab/MyTab.vue'
   import MyPlayer from 'src/components/m-player/MyPlayer.vue'
   import MyLogin from 'components/m-login/MyLogin.vue'
+  import {uploadFavorite} from 'src/api/favorite'
 
   @Component({
     components: {
@@ -34,6 +35,11 @@
 
     created() {
       this.refreshLoginInfo()
+      this.uploadingSongs()
+    }
+
+    uploadingSongs() {
+      uploadFavorite(this.favoriteHistory)
     }
   }
 </script>

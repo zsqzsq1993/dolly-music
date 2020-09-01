@@ -47,6 +47,8 @@
   import RegisterPage from './RegisterPage.vue'
   import TopTip from 'base/m-top-tip/TopTip.vue'
   import {logout} from 'src/api/register'
+  import {Song} from 'src/assets/ts/Song'
+  import {uploadFavorite} from 'src/api/favorite'
 
   @Component({
     components: {
@@ -59,6 +61,7 @@
   export default class extends Vue {
     @Getter('loginPageFlag') readonly loginPageFlag!: boolean
     @Getter('loginInfo') readonly loginInfo!: any
+    @Getter('favoriteHistory') readonly favoriteHistory!: Array<Song>
 
     @Mutation(types.SET_LOGIN_PAGE_FLAG) setLoginPageFlag: any
 
@@ -105,6 +108,8 @@
           this.setLoginPageFlag(false)
           this.refreshLoginInfo()
           this.logoutBusyFlag = false
+
+          uploadFavorite(this.favoriteHistory)
         }, 1500)
       }
     }

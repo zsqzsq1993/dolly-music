@@ -519,12 +519,13 @@ module.exports = {
           })
         }
 
-        const friend = req.body.username
+        const friendUsername = req.body.username
         const mine = req.session.username
         await connectMongoose()
 
         const friends = (await User.findOne({username: mine})).friends
-        friends.push(friend)
+        friends.push(friendUsername)
+
         const result = await User.updateOne({username: mine}, {friends})
         if (result) {
           res.json({

@@ -57,6 +57,10 @@ const mutations = {
 
   [types.SET_LOGIN_INFO] (state: any, object: any) {
     state.loginInfo = object
+  },
+
+  [types.SET_FRIEND_USER_NAME] (state: any, name: string) {
+    state.friendUsername = name
   }
 }
 

@@ -25,3 +25,5 @@ export const SET_FAVORITE_HISTORY = 'set_favorite_history'
 export const SET_LOGIN_PAGE_FLAG = 'set_login_page_flag'
 
 export const SET_LOGIN_INFO = 'set_login_info'
+
+export const SET_FRIEND_USER_NAME = 'set_friend_user_name'

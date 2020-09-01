@@ -3,7 +3,8 @@ import {Getter, Mutation, Action} from 'vuex-class'
 import {playmode} from 'src/assets/ts/config'
 import * as types from 'src/store/mutation-types'
 import {Song} from 'src/assets/ts/Song'
-import {shuffle} from 'src/assets/ts/util'
+import {deepCopy, shuffle} from 'src/assets/ts/util'
+import {addFriend, removeFriend} from 'src/api/favorite'
 
 @Component
 export class PlayListMixin extends Vue {
@@ -190,5 +191,29 @@ export class PlayerMixin extends FavoriteMixin {
     return list.findIndex(item => {
       return this.currentSong.songid === item.songid
     })
+  }
+}
+
+@Component
+export class FriendMixin extends Vue {
+  @Getter('loginInfo') loginInfo: any
+
+  @Mutation(types.SET_LOGIN_INFO) setLoginInfo: any
+
+  followPerson(username: string) {
+    const copy = deepCopy(this.loginInfo)
+    copy.friends.push(username)
+    this.setLoginInfo(copy)
+    addFriend(username).catch(e => console.log(e))
+  }
+
+  unfollowPerson(username: string) {
+    const index = this.loginInfo.friends.indexOf(username)
+    console.log(this.loginInfo)
+    const copy = deepCopy(this.loginInfo)
+    console.log(copy)
+    copy.friends.splice(index, 1)
+    this.setLoginInfo(copy)
+    removeFriend(username).catch(e => console.log(e))
   }
 }

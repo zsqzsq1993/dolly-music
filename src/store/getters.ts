@@ -29,3 +29,5 @@ export const currentSong = (state: any) => {
 export const loginPageFlag = (state: any) => state.loginPageFlag
 
 export const loginInfo = (state: any) => state.loginInfo
+
+export const friendUsername = (state: any) => state.friendUsername

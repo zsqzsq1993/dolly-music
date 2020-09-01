@@ -19,7 +19,8 @@ const state = {
   playHistory: storage.get(PLAY_KEY) || [],
   favoriteHistory: storage.get(FAVORITE_KEY) || [],
   loginPageFlag: false,
-  loginInfo: {}
+  loginInfo: {},
+  friendUsername: ''
 }
 
 export default state

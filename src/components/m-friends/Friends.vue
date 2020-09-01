@@ -13,53 +13,52 @@
           :placeholder="searchBoxPlaceHolder"
           @query="handleQuery"></search-box>
       </div>
-      <scroll class="name-list-scroll" v-show="keyword && this.namelist.length">
-        <div class="name-list-wrapper">
-          <div class="name-wrapper" v-for="person in namelist" :key="person.username">
-            <div class="name">{{person.username}}</div>
-            <div class="songs-count-wrapper">{{person.songs.length}}首收藏</div>
-            <div class="icon-wrapper"
-                 v-show="!followed(person.username)"
-                 @click="followPerson(person.username)">
-              <i class="icon-add"></i>
-            </div>
-            <div class="friend-flag-wrapper" v-show="followed(person.username)">已关注</div>
-            <div class="icon-wrapper"
-                 v-show="followed(person.username)"
-                 @click="unfollowPerson(person.username)">
-              <i class="icon-delete"></i>
-            </div>
+      <div class="suggest-wrapper" v-show="keyword">
+        <scroll class="name-list-scroll" v-show="this.namelist.length" :data="namelist">
+          <div class="name-list-wrapper">
+            <name-list :namelist="namelist"></name-list>
           </div>
+        </scroll>
+        <div class="no-search-result-wrapper" v-show="showNoResults">
+          <no-results></no-results>
         </div>
-      </scroll>
-      <div class="no-search-result-wrapper" v-show="showNoResults">
-        <no-results></no-results>
       </div>
+      <div class="my-follow-wrapper" v-show="!keyword">
+        <div class="friend-wrapper"
+             v-for="friend in loginInfo.friends"
+             :key="friend"
+             @click.stop="toFriendDetail(friend)">
+          <span class="username">{{friend}}</span>
+          <i class="icon-dismiss unfollow-icon" @click.stop="unfollowPerson(friend)"></i>
+        </div>
+      </div>
+      <router-view></router-view>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-  import {Component, Vue, Watch} from 'vue-property-decorator'
-  import {Getter, Mutation} from 'vuex-class'
+  import {Component, Mixins, Watch} from 'vue-property-decorator'
+  import {Mutation} from 'vuex-class'
   import * as types from 'src/store/mutation-types'
   import NoResults from 'base/m-no-results/NoResults.vue'
   import SearchBox from 'base/m-search-box/SearchBox.vue'
-  import {searchUser, addFriend, removeFriend} from 'src/api/favorite'
+  import {searchUser} from 'src/api/favorite'
   import Scroll from 'base/m-scroll/Scroll.vue'
+  import NameList from './NameList.vue'
+  import {FriendMixin} from 'src/assets/ts/mixins'
 
   @Component({
     components: {
       NoResults,
       SearchBox,
-      Scroll
+      Scroll,
+      NameList
     }
   })
-  export default class extends Vue {
-    @Getter('loginInfo') loginInfo: any
-
+  export default class extends Mixins(FriendMixin) {
     @Mutation(types.SET_LOGIN_PAGE_FLAG) setLoginPageFlag: any
-    @Mutation(types.SET_LOGIN_INFO) setLoginInfo: any
+    @Mutation(types.SET_FRIEND_USER_NAME) setFriendUsername: any
 
     @Watch('keyword')
     searchUser(newVal: string, oldVal: string) {
@@ -105,32 +104,9 @@
       this.keyword = val
     }
 
-    followed(username: string) {
-      return this.loginInfo.friends.indexOf(username) !== -1
-    }
-
-    followPerson(username: string) {
-      const copy = this._copy()
-      copy.friends.push(username)
-      this.setLoginInfo(copy)
-      addFriend(username)
-    }
-
-    unfollowPerson(username: string) {
-      const index = this.loginInfo.friends.indexOf(username)
-      const copy = this._copy()
-      copy.friends.splice(index, 1)
-      this.setLoginInfo(copy)
-      removeFriend(username)
-    }
-
-    _copy() {
-      return {
-        status: true,
-        username: this.loginInfo.username,
-        songs: this.loginInfo.songs.slice(),
-        friends: this.loginInfo.friends.slice()
-      }
+    toFriendDetail(name: string) {
+      this.setFriendUsername(name)
+      this.$router.push(`/user/${name}`)
     }
   }
 </script>
@@ -173,23 +149,20 @@
             padding 0 8px
             margin-bottom 15px
             color $color-text-d
-            font-size $font-size-median-x
 
             .name
               flex 1
               text-align left
-              height $font-size-median-x
+              font-size $font-size-median-x
 
             .songs-count-wrapper
               flex 1
-              text-align left
-              height $font-size-small
+              text-align right
               font-size $font-size-small
 
-            .icon-wrapper
+            .follow-wrapper
               flex 1
               text-align right
-              height $font-size-small
               font-size $font-size-small
 
       .no-search-result-wrapper
@@ -199,4 +172,20 @@
         right 0
         bottom 0
         left 0
+      .my-follow-wrapper
+        padding 10px 20px
+        display flex
+
+        .friend-wrapper
+          flex 0 0 auto
+          display inline-block
+          margin 0 10px 10px 0
+          padding 5px 10px
+          border 1px solid $color-text-d
+          border-radius  10px
+          color $color-text-d
+          font-size $font-size-median
+
+          .username
+            margin-right 5px
 </style>

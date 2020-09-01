@@ -13,7 +13,10 @@
           <span>随机播放全部</span>
         </div>
       </div>
-      <Scroll :data="songlist" ref="scroll" v-show="currentIndex !== 2">
+      <Scroll class="user-center-scroll"
+              :data="songlist"
+              ref="scroll"
+              v-show="currentIndex !== 2">
         <songs-list :songs="songlist"
                     v-show="songlist.length"
                     @select="activatePlayer"></songs-list>
@@ -175,7 +178,7 @@
           flex: 0 0 auto
           font-size $font-size-small
 
-    .m-scroll
+    .user-center-scroll
       position absolute
       top 235px
       right 0
