@@ -32,7 +32,17 @@
           <i class="icon-dismiss unfollow-icon" @click.stop="unfollowPerson(friend)"></i>
         </div>
       </div>
-      <router-view></router-view>
+      <router-view @no-songs="handleNoSongs"></router-view>
+    </div>
+    <div class="top-tip-wrapper">
+      <top-tip ref="toptip">
+        <div class="reminder">
+          <i class="icon-delete"></i>
+          <span class="text-wrapper">
+              该用户尚无歌单
+          </span>
+        </div>
+      </top-tip>
     </div>
   </div>
 </template>
@@ -47,13 +57,15 @@
   import Scroll from 'base/m-scroll/Scroll.vue'
   import NameList from './NameList.vue'
   import {FriendMixin} from 'src/assets/ts/mixins'
+  import TopTip from 'base/m-top-tip/TopTip.vue'
 
   @Component({
     components: {
       NoResults,
       SearchBox,
       Scroll,
-      NameList
+      NameList,
+      TopTip
     }
   })
   export default class extends Mixins(FriendMixin) {
@@ -107,6 +119,10 @@
     toFriendDetail(name: string) {
       this.setFriendUsername(name)
       this.$router.push(`/user/${name}`)
+    }
+
+    handleNoSongs() {
+      (this.$refs.toptip as any).show()
     }
   }
 </script>
@@ -188,4 +204,23 @@
 
           .username
             margin-right 5px
+    .top-tip-wrapper
+      position fixed
+      z-index 10
+      top 0
+      left 0
+      width 100%
+
+      .reminder
+        padding 18px 0
+        text-align center
+
+        i
+          color $color-theme
+          font-size $font-size-median
+          margin-right 4px
+
+        span
+          color $color-text
+          font-size $font-size-median
 </style>

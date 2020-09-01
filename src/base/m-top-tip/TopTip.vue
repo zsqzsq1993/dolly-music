@@ -17,11 +17,14 @@
       timer = -1
 
       show() {
-        this.showFlag = true
-        clearTimeout(this.timer)
-        this.timer = setTimeout(() => {
-          this.hide()
-        }, this.delay)
+        return new Promise(resolve => {
+          this.showFlag = true
+          clearTimeout(this.timer)
+          this.timer = setTimeout(() => {
+            this.hide()
+            resolve()
+          }, this.delay)
+        })
       }
 
       hide() {

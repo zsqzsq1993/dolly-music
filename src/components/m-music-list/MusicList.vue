@@ -74,7 +74,7 @@
     imgHeight = 0
 
     get bgImage() {
-      return `background-image: url(${this.avatar})` // do not use background
+      return `background-image: url(${this.avatar})`
     }
 
     mounted() {

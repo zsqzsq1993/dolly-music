@@ -3,7 +3,7 @@
     <music-list
       :title="friendUsername"
       :avatar="getAvatar"
-      :songs="songs">
+      :songs="songs" v-if="songs.length">
     </music-list>
   </slide-transition>
 </template>
@@ -43,9 +43,17 @@
           if (response.code === 0) {
             this.songs = response.data
           }
+          this.handleEmptySongs(this.songs)
         })
       } else {
         this.$router.push('/user')
+      }
+    }
+
+    handleEmptySongs(songs: Array<Song>) {
+      if (!songs.length) {
+        this.$emit('no-songs')
+        this.$router.back()
       }
     }
   }
