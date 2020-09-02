@@ -1,4 +1,4 @@
-import {devMode} from 'src/api/config'
+const devMode = process.env.NODE_ENV !== 'production'
 
 const HOST = devMode ? 'localhost' : 'localhost'
 
