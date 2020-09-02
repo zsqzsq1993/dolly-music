@@ -1,9 +1,13 @@
+import {devMode} from 'src/api/config'
+
+const HOST = devMode ? 'localhost' : 'localhost'
+
 const dbsConfig = {
-  mongodb: 'mongodb://localhost:27017/music',
+  mongodb: `mongodb://${HOST}:27017/music`,
 
   redis: {
     get host() {
-      return 'localhost'
+      return HOST
     },
 
     get port() {
@@ -15,7 +19,7 @@ const dbsConfig = {
     },
 
     get expire() {
-      return +new Date() + 1000*60
+      return +new Date() + 1000 * 60
     }
   },
 
