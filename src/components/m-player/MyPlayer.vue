@@ -134,6 +134,7 @@
   import lyricParser, {LyricParser} from 'src/assets/ts/lyricParser'
   import PlayList from 'components/m-playlist/PlayList.vue'
   import {PlayerMixin} from 'src/assets/ts/mixins'
+  import {deepCopy} from 'src/assets/ts/util'
 
   const transform = prefixStyle('transform') || 'transform'
   const PAGE_CD = 0
@@ -309,7 +310,15 @@
     }
 
     onerror() {
-      console.warn('loading audio resource error, try another song.')
+      console.warn('Song url past due, regain')
+
+      this.togglePlaying()
+
+      Song.getUrls(deepCopy(this.playList)).then((songs: Array<Song>) => {
+        this.setPlayList(songs)
+        this.loop()
+      })
+
       this.audioReady = true
     }
 

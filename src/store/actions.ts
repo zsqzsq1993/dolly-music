@@ -183,6 +183,18 @@ const actions: ActionTree<any, any> = {
       commit(types.SET_LOGIN_INFO, object)
     })
   }
+
+  // regenUrl({commit, state}, {key}) {
+  //   const songs = state[key]
+  //
+  //   const func = key === 'playHistory'
+  //     ? types.SET_PLAY_HISTORY
+  //     : types.SET_FAVORITE_HISTORY
+  //
+  //   Song.getUrls(songs).then((songs: Array<Song>) => {
+  //     commit(func, songs)
+  //   })
+  // }
 }
 
 export default actions
