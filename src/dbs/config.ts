@@ -1,6 +1,6 @@
 const devMode = process.env.NODE_ENV !== 'production'
 
-const HOST = devMode ? 'localhost' : 'localhost'
+const HOST = devMode ? 'localhost' : '127.0.0.1'
 
 const dbsConfig = {
   // when using local mongodb ->
