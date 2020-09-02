@@ -1,0 +1,11 @@
+deployment; try reducing chunk-vendors by compression plugin; fix mongodb remote address 
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# On branch master
+# Changes to be committed:
+#	modified:   package-lock.json
+#	modified:   package.json
+#	modified:   src/dbs/config.ts
+#	modified:   vue.config.js
+#

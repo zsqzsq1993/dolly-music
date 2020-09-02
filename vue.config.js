@@ -53,6 +53,8 @@ module.exports = {
     })]
   },
 
+  publicPath: '',
+
   devServer: {
     before(app) {
       app.use(session({
@@ -582,8 +584,6 @@ module.exports = {
           })
         }
       })
-    },
-
-    publicPath: ''
+    }
   }
 }
