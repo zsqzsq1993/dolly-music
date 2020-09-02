@@ -3,7 +3,11 @@ import {devMode} from 'src/api/config'
 const HOST = devMode ? 'localhost' : 'localhost'
 
 const dbsConfig = {
-  mongodb: `mongodb://${HOST}:27017/music`,
+  // when using local mongodb ->
+  // mongodb: `mongodb://${HOST}:27017/music`,
+
+  // when using mongodb cloud
+  mongodb: 'mongodb+srv://zsqzsq1993:Findahouse153!@dolly-music.mongodb.net/music?w=majority',
 
   redis: {
     get host() {
