@@ -7,7 +7,7 @@ const dbsConfig = {
   // mongodb: `mongodb://${HOST}:27017/music`,
 
   // when using mongodb cloud
-  mongodb: 'mongodb+srv://zsqzsq1993:Findahouse153!@dolly-music.mongodb.net/music?w=majority',
+  mongodb: 'mongodb+srv://zsqzsq1993:Findahouse153!@dolly-music.2uz6w.mongodb.net/music?retryWrites=true&w=majority',
 
   redis: {
     get host() {

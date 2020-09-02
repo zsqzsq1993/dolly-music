@@ -9,6 +9,7 @@ const dbsConfig = require('./src/dbs/config.ts')
 const mongoose = require('mongoose')
 const session = require('express-session')
 const User = require('./src/dbs/models/user.js')
+const CompressionWebpackPlugin = require('compression-webpack-plugin')
 /* eslint-enable */
 
 // connect redis
@@ -42,7 +43,14 @@ module.exports = {
         assets: resolve('src/assets'),
         base: resolve('src/base')
       }
-    }
+    },
+
+    plugins: [new CompressionWebpackPlugin({
+      algorithm: 'gzip',
+      test: /\.ts$|\.js$|\.html$|\.json$|\.css/,
+      threshold: 10240,
+      minRatio: 0.8
+    })]
   },
 
   devServer: {
