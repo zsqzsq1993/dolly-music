@@ -530,7 +530,7 @@ mongoose.connect(dbsConfig.mongodb, {
 
   const httpsSever = https.createServer(credential, app)
 
-  httpsSever.listen(port, (error) => {
+  httpsSever.listen(port, error => {
     if (error) {
       console.log(error)
     } else {
