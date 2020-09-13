@@ -189,4 +189,4 @@ export const getSearchData = {
   remoteplace: 'txt.mqq.all'
 }
 
-export const HOST = 'http://dollylosingweight.today/music'
+export const HOST = 'https://dollylosingweight.today/music'
