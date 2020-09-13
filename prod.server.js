@@ -7,7 +7,12 @@ const nodemailer = require('nodemailer')
 const session = require('express-session')
 const dbsConfig = require('./src/dbs/config.ts')
 const User = require('./src/dbs/models/user.js')
+const https = require('https')
+const fs = require('fs')
+const cert = fs.readFileSync('/etc/nginx/1_dollylosingweight.today_bundle.crt')
+const key = fs.readFileSync('/etc/nginx/2_dollylosingweight.today.key')
 
+const credential = { key, cert }
 const port = process.env.PORT || 9000
 const app = express()
 const router = express.Router()
@@ -523,11 +528,13 @@ mongoose.connect(dbsConfig.mongodb, {
 
   app.use(express.static('./dist'))
 
-  app.listen(port, (error) => {
+  const httpsSever = https.createServer(credential, app)
+
+  httpsSever.listen(port, (error) => {
     if (error) {
       console.log(error)
     } else {
-      console.log('listen at http://localhost:' + port)
+      console.log('listen at https://localhost:' + port)
     }
   })
 }).catch(error => {
